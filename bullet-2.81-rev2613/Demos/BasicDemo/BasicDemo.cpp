@@ -41,6 +41,11 @@ static GLDebugDrawer gDebugDraw;
 
 void BasicDemo::clientMoveAndDisplay()
 {
+	//TODO: insert fitness test here
+	int nr = 1;
+	btVector3 pos = m_dynamicsWorld->getCollisionObjectArray().at(nr)->getWorldTransform().operator*(btVector3(1,1,1));
+	printf("%f",pos.y());
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
 	//simple dynamics world doesn't handle fixed-time-stepping
@@ -87,7 +92,7 @@ void	BasicDemo::initPhysics()
 	setTexturing(true);
 	setShadows(true);
 
-	setCameraDistance(btScalar(SCALING*50.));
+	setCameraDistance(btScalar(SCALING*20.));
 
 	///collision configuration contains default setup for memory, collision setup
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -107,39 +112,33 @@ void	BasicDemo::initPhysics()
 	
 	m_dynamicsWorld->setGravity(btVector3(0,-10,0));
 
-	///create a few basic rigid bodies
-	btBoxShape* groundShape = new btBoxShape(btVector3(btScalar(10.),btScalar(1.),btScalar(10.)));
-	//groundShape->initializePolyhedralFeatures();
-//	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0),50);
-	
+	///create ground bodies
+	btBoxShape* groundShape = new btBoxShape(btVector3(btScalar(1000.),btScalar(1.),btScalar(1000.)));
 	m_collisionShapes.push_back(groundShape);
 
 	btTransform groundTransform;
 	groundTransform.setIdentity();
-	groundTransform.setOrigin(btVector3(0,-5,0));
+	groundTransform.setOrigin(btVector3(0,0,0));
 
-	//We can also use DemoApplication::localCreateRigidBody, but for clarity it is provided here:
-	{
-		btScalar mass(0.);
+	localCreateRigidBody(0.,groundTransform,groundShape);
 
-		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+	///try
+	btBoxShape* colShape = new btBoxShape(btVector3(SCALING*1,SCALING*1,SCALING*1));
+	m_collisionShapes.push_back(colShape);
 
-		btVector3 localInertia(0,0,0);
-		if (isDynamic)
-			groundShape->calculateLocalInertia(mass,localInertia);
+	btTransform startTransform;
+	startTransform.setIdentity();
+	startTransform.setOrigin(btVector3(0,5,0));
 
-		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass,myMotionState,groundShape,localInertia);
-		btRigidBody* body = new btRigidBody(rbInfo);
+	btScalar	mass(1.f);
+	
+	localCreateRigidBody(mass,startTransform,colShape);
 
-		//add the body to the dynamics world
-		m_dynamicsWorld->addRigidBody(body);
-	}
-
-
-	{
+	startTransform.setOrigin(btVector3(5,5,0));
+	btRigidBody* box2 = localCreateRigidBody(mass,startTransform,colShape);
+	box2->applyCentralForce(btVector3(-1001,0,0));
+	//delete box2;
+	/*{
 		//create a few dynamic rigidbodies
 		// Re-using the same collision is better for memory usage and performance
 
@@ -152,13 +151,6 @@ void	BasicDemo::initPhysics()
 		startTransform.setIdentity();
 
 		btScalar	mass(1.f);
-
-		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
-
-		btVector3 localInertia(0,0,0);
-		if (isDynamic)
-			colShape->calculateLocalInertia(mass,localInertia);
 
 		float start_x = START_POS_X - ARRAY_SIZE_X/2;
 		float start_y = START_POS_Y;
@@ -175,21 +167,16 @@ void	BasicDemo::initPhysics()
 										btScalar(20+2.0*k + start_y),
 										btScalar(2.0*j + start_z)));
 
-			
-					//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-					btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-					btRigidBody::btRigidBodyConstructionInfo rbInfo(mass,myMotionState,colShape,localInertia);
-					btRigidBody* body = new btRigidBody(rbInfo);
-					
-
-					m_dynamicsWorld->addRigidBody(body);
+					localCreateRigidBody(mass,startTransform,colShape);
 				}
 			}
 		}
-	}
+	}*/
 
 
 }
+
+
 void	BasicDemo::clientResetScene()
 {
 	exitPhysics();

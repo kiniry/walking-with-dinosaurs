@@ -515,10 +515,7 @@ void	DemoApplication::setDebugMode(int mode)
 
 void DemoApplication::moveAndDisplay()
 {
-	//TODO: insert fitness test here
-	int nr = 1;
-	btVector3 pos = m_dynamicsWorld->getCollisionObjectArray().at(nr)->getWorldTransform().operator*(btVector3(1,1,1));
-	printf("%f",pos.y());
+	
 
 	if (!m_idle)
 		clientMoveAndDisplay();
