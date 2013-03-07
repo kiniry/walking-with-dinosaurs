@@ -218,7 +218,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Demos\BasicDemo\BasicDemo.h" />
-    <ClInclude Include="Part.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\BasicDemo\BasicDemo.cpp">
@@ -227,7 +226,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Demos\BasicDemo\Win32BasicDemo.cpp">
     </ClCompile>
-    <ClCompile Include="Part.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\bullet.rc" />

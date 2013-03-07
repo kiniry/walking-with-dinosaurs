@@ -12,7 +12,6 @@
     <ClInclude Include="..\..\Demos\BasicDemo\BasicDemo.h">
       <Filter>Demos\BasicDemo</Filter>
     </ClInclude>
-    <ClInclude Include="Part.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\BasicDemo\BasicDemo.cpp">
@@ -24,7 +23,6 @@
     <ClCompile Include="..\..\Demos\BasicDemo\Win32BasicDemo.cpp">
       <Filter>Demos\BasicDemo</Filter>
     </ClCompile>
-    <ClCompile Include="Part.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\bullet.rc" />
