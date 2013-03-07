@@ -65,7 +65,7 @@
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">obj\x32\Release\App_BasicDemo\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">App_BasicDemo_vs2010</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WWD</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">obj\x64\Release\App_BasicDemo\</IntDir>
@@ -218,6 +218,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Demos\BasicDemo\BasicDemo.h" />
+    <ClInclude Include="Grammar.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\BasicDemo\BasicDemo.cpp">
@@ -226,6 +227,7 @@
     </ClCompile>
     <ClCompile Include="..\..\Demos\BasicDemo\Win32BasicDemo.cpp">
     </ClCompile>
+    <ClCompile Include="Grammar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\bullet.rc" />
