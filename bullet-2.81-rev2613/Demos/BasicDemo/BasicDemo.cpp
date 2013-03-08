@@ -123,7 +123,8 @@ void	BasicDemo::initPhysics()
 	localCreateRigidBody(0.,groundTransform,groundShape);
 
 	///try
-	btBoxShape* colShape = new btBoxShape(btVector3(SCALING*1,SCALING*1,SCALING*1));
+	//btBoxShape* colShape = new btBoxShape(btVector3(SCALING*1,SCALING*2,SCALING*1));
+	btCapsuleShape* colShape = new btCapsuleShape(btScalar(1),btScalar(2));
 	m_collisionShapes.push_back(colShape);
 
 	btTransform startTransform;
@@ -132,12 +133,36 @@ void	BasicDemo::initPhysics()
 
 	btScalar	mass(1.f);
 	
-	localCreateRigidBody(mass,startTransform,colShape);
+	btRigidBody* box1 = localCreateRigidBody(mass,startTransform,colShape);
 
-	startTransform.setOrigin(btVector3(5,5,0));
+	//startTransform.setOrigin(btVector3(5,5,0));
 	btRigidBody* box2 = localCreateRigidBody(mass,startTransform,colShape);
-	box2->applyCentralForce(btVector3(-1001,0,0));
-	//delete box2;
+	//box2->applyCentralForce(btVector3(-1001,0,0));
+	btRigidBody* box3 = localCreateRigidBody(mass,startTransform,colShape);
+	
+	//Define the two types of constraints/joints
+	btHingeConstraint* hingeC;
+	btConeTwistConstraint* coneC;
+
+	//Define the local transform on the shapes regarding to the joints. (prolly from the center of the shape)
+	btTransform localA, localB;
+	localA.setIdentity();localB.setIdentity();
+	//Rotation - SUBJECT TO CHANGE!
+	localA.getBasis().setEulerZYX(0,0,0);
+	localB.getBasis().setEulerZYX(0,0,0);
+	//Translation in regards to the boxes.
+	localA.setOrigin(btVector3(SCALING*0,SCALING*2,SCALING*0));
+	localB.setOrigin(btVector3(SCALING*0,SCALING*-2,SCALING*0));
+
+	//setup contraint/joint
+	hingeC = new btHingeConstraint(*box1,*box2,localA,localB);
+	hingeC->setLimit(btScalar(-PI/2),btScalar(PI/2));
+	m_dynamicsWorld->addConstraint(hingeC,true);
+
+	hingeC = new btHingeConstraint(*box3,*box1,localA,localB);
+	hingeC->setLimit(btScalar(-PI/2),btScalar(PI/2));
+	m_dynamicsWorld->addConstraint(hingeC,true);
+
 	/*{
 		//create a few dynamic rigidbodies
 		// Re-using the same collision is better for memory usage and performance

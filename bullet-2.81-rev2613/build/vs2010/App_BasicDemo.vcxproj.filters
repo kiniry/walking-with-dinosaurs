@@ -6,10 +6,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Demos\BasicDemo\BasicDemo.h">
+    <ClInclude Include="..\..\Demos\BasicDemo\Grammar.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Demos\BasicDemo\Grammar.h">
+    <ClInclude Include="..\..\Demos\BasicDemo\BasicDemo.h">
       <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>
@@ -17,13 +17,13 @@
     <ClCompile Include="..\..\Demos\BasicDemo\Win32BasicDemo.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Demos\BasicDemo\BasicDemo.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Demos\BasicDemo\Grammar.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Demos\BasicDemo\main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\BasicDemo\BasicDemo.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
