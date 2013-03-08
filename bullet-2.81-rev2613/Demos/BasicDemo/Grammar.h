@@ -4,9 +4,15 @@
 #define NULL 0
 
 #include "btBulletDynamicsCommon.h"
-
+#include "Physics.h"
 enum{pressure, angel, light};
+#define sucecs 0
+#define fail -1
 
+#define maxHeight 10
+#define maxWidth 10
+#define maxDepth 10
+#define maxBlocks 30
 struct Joint{
 	btVector3 degreesOfFreedom;
 	//pre/post vec = x,y,side
@@ -17,6 +23,7 @@ struct Joint{
 };
 
 struct Part {
+	int id;
 	int height, width, depth;
 	Part  *parts;
 	Joint* joint;
