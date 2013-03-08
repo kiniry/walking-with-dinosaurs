@@ -34,9 +34,9 @@ class btConstraintSolver;
 struct btCollisionAlgorithmCreateFunc;
 class btDefaultCollisionConfiguration;
 
-///BasicDemo is good starting point for learning the code base and porting.
+///Physics is good starting point for learning the code base and porting.
 
-class BasicDemo : public PlatformDemoApplication
+class Physics : public PlatformDemoApplication
 {
 
 	//keep the collision shapes, for deletion/cleanup
@@ -52,10 +52,10 @@ class BasicDemo : public PlatformDemoApplication
 
 	public:
 
-	BasicDemo()
+	Physics()
 	{
 	}
-	virtual ~BasicDemo()
+	virtual ~Physics()
 	{
 		exitPhysics();
 	}
@@ -70,7 +70,7 @@ class BasicDemo : public PlatformDemoApplication
 	
 	static DemoApplication* Create()
 	{
-		BasicDemo* demo = new BasicDemo;
+		Physics* demo = new Physics;
 		demo->myinit();
 		demo->initPhysics();
 		return demo;

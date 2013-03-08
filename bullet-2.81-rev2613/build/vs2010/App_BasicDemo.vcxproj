@@ -223,8 +223,6 @@
     <ClCompile Include="..\..\Demos\BasicDemo\Grammar.cpp" />
     <ClCompile Include="..\..\Demos\BasicDemo\main.cpp">
     </ClCompile>
-    <ClCompile Include="..\..\Demos\BasicDemo\Win32BasicDemo.cpp">
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\bullet.rc" />

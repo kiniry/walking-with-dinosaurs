@@ -39,7 +39,7 @@ subject to the following restrictions:
 static GLDebugDrawer gDebugDraw;
 
 
-void BasicDemo::clientMoveAndDisplay()
+void Physics::clientMoveAndDisplay()
 {
 	//TODO: insert fitness test here
 	int nr = 1;
@@ -69,7 +69,7 @@ void BasicDemo::clientMoveAndDisplay()
 
 
 
-void BasicDemo::displayCallback(void) {
+void Physics::displayCallback(void) {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 	
@@ -87,7 +87,7 @@ void BasicDemo::displayCallback(void) {
 
 
 
-void	BasicDemo::initPhysics()
+void	Physics::initPhysics()
 {
 	setTexturing(true);
 	setShadows(true);
@@ -202,14 +202,14 @@ void	BasicDemo::initPhysics()
 }
 
 
-void	BasicDemo::clientResetScene()
+void	Physics::clientResetScene()
 {
 	exitPhysics();
 	initPhysics();
 }
 	
 
-void	BasicDemo::exitPhysics()
+void	Physics::exitPhysics()
 {
 
 	//cleanup in the reverse order of creation/initialization

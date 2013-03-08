@@ -23,7 +23,7 @@ subject to the following restrictions:
 int main(int argc,char** argv)
 {
 
-	BasicDemo ccdDemo;
+	Physics ccdDemo;
 	ccdDemo.initPhysics();
 
 

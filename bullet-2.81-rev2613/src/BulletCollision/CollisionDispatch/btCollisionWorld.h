@@ -42,12 +42,12 @@ subject to the following restrictions:
  * Although cmake is recommended, you can also use autotools for UNIX: ./autogen.sh ./configure to create a Makefile and then run make.
  * 
  * @subsection step3 Step 3: Testing demos
- * Try to run and experiment with BasicDemo executable as a starting point.
+ * Try to run and experiment with Physics executable as a starting point.
  * Bullet can be used in several ways, as Full Rigid Body simulation, as Collision Detector Library or Low Level / Snippets like the GJK Closest Point calculation.
  * The Dependencies can be seen in this documentation under Directories
  * 
  * @subsection step4 Step 4: Integrating in your application, full Rigid Body and Soft Body simulation
- * Check out BasicDemo how to create a btDynamicsWorld, btRigidBody and btCollisionShape, Stepping the simulation and synchronizing your graphics object transform.
+ * Check out Physics how to create a btDynamicsWorld, btRigidBody and btCollisionShape, Stepping the simulation and synchronizing your graphics object transform.
  * Check out SoftDemo how to use soft body dynamics, using btSoftRigidDynamicsWorld.
  * @subsection step5 Step 5 : Integrate the Collision Detection Library (without Dynamics and other Extras)
  * Bullet Collision Detection can also be used without the Dynamics/Extras.

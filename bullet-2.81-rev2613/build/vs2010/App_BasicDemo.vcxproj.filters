@@ -14,9 +14,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Demos\BasicDemo\Win32BasicDemo.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Demos\BasicDemo\Grammar.cpp">
       <Filter>source</Filter>
     </ClCompile>
