@@ -9,7 +9,7 @@
     <ClInclude Include="..\..\Demos\BasicDemo\Grammar.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Demos\BasicDemo\BasicDemo.h">
+    <ClInclude Include="..\..\Demos\BasicDemo\Physics.h">
       <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>
@@ -23,7 +23,7 @@
     <ClCompile Include="..\..\Demos\BasicDemo\main.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Demos\BasicDemo\BasicDemo.cpp">
+    <ClCompile Include="..\..\Demos\BasicDemo\Physics.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -13,7 +13,7 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "BasicDemo.h"
+#include "Physics.h"
 #include "GlutStuff.h"
 #include "btBulletDynamicsCommon.h"
 #include "LinearMath/btHashMap.h"
