@@ -3,15 +3,14 @@
 
 #define NULL 0
 
+#include "btBulletDynamicsCommon.h"
+
 enum{pressure, angel, light};
-struct Point3{
-	int x,y,z;
-};
 
 struct Joint{
-	Point3 degreesOfFreedom;
-	Point3 pre;
-	Point3 post;
+	btVector3 degreesOfFreedom;
+	btVector3 pre;
+	btVector3 post;
 	int length;
 
 };
