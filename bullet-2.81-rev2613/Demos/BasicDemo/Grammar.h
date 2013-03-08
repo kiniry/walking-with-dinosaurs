@@ -31,4 +31,8 @@ struct Part {
 };
 Part *body;
 
+int B(int index, const int* DNA, Physics *world, int *blocks, int part);
+int J(int index, const int* DNA, Physics *world, int *blocks, int part1);
+int readDNA(const int* DNA, Physics *world);
+
 #endif
