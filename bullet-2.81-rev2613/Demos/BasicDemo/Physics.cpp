@@ -240,16 +240,38 @@ int Physics::createJoint(	int box1,
 
 void Physics::setLocalRotation(int myS, int opS, btTransform* myTrans, btTransform* opTrans)
 {
-	if(myS==opS){
-		myTrans->getBasis().setEulerZYX(0,0,0);
+	myTrans->getBasis().setEulerZYX(0,0,0);
+	//if equal
+	if(myS==opS&&myS!=0&&myS!=1){
+
 		opTrans->getBasis().setEulerZYX(0,0,PI);
 	}
-	else if(myS==1&&opS==2){
-		myTrans->getBasis().setEulerZYX(0,0,0);
-		opTrans->getBasis().setEulerZYX(PI,PI,0);
+	else if(myS==opS){
+		opTrans->getBasis().setEulerZYX(0,PI,0);
 	}
+	//02 04 12 14
+	else if(myS==4&&opS==0 || myS==0&&opS==2 || myS==2&&opS==1 || myS==1&&opS==4){
+		opTrans->getBasis().setEulerZYX(0,PI/2,0);
+	}
+	else if(myS==0&&opS==4 || myS==2&&opS==0 || myS==1&&opS==2 || myS==4&&opS==1){
+		opTrans->getBasis().setEulerZYX(0,-PI/2,0);
+	}
+	//03 05 13 15
+	else if(myS==3&&opS==1 || myS==1&&opS==5 || myS==0&&opS==3 || myS==5&&opS==0){
+		opTrans->getBasis().setEulerZYX(-PI/2,0,0);
+	}
+	else if(myS==1&&opS==3 || myS==5&&opS==1 || myS==3&&opS==0 || myS==0&&opS==5){
+		opTrans->getBasis().setEulerZYX(PI/2,0,0);
+	}
+	//23 25 43 45
+	else if(myS==2&&opS==3 || myS==5&&opS==2 || myS==3&&opS==4 || myS==4&&opS==5){
+		opTrans->getBasis().setEulerZYX(0,0,-PI/2);
+	}
+	else if(myS==3&&opS==2 || myS==2&&opS==5 || myS==4&&opS==3 || myS==5&&opS==4){
+		opTrans->getBasis().setEulerZYX(0,0,PI/2);
+	}
+	//if opposite
 	else{
-		myTrans->getBasis().setEulerZYX(0,0,0);
 		opTrans->getBasis().setEulerZYX(0,0,0);
 	}
 }
@@ -258,22 +280,22 @@ btVector3 Physics::getLocalTransform(float x, float y, int s, btVector3* halfSiz
 {
 	switch(s){
 	case 0://bottom (y-)
-		return btVector3(x,-halfSizes->y(),y);
+		return btVector3(x,y,-halfSizes->z());
 		break;
 	case 1://top (y+)
-		return btVector3(x,halfSizes->y(),y);
+		return btVector3(x,y,halfSizes->z());
 		break;
 	case 2://x+
 		return btVector3(halfSizes->x(),x,y);
 		break;
 	case 3://z+
-		return btVector3(x,y,halfSizes->z());
+		return btVector3(x,halfSizes->y(),y);
 		break;
 	case 4://x-
 		return btVector3(-halfSizes->x(),x,y);
 		break;
 	case 5://z-
-		return btVector3(x,y,-halfSizes->z());
+		return btVector3(x,-halfSizes->y(),y);
 		break;
 	}
 }
