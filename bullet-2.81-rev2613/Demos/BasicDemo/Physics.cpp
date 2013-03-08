@@ -172,7 +172,7 @@ void Physics::testPhysics(){
 	//m_dynamicsWorld->getConstraint(0)->setBreakingImpulseThreshold(btScalar(10));
 }
 
-int Physics::createBox(float x, float y, float z)
+int Physics::createBox(int x, int y, int z)
 {
 	btBoxShape* boxShape = new btBoxShape(btVector3(x,y,z));
 	m_collisionShapes.push_back(boxShape);

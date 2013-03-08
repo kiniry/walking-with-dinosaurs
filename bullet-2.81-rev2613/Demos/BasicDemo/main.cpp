@@ -29,8 +29,8 @@ int main(int argc,char** argv)
 
 	//insert random shite
 	int string[] = {3,1,1,0};
-	WWDPhysics.createBox(3,1,1);
-	//readDNA(string,&WWDPhysics);
+	//WWDPhysics.createBox(3,1,1);
+	readDNA(string,&WWDPhysics);
 
 #ifdef CHECK_MEMORY_LEAKS
 	ccdDemo.exitPhysics();

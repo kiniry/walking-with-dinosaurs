@@ -6,19 +6,20 @@ int readDNA(const int* DNA, Physics *world){
 	try{	
 		int part = world->createBox(DNA[index]%maxHeight+1, DNA[index+1]%maxWidth+1, DNA[index+2]%maxDepth+1);
 		blocks++;
+		index = index+3;
 		index=B(index, DNA, world, &blocks, part);
 	}catch (int e){
 		return e;
 	}
-
-	return Gsucecs;
+	
+	return Gsucces;
 }
 
 int B(int index, const int* DNA, Physics *world, int *blocks, int part){
 	if(*blocks >= maxBlocks){
 		throw Gfail;
 	}
-
+				
 	switch (DNA[index]%6){
 		case 0:
 			index++;
@@ -59,7 +60,7 @@ int B(int index, const int* DNA, Physics *world, int *blocks, int part){
 			throw Gfail;
 		
 	}
-
+	
 	return index;
 }
 

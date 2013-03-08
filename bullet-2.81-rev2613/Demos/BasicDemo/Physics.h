@@ -78,7 +78,7 @@ class Physics : public PlatformDemoApplication
 		return demo;
 	}
 
-	int createBox(float x,float y,float z);
+	int createBox(int x,int y,int z);
 	int createJoint(		int box1,
 							int box2,
 							int type,

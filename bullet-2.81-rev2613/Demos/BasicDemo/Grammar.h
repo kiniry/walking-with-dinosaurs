@@ -6,7 +6,7 @@
 #define NULL 0
 
 enum{pressure, angel, light};
-#define Gsucecs 0
+#define Gsucces 0
 #define Gfail -1
 
 #define maxHeight 10
