@@ -26,6 +26,7 @@ subject to the following restrictions:
 #include "LinearMath/btAlignedObjectArray.h"
 #include <math.h>
 #define PI 3.1415926
+enum{HINGE,CONETWIST};
 class btBroadphaseInterface;
 class btCollisionShape;
 class btOverlappingPairCache;
@@ -38,6 +39,7 @@ class btDefaultCollisionConfiguration;
 
 class Physics : public PlatformDemoApplication
 {
+	int currentBoxIndex,currentJointIndex;
 
 	//keep the collision shapes, for deletion/cleanup
 	btAlignedObjectArray<btCollisionShape*>	m_collisionShapes;
@@ -76,6 +78,14 @@ class Physics : public PlatformDemoApplication
 		return demo;
 	}
 
+	int createBox(float x,float y,float z);
+	int createJoint(		int box1,
+							int box2,
+							int type,
+							float preX, float preY, float preS,
+							float postX, float postY, float postS,
+							float dofX, float dofY, float dofZ);
+	btVector3 getLocalTransform(float x, float y, int s, btVector3* halfSizes);
 	
 };
 
