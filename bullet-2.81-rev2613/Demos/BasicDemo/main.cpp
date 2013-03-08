@@ -13,7 +13,8 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "Physics.h"
+//#include "Physics.h"
+#include "Grammar.h"
 #include "GlutStuff.h"
 #include "btBulletDynamicsCommon.h"
 #include "LinearMath/btHashMap.h"
@@ -23,14 +24,18 @@ subject to the following restrictions:
 int main(int argc,char** argv)
 {
 
-	Physics ccdDemo;
-	ccdDemo.initPhysics();
+	Physics WWDPhysics;
+	WWDPhysics.initPhysics();
 
+	//insert random shite
+	int string[] = {3,1,1,0};
+	WWDPhysics.createBox(3,1,1);
+	//readDNA(string,&WWDPhysics);
 
 #ifdef CHECK_MEMORY_LEAKS
 	ccdDemo.exitPhysics();
 #else
-	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",&ccdDemo);
+	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",&WWDPhysics);
 #endif
 	
 	//default glut doesn't return from mainloop

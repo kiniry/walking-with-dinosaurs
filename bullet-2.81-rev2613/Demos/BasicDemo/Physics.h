@@ -86,8 +86,9 @@ class Physics : public PlatformDemoApplication
 							float postX, float postY, float postS,
 							float dofX, float dofY, float dofZ);
 	btVector3 getLocalTransform(float x, float y, int s, btVector3* halfSizes);
+	void testPhysics();
 	
 };
 
-#endif //BASIC_DEMO_H
+#endif
 

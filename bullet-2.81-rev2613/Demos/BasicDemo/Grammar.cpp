@@ -11,12 +11,12 @@ int readDNA(const int* DNA, Physics *world){
 		return e;
 	}
 
-	return sucecs;
+	return Gsucecs;
 }
 
 int B(int index, const int* DNA, Physics *world, int *blocks, int part){
 	if(*blocks >= maxBlocks){
-		throw fail;
+		throw Gfail;
 	}
 
 	switch (DNA[index]%6){
@@ -56,7 +56,7 @@ int B(int index, const int* DNA, Physics *world, int *blocks, int part){
 		
 
 		default:
-			throw fail;
+			throw Gfail;
 		
 	}
 

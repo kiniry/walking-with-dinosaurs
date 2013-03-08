@@ -28,10 +28,11 @@ static GLDebugDrawer gDebugDraw;
 void Physics::clientMoveAndDisplay()
 {
 	//TODO: insert fitness test here
+	/*TEST
 	int nr = 1;
 	btVector3 pos = m_dynamicsWorld->getCollisionObjectArray().at(nr)->getWorldTransform().operator*(btVector3(1,1,1));
 	printf("%f",pos.y());
-	
+	*/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
 	//simple dynamics world doesn't handle fixed-time-stepping
@@ -110,7 +111,9 @@ void	Physics::initPhysics()
 
 	localCreateRigidBody(0.,groundTransform,groundShape);
 	currentBoxIndex++;
+}
 
+void Physics::testPhysics(){
 	///try
 	//btBoxShape* colShape = new btBoxShape(btVector3(SCALING*1,SCALING*2,SCALING*1));
 	btCapsuleShape* colShape = new btCapsuleShape(btScalar(1),btScalar(2));
@@ -167,44 +170,8 @@ void	Physics::initPhysics()
 
 	//how to get a constraint at a specific index, and set its breaking threshold
 	//m_dynamicsWorld->getConstraint(0)->setBreakingImpulseThreshold(btScalar(10));
-
-	/*{
-		//create a few dynamic rigidbodies
-		// Re-using the same collision is better for memory usage and performance
-
-		btBoxShape* colShape = new btBoxShape(btVector3(SCALING*1,SCALING*1,SCALING*1));
-		//btCollisionShape* colShape = new btSphereShape(btScalar(1.));
-		m_collisionShapes.push_back(colShape);
-
-		/// Create Dynamic Objects
-		btTransform startTransform;
-		startTransform.setIdentity();
-
-		btScalar	mass(1.f);
-
-		float start_x = START_POS_X - ARRAY_SIZE_X/2;
-		float start_y = START_POS_Y;
-		float start_z = START_POS_Z - ARRAY_SIZE_Z/2;
-
-		for (int k=0;k<ARRAY_SIZE_Y;k++)
-		{
-			for (int i=0;i<ARRAY_SIZE_X;i++)
-			{
-				for(int j = 0;j<ARRAY_SIZE_Z;j++)
-				{
-					startTransform.setOrigin(SCALING*btVector3(
-										btScalar(2.0*i + start_x),
-										btScalar(20+2.0*k + start_y),
-										btScalar(2.0*j + start_z)));
-
-					localCreateRigidBody(mass,startTransform,colShape);
-				}
-			}
-		}
-	}*/
-
-
 }
+
 int Physics::createBox(float x, float y, float z)
 {
 	btBoxShape* boxShape = new btBoxShape(btVector3(x,y,z));
