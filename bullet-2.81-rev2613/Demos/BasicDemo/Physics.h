@@ -82,11 +82,12 @@ class Physics : public PlatformDemoApplication
 	int createJoint(		int box1,
 							int box2,
 							int type,
-							float preX, float preY, float preS,
-							float postX, float postY, float postS,
-							float dofX, float dofY, float dofZ);
+							int preX, int preY, int preS,
+							int postX, int postY, int postS,
+							int dofX, int dofY, int dofZ);
 	btVector3 getLocalTransform(float x, float y, int s, btVector3* halfSizes);
 	void testPhysics();
+	void setLocalRotation(int myS, int opS, btTransform* myTrans, btTransform* opTrans);
 	
 };
 

@@ -192,9 +192,9 @@ int Physics::createBox(int x, int y, int z)
 int Physics::createJoint(	int box1,
 							int box2,
 							int type,
-							float preX, float preY, float preS,
-							float postX, float postY, float postS,
-							float dofX, float dofY, float dofZ)
+							int preX, int preY, int preS,
+							int postX, int postY, int postS,
+							int dofX, int dofY, int dofZ)
 {	
 	//Get box pointers
 	btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
@@ -204,8 +204,9 @@ int Physics::createJoint(	int box1,
 	btTransform localA, localB;
 	localA.setIdentity();localB.setIdentity();
 	//Rotation - SUBJECT TO CHANGE!
-	localA.getBasis().setEulerZYX(0,0,0);
-	localB.getBasis().setEulerZYX(0,0,0);
+	//localA.getBasis().setEulerZYX(0,0,PI);
+	//localB.getBasis().setEulerZYX(0,0,0);
+	setLocalRotation(preS, postS, &localA, &localB);
 	//Translation in regards to the boxes.
 	btVector3 box1HalfSize = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithoutMargin();
 	btVector3 box2HalfSize = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithoutMargin();
@@ -215,7 +216,7 @@ int Physics::createJoint(	int box1,
 	//setup contraint/joint
 	btHingeConstraint* hingeC;
 	btConeTwistConstraint* coneC;
-	int DOFx = ((int)dofX) %180;	int DOFy = ((int)dofY) %180;	int DOFz = ((int)dofZ) %180;
+	int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
 	float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
 	switch(type){
 	case HINGE:
@@ -237,6 +238,22 @@ int Physics::createJoint(	int box1,
 	return returnVal;
 }
 
+void Physics::setLocalRotation(int myS, int opS, btTransform* myTrans, btTransform* opTrans)
+{
+	if(myS==opS){
+		myTrans->getBasis().setEulerZYX(0,0,0);
+		opTrans->getBasis().setEulerZYX(0,0,PI);
+	}
+	else if(myS==1&&opS==2){
+		myTrans->getBasis().setEulerZYX(0,0,0);
+		opTrans->getBasis().setEulerZYX(PI,PI,0);
+	}
+	else{
+		myTrans->getBasis().setEulerZYX(0,0,0);
+		opTrans->getBasis().setEulerZYX(0,0,0);
+	}
+}
+
 btVector3 Physics::getLocalTransform(float x, float y, int s, btVector3* halfSizes)
 {
 	switch(s){
@@ -247,7 +264,7 @@ btVector3 Physics::getLocalTransform(float x, float y, int s, btVector3* halfSiz
 		return btVector3(x,halfSizes->y(),y);
 		break;
 	case 2://x+
-		return btVector3(halfSizes->x(),y,y);
+		return btVector3(halfSizes->x(),x,y);
 		break;
 	case 3://z+
 		return btVector3(x,y,halfSizes->z());

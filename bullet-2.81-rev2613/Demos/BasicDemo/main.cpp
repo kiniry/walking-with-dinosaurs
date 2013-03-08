@@ -28,7 +28,8 @@ int main(int argc,char** argv)
 	WWDPhysics.initPhysics();
 
 	//insert random shite
-	int string[] = {3,1,1,0};
+	int dof = 0,S1=1,S2=2;
+	int string[] = {3,3,3,1,0,0,0,S1,0,0,S2,dof,0,0,3,2,3,0};
 	//WWDPhysics.createBox(3,1,1);
 	readDNA(string,&WWDPhysics);
 
