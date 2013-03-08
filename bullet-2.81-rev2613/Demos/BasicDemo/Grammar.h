@@ -9,6 +9,7 @@ enum{pressure, angel, light};
 
 struct Joint{
 	btVector3 degreesOfFreedom;
+	//pre/post vec = x,y,side
 	btVector3 pre;
 	btVector3 post;
 	int length;
