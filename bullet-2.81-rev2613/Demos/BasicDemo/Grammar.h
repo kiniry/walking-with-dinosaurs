@@ -5,7 +5,6 @@
 
 #define NULL 0
 
-enum{pressure, angel, light};
 #define Gsucces 0
 #define Gfail -1
 

@@ -22,12 +22,41 @@
 #include <stdio.h> //printf debugging
 #include "GLDebugDrawer.h"
 
+extern ContactAddedCallback		gContactAddedCallback;
+
 static GLDebugDrawer gDebugDraw;
+
+//used for collision sensor
+//at the moment it only works on active objects
+static bool CollisionCallBackFunction(btManifoldPoint& cp,	const btCollisionObjectWrapper* colObj0Wrap,int partId0,int index0,const btCollisionObjectWrapper* colObj1Wrap,int partId1,int index1){
+
+
+	printf("collision");
+
+
+	return false;
+}
 
 
 void Physics::clientMoveAndDisplay()
 {
 	//TODO: insert fitness test here
+	//TODO: get sensor data
+	//angel sensor
+	for(int i = 0; i < m_dynamicsWorld->getNumConstraints(); i++){
+		(m_dynamicsWorld->getConstraint(i))->getConstraintType();
+		//for hinge bruges .getangle()
+		//for concavetwist bruges 
+	}
+
+
+	//pressure sensor
+	//check for collision
+	//nemmest ville være bare at tjekke for jorden
+	m_dynamicsWorld->getCollisionObjectArray();
+
+
+
 	/*TEST
 	int nr = 1;
 	btVector3 pos = m_dynamicsWorld->getCollisionObjectArray().at(nr)->getWorldTransform().operator*(btVector3(1,1,1));
@@ -45,7 +74,7 @@ void Physics::clientMoveAndDisplay()
 		//optional but useful: debug drawing
 		m_dynamicsWorld->debugDrawWorld();
 	}
-		
+	
 	renderme(); 
 
 	glFlush();
@@ -101,7 +130,7 @@ void	Physics::initPhysics()
 	
 	m_dynamicsWorld->setGravity(btVector3(0,-10,0));
 
-	///create ground bodies
+	///create ground body
 	btBoxShape* groundShape = new btBoxShape(btVector3(btScalar(1000.),btScalar(1.),btScalar(1000.)));
 	m_collisionShapes.push_back(groundShape);
 
@@ -111,6 +140,10 @@ void	Physics::initPhysics()
 
 	localCreateRigidBody(0.,groundTransform,groundShape);
 	currentBoxIndex++;
+
+
+	 gContactAddedCallback = CollisionCallBackFunction;
+
 }
 
 void Physics::testPhysics(){
@@ -189,6 +222,26 @@ int Physics::createBox(int x, int y, int z)
 	return returnVal;
 }
 
+//skal udvides
+int Physics::createSensor(int boxIndex, int type){
+		btRigidBody* box = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(boxIndex);
+	switch (type){
+		case pressure:
+			box->setCollisionFlags(box->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+			break;
+		case light:
+			break;
+
+		case angle:
+
+			break;
+	}
+
+
+
+	return 0;
+}
+
 int Physics::createJoint(	int box1,
 							int box2,
 							int type,
@@ -203,9 +256,7 @@ int Physics::createJoint(	int box1,
 	//Define the local transform on the shapes regarding to the joints. (prolly from the center of the shape)
 	btTransform localA, localB;
 	localA.setIdentity();localB.setIdentity();
-	//Rotation - SUBJECT TO CHANGE!
-	//localA.getBasis().setEulerZYX(0,0,PI);
-	//localB.getBasis().setEulerZYX(0,0,0);
+	//Rotation
 	setLocalRotation(preS, postS, &localA, &localB);
 	//Translation in regards to the boxes.
 	btVector3 box1HalfSize = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithoutMargin();
@@ -275,6 +326,7 @@ void Physics::setLocalRotation(int myS, int opS, btTransform* myTrans, btTransfo
 		opTrans->getBasis().setEulerZYX(0,0,0);
 	}
 }
+
 
 btVector3 Physics::getLocalTransform(float x, float y, int s, btVector3* halfSizes)
 {

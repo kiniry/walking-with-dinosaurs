@@ -26,6 +26,8 @@ subject to the following restrictions:
 #include "LinearMath/btAlignedObjectArray.h"
 #include <math.h>
 #define PI 3.1415926
+enum{pressure, angle, light};
+
 enum{HINGE,CONETWIST};
 class btBroadphaseInterface;
 class btCollisionShape;
@@ -79,6 +81,7 @@ class Physics : public PlatformDemoApplication
 	}
 
 	int createBox(int x,int y,int z);
+	int createSensor(int box, int type);
 	int createJoint(		int box1,
 							int box2,
 							int type,
@@ -88,7 +91,6 @@ class Physics : public PlatformDemoApplication
 	btVector3 getLocalTransform(float x, float y, int s, btVector3* halfSizes);
 	void testPhysics();
 	void setLocalRotation(int myS, int opS, btTransform* myTrans, btTransform* opTrans);
-	
 };
 
 #endif
