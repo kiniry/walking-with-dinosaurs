@@ -214,10 +214,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Demos\BasicDemo\NeuralNode.h" />
     <ClInclude Include="..\..\Demos\BasicDemo\Physics.h" />
     <ClInclude Include="..\..\Demos\BasicDemo\Grammar.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Demos\BasicDemo\NeuralNode.cpp" />
     <ClCompile Include="..\..\Demos\BasicDemo\Physics.cpp">
     </ClCompile>
     <ClCompile Include="..\..\Demos\BasicDemo\Grammar.cpp" />

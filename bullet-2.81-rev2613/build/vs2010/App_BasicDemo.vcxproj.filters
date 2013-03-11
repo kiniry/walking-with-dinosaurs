@@ -12,6 +12,9 @@
     <ClInclude Include="..\..\Demos\BasicDemo\Physics.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Demos\BasicDemo\NeuralNode.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\BasicDemo\Grammar.cpp">
@@ -21,6 +24,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Demos\BasicDemo\Physics.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\BasicDemo\NeuralNode.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

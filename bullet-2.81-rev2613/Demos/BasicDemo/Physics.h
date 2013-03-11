@@ -28,7 +28,7 @@ subject to the following restrictions:
 #define PI 3.1415926
 enum{pressure, angle, light};
 
-enum{HINGE,CONETWIST,GENERIC6DOF};
+enum{HINGE,GENERIC6DOF};
 class btBroadphaseInterface;
 class btCollisionShape;
 class btOverlappingPairCache;
