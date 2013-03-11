@@ -28,7 +28,7 @@ subject to the following restrictions:
 #define PI 3.1415926
 enum{pressure, angle, light};
 
-enum{HINGE,CONETWIST};
+enum{HINGE,CONETWIST,GENERIC6DOF};
 class btBroadphaseInterface;
 class btCollisionShape;
 class btOverlappingPairCache;
@@ -91,6 +91,7 @@ class Physics : public PlatformDemoApplication
 	btVector3 getLocalTransform(float x, float y, int s, btVector3* halfSizes);
 	void testPhysics();
 	void setLocalRotation(int myS, int opS, btTransform* myTrans, btTransform* opTrans);
+	int setEffect(int jointIndex, int valueX,int valueY,int valueZ);
 };
 
 #endif

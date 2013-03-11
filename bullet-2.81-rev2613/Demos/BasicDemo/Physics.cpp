@@ -280,6 +280,33 @@ int Physics::createSensor(int boxIndex, int type){
 	return 0;
 }
 
+int Physics::setEffect(int jointIndex, int valueX,int valueY,int valueZ){
+	switch(m_dynamicsWorld->getConstraint(jointIndex)->getConstraintType()){
+	case HINGE_CONSTRAINT_TYPE:
+		((btHingeConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->enableAngularMotor(true,btScalar(MAXDWORD),btScalar(valueX));
+		return HINGE;
+		break;
+	case CONETWIST_CONSTRAINT_TYPE:
+		((btConeTwistConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->setMaxMotorImpulse(valueX*valueX+valueY*valueY+valueZ*valueZ);
+		((btConeTwistConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->setMotorTarget(btQuaternion(valueX,valueY,valueZ,100));
+		return CONETWIST;
+		break;
+	case D6_CONSTRAINT_TYPE:
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0)->m_maxMotorForce=valueX;
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1)->m_maxMotorForce=valueY;
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(2)->m_maxMotorForce=valueZ;
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0)->m_targetVelocity=MAXDWORD;
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1)->m_targetVelocity=MAXDWORD;
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(2)->m_targetVelocity=MAXDWORD;
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0)->m_enableMotor=true;
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1)->m_enableMotor=true;
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(2)->m_enableMotor=true;
+		return GENERIC6DOF;
+		break;
+	}
+	return -1;
+}
+
 int Physics::createJoint(	int box1,
 							int box2,
 							int type,
@@ -305,6 +332,7 @@ int Physics::createJoint(	int box1,
 	//setup contraint/joint
 	btHingeConstraint* hingeC;
 	btConeTwistConstraint* coneC;
+	btGeneric6DofConstraint* gen6C;
 	int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
 	float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
 	switch(type){
@@ -313,15 +341,23 @@ int Physics::createJoint(	int box1,
 		hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
 		m_dynamicsWorld->addConstraint(hingeC,true);
 		break;
-	case CONETWIST:
+	case CONETWIST: //use GENERIC6DOF instead
 		coneC = new btConeTwistConstraint(*Box1,*Box2,localA,localB);
 		coneC->setLimit(btScalar(DOFxR),btScalar(DOFyR),btScalar(DOFzR));
 		m_dynamicsWorld->addConstraint(coneC,true);
-		break; 
+		break;
+	case GENERIC6DOF:
+		gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localA,localB,true);
+		gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist) if wanted
+		gen6C->setLimit(1,0,0);
+		gen6C->setLimit(2,0,0);
+		gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
+		gen6C->setLimit(4,-DOFyR/2,DOFyR/2);
+		gen6C->setLimit(5,-DOFzR/2,DOFzR/2);
+		m_dynamicsWorld->addConstraint(gen6C,true);
+		break;
 	}
 	
-	currentJointIndex++;
-
 	int returnVal = currentJointIndex;
 	currentJointIndex++;
 	return returnVal;
