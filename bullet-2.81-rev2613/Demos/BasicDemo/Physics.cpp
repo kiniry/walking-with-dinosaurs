@@ -28,14 +28,7 @@ static GLDebugDrawer gDebugDraw;
 void Physics::clientMoveAndDisplay()
 {
 	//TODO: insert fitness test here
-	//TODO: get sensor data
-	//angel sensor
-	for(int i = 0; i < m_dynamicsWorld->getNumConstraints(); i++){
-		(m_dynamicsWorld->getConstraint(i))->getConstraintType();
-		//for hinge bruges .getangle()
-		//for concavetwist bruges 
-	}
-
+	
 
 
 
@@ -77,12 +70,35 @@ void Physics::clientMoveAndDisplay()
 		}
 		
 	*/
-		printf("collision %d %d\n", *((int*)contactManifold->getBody0()->getUserPointer()), *((int*)contactManifold->getBody1()->getUserPointer()));
+		//printf("collision %d %d\n", *((int*)contactManifold->getBody0()->getUserPointer()), *((int*)contactManifold->getBody1()->getUserPointer()));
+		
+		
 		//you can un-comment out this line, and then all points are removed
 		//contactManifold->clearManifold();	
 	}
 
 	
+	//angel sensor
+	for(int i = 0; i < m_dynamicsWorld->getNumConstraints(); i++){
+		btHingeConstraint* constraint;
+		btGeneric6DofConstraint* constraint1;
+		float x,y,z; 
+		switch((m_dynamicsWorld->getConstraint(i))->getConstraintType()){
+
+			case HINGE_CONSTRAINT_TYPE:
+				constraint = (btHingeConstraint*) m_dynamicsWorld->getConstraint(i);
+				x = constraint->getHingeAngle();
+				printf("%f\n",x);
+				break;
+			case D6_CONSTRAINT_TYPE:
+				constraint1 = (btGeneric6DofConstraint*) m_dynamicsWorld->getConstraint(i);
+				x = constraint1->getRotationalLimitMotor(0)->m_currentPosition;
+				y = constraint1->getRotationalLimitMotor(1)->m_currentPosition;
+				z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
+				printf("%f %f %f\n", x, y, z);
+				break;
+		}
+	}
 
 
 

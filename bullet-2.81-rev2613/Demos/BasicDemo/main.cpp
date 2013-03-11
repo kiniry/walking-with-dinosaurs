@@ -15,11 +15,11 @@ int main(int argc,char** argv)
 
 	//insert random shite
 	int dof = 0,S1=5,S2=4;
-	//int string[] = {3,2,1,1,0,0,0,S1,0,0,S2,dof,0,0,3,2,1,0};
-	int box = WWDPhysics.createBox(3,1,1);
-	WWDPhysics.createSensor(box, pressure);
-	int string[] = {3,2,1,0};
-	//readDNA(string,&WWDPhysics);
+	int string[] = {3,2,1,1,0,0,0,S1,0,0,S2,dof,0,0,3,2,1,0};
+	//int box = WWDPhysics.createBox(3,1,1);
+	//WWDPhysics.createSensor(box, pressure);
+	//int string[] = {3,2,1,0};
+	readDNA(string,&WWDPhysics);
 	
 #ifdef CHECK_MEMORY_LEAKS
 	ccdDemo.exitPhysics();
