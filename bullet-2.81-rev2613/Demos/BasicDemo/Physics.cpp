@@ -16,26 +16,13 @@
 
 #include "Physics.h"
 #include "GlutStuff.h"
-///btBulletDynamicsCommon.h is the main Bullet include file, contains most common include files.
 #include "btBulletDynamicsCommon.h"
 
 #include <stdio.h> //printf debugging
 #include "GLDebugDrawer.h"
 
-extern ContactAddedCallback		gContactAddedCallback;
 
 static GLDebugDrawer gDebugDraw;
-
-//used for collision sensor
-//at the moment it only works on active objects
-static bool CollisionCallBackFunction(btManifoldPoint& cp,	const btCollisionObjectWrapper* colObj0Wrap,int partId0,int index0,const btCollisionObjectWrapper* colObj1Wrap,int partId1,int index1){
-
-
-	printf("collision");
-
-
-	return false;
-}
 
 
 void Physics::clientMoveAndDisplay()
@@ -50,18 +37,8 @@ void Physics::clientMoveAndDisplay()
 	}
 
 
-	//pressure sensor
-	//check for collision
-	//nemmest ville være bare at tjekke for jorden
-	m_dynamicsWorld->getCollisionObjectArray();
 
 
-
-	/*TEST
-	int nr = 1;
-	btVector3 pos = m_dynamicsWorld->getCollisionObjectArray().at(nr)->getWorldTransform().operator*(btVector3(1,1,1));
-	printf("%f",pos.y());
-	*/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
 	//simple dynamics world doesn't handle fixed-time-stepping
@@ -74,7 +51,42 @@ void Physics::clientMoveAndDisplay()
 		//optional but useful: debug drawing
 		m_dynamicsWorld->debugDrawWorld();
 	}
+
+	//collision detection
+	//one per btPersistentManifold for each collision 
+	int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
+	for (int i=0;i<numManifolds;i++)
+	{
+		btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+
+		//get all contact points
+		/*
+		btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
+		btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
 	
+		int numContacts = contactManifold->getNumContacts();
+		for (int j=0;j<numContacts;j++)
+		{
+			btManifoldPoint& pt = contactManifold->getContactPoint(j);
+			if (pt.getDistance()<0.f)
+			{
+				const btVector3& ptA = pt.getPositionWorldOnA();
+				const btVector3& ptB = pt.getPositionWorldOnB();
+				const btVector3& normalOnB = pt.m_normalWorldOnB;
+			}
+		}
+		
+	*/
+		printf("collision %d %d\n", *((int*)contactManifold->getBody0()->getUserPointer()), *((int*)contactManifold->getBody1()->getUserPointer()));
+		//you can un-comment out this line, and then all points are removed
+		//contactManifold->clearManifold();	
+	}
+
+	
+
+
+
+
 	renderme(); 
 
 	glFlush();
@@ -132,17 +144,21 @@ void	Physics::initPhysics()
 
 	///create ground body
 	btBoxShape* groundShape = new btBoxShape(btVector3(btScalar(1000.),btScalar(1.),btScalar(1000.)));
+
 	m_collisionShapes.push_back(groundShape);
 
 	btTransform groundTransform;
 	groundTransform.setIdentity();
 	groundTransform.setOrigin(btVector3(0,0,0));
 
-	localCreateRigidBody(0.,groundTransform,groundShape);
+	btRigidBody* ground = localCreateRigidBody(0.,groundTransform,groundShape);
+	malloc(sizeof(int));
+	int* thePoint = (int*) malloc(sizeof(int));
+	*thePoint=-1;
+	ground->setUserPointer(thePoint);
+	
 	currentBoxIndex++;
 
-
-	 gContactAddedCallback = CollisionCallBackFunction;
 
 }
 
@@ -215,8 +231,11 @@ int Physics::createBox(int x, int y, int z)
 
 	btScalar mass = btScalar(x*y*z*KG);
 
-	btRigidBody* box1 = localCreateRigidBody(mass,startTransform,boxShape);
-	
+	btRigidBody* box = localCreateRigidBody(mass,startTransform,boxShape);
+	int* thePoint = (int*) malloc(sizeof(int));
+	*thePoint=-1;
+	box->setUserPointer(thePoint);
+
 	int returnVal = currentBoxIndex;
 	currentBoxIndex++;
 	return returnVal;
@@ -224,7 +243,10 @@ int Physics::createBox(int x, int y, int z)
 
 //skal udvides
 int Physics::createSensor(int boxIndex, int type){
-		btRigidBody* box = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(boxIndex);
+	btRigidBody* box = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(boxIndex);
+	int* thePoint = (int*) malloc(sizeof(int));
+	*thePoint=boxIndex;
+	box->setUserPointer(thePoint);
 	switch (type){
 		case pressure:
 			box->setCollisionFlags(box->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
