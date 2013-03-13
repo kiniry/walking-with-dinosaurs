@@ -11,7 +11,6 @@ int readDNA(const int* DNA, Physics *world){
 	}catch (int e){
 		return e;
 	}
-	
 	return Gsucces;
 }
 

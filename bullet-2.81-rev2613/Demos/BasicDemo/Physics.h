@@ -38,11 +38,10 @@ struct btCollisionAlgorithmCreateFunc;
 class btDefaultCollisionConfiguration;
 
 ///Physics is good starting point for learning the code base and porting.
-
 class Physics : public PlatformDemoApplication
 {
 	int currentBoxIndex,currentJointIndex;
-
+	unsigned long timeUsed;
 	//keep the collision shapes, for deletion/cleanup
 	btAlignedObjectArray<btCollisionShape*>	m_collisionShapes;
 
@@ -70,8 +69,8 @@ class Physics : public PlatformDemoApplication
 	virtual void clientMoveAndDisplay();
 
 	virtual void displayCallback();
-	virtual void	clientResetScene();
-	
+	virtual void clientResetScene();
+	btScalar startBoxMass;
 	static DemoApplication* Create()
 	{
 		Physics* demo = new Physics;

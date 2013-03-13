@@ -36,14 +36,15 @@ void Physics::clientMoveAndDisplay()
 
 	//simple dynamics world doesn't handle fixed-time-stepping
 	float ms = getDeltaTimeMicroseconds();
-	
+	timeUsed += ms;
+
+
 	///step the simulation
-	if (m_dynamicsWorld)
-	{
-		m_dynamicsWorld->stepSimulation(ms / 1000000.f);
-		//optional but useful: debug drawing
-		m_dynamicsWorld->debugDrawWorld();
-	}
+	m_dynamicsWorld->stepSimulation(ms / 1000000.f);
+	//optional but useful: debug drawing
+	m_dynamicsWorld->debugDrawWorld();
+	
+
 
 	//collision detection
 	//one per btPersistentManifold for each collision 
@@ -52,29 +53,8 @@ void Physics::clientMoveAndDisplay()
 	{
 		btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
 
-		//get all contact points
-		/*
-		btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
-		btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
-	
-		int numContacts = contactManifold->getNumContacts();
-		for (int j=0;j<numContacts;j++)
-		{
-			btManifoldPoint& pt = contactManifold->getContactPoint(j);
-			if (pt.getDistance()<0.f)
-			{
-				const btVector3& ptA = pt.getPositionWorldOnA();
-				const btVector3& ptB = pt.getPositionWorldOnB();
-				const btVector3& normalOnB = pt.m_normalWorldOnB;
-			}
-		}
-		
-	*/
-		//printf("collision %d %d\n", *((int*)contactManifold->getBody0()->getUserPointer()), *((int*)contactManifold->getBody1()->getUserPointer()));
-		
-		
-		//you can un-comment out this line, and then all points are removed
-		//contactManifold->clearManifold();	
+		//printf("collision between box %d and %d\n", *((int*)contactManifold->getBody0()->getUserPointer()), *((int*)contactManifold->getBody1()->getUserPointer()));
+			
 	}
 
 	
@@ -133,6 +113,7 @@ void Physics::displayCallback(void) {
 
 void	Physics::initPhysics()
 {
+	timeUsed=0;
 	currentBoxIndex=0;
 	currentJointIndex=0;
 	setTexturing(true);
@@ -178,64 +159,6 @@ void	Physics::initPhysics()
 
 }
 
-void Physics::testPhysics(){
-	///try
-	//btBoxShape* colShape = new btBoxShape(btVector3(SCALING*1,SCALING*2,SCALING*1));
-	btCapsuleShape* colShape = new btCapsuleShape(btScalar(1),btScalar(2));
-	m_collisionShapes.push_back(colShape);
-
-	btTransform startTransform;
-	startTransform.setIdentity();
-	startTransform.setOrigin(btVector3(0,5,0));
-
-	btScalar	mass(1.f);
-	
-	btRigidBody* box1 = localCreateRigidBody(mass,startTransform,colShape);
-	currentBoxIndex++;
-
-	//startTransform.setOrigin(btVector3(5,5,0));
-	btRigidBody* box2 = localCreateRigidBody(mass,startTransform,colShape);
-	currentBoxIndex++;
-	//box2->applyCentralForce(btVector3(-1001,0,0));
-	btRigidBody* box3 = localCreateRigidBody(mass,startTransform,colShape);
-	currentBoxIndex++;
-	//Define the two types of constraints/joints
-	btHingeConstraint* hingeC;
-	btConeTwistConstraint* coneC;
-
-	//Define the local transform on the shapes regarding to the joints. (prolly from the center of the shape)
-	btTransform localA, localB;
-	localA.setIdentity();localB.setIdentity();
-	//Rotation - SUBJECT TO CHANGE!
-	localA.getBasis().setEulerZYX(0,0,0);
-	localB.getBasis().setEulerZYX(0,0,0);
-	//Translation in regards to the boxes.
-	localA.setOrigin(btVector3(SCALING*0,SCALING*2,SCALING*0));
-	localB.setOrigin(btVector3(SCALING*0,SCALING*-2,SCALING*0));
-
-	//setup contraint/joint
-	hingeC = new btHingeConstraint(*box1,*box2,localA,localB);
-	hingeC->setLimit(btScalar(-PI/2),btScalar(PI/2));
-	m_dynamicsWorld->addConstraint(hingeC,true);
-	currentJointIndex++;
-
-	hingeC = new btHingeConstraint(*box3,*box1,localA,localB);
-	hingeC->setLimit(btScalar(-PI/2),btScalar(PI/2));
-	m_dynamicsWorld->addConstraint(hingeC,true);
-	currentJointIndex++;
-
-	//test of createBox
-	int b1 = createBox(2,1,4);
-	int b2 = createBox(2,4,2);
-
-	createJoint(b1,	b2,	HINGE,
-				1, 1, 0,
-				3, 1, 3,
-				30, 0, 500);
-
-	//how to get a constraint at a specific index, and set its breaking threshold
-	//m_dynamicsWorld->getConstraint(0)->setBreakingImpulseThreshold(btScalar(10));
-}
 
 int Physics::createBox(int x, int y, int z)
 {
@@ -246,8 +169,10 @@ int Physics::createBox(int x, int y, int z)
 	startTransform.setIdentity();
 
 	btScalar mass = btScalar(x*y*z*KG);
-
-	btRigidBody* box = localCreateRigidBody(mass,startTransform,boxShape);
+	if(currentBoxIndex == 1){
+		startTransform.setOrigin(btVector3(0,10,0));
+	}
+	btRigidBody* box= localCreateRigidBody(mass,startTransform,boxShape);
 	int* thePoint = (int*) malloc(sizeof(int));
 	*thePoint=-1;
 	box->setUserPointer(thePoint);
@@ -322,6 +247,7 @@ int Physics::createJoint(	int box1,
 	btTransform localA, localB;
 	localA.setIdentity();localB.setIdentity();
 	//Rotation
+	//only box2(localB) is rotated
 	setLocalRotation(preS, postS, &localA, &localB);
 	//Translation in regards to the boxes.
 	btVector3 box1HalfSize = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithoutMargin();
@@ -329,9 +255,27 @@ int Physics::createJoint(	int box1,
 	localA.setOrigin(getLocalTransform(preX,preY,preS,&box1HalfSize));
 	localB.setOrigin(getLocalTransform(postX,postY,postS,&box2HalfSize));
 
+	//rotate and move box2 to new posistion
+	btScalar rotx;
+	btScalar roty;
+	btScalar rotz;
+	float x = Box1->getCenterOfMassTransform().getOrigin().getX();
+	float y = Box1->getCenterOfMassTransform().getOrigin().getY();
+	float z = Box1->getCenterOfMassTransform().getOrigin().getZ();
+	float xOff;
+	float yOff;
+	float zOff;
+	
+	btTransform trans;
+	trans.setIdentity();
+	trans.setRotation(localB.getRotation());
+	trans.setOrigin(btVector3(x+xOff, y+yOff, z+zOff));
+	
+	Box2->setCenterOfMassTransform(trans);
+		
+		
 	//setup contraint/joint
 	btHingeConstraint* hingeC;
-	btConeTwistConstraint* coneC;
 	btGeneric6DofConstraint* gen6C;
 	int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
 	float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
@@ -341,11 +285,6 @@ int Physics::createJoint(	int box1,
 		hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
 		m_dynamicsWorld->addConstraint(hingeC,true);
 		break;
-	/*case CONETWIST: //use GENERIC6DOF instead
-		coneC = new btConeTwistConstraint(*Box1,*Box2,localA,localB);
-		coneC->setLimit(btScalar(DOFxR),btScalar(DOFyR),btScalar(DOFzR));
-		m_dynamicsWorld->addConstraint(coneC,true);
-		break;*/
 	case GENERIC6DOF:
 		gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localA,localB,true);
 		gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist) if wanted
@@ -362,6 +301,7 @@ int Physics::createJoint(	int box1,
 	currentJointIndex++;
 	return returnVal;
 }
+
 
 void Physics::setLocalRotation(int myS, int opS, btTransform* myTrans, btTransform* opTrans)
 {
@@ -423,13 +363,18 @@ btVector3 Physics::getLocalTransform(float x, float y, int s, btVector3* halfSiz
 	case 5://z-
 		return btVector3(x,-halfSizes->y(),y);
 		break;
+	default:
+		perror("not a legal s value");
+		break;
 	}
 }
+
 
 void	Physics::clientResetScene()
 {
 	exitPhysics();
 	initPhysics();
+	
 }
 	
 
