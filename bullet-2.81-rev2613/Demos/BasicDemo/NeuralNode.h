@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 //Definition of functions
-enum{SUM,MULTIPLY};
+enum{SUM,PRODUCT,DIVIDE};
 
 class NeuralNode
 {
@@ -25,6 +25,7 @@ public:
 
 private:
 	inline float sum();
-	inline float multiply();
+	inline float product();
+	inline float divide();
 };
 

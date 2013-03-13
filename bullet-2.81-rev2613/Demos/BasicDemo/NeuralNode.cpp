@@ -48,8 +48,11 @@ void NeuralNode::compute()
 		case SUM:
 			currentOutput=sum();
 			break;
-		case MULTIPLY:
-			currentOutput=multiply();
+		case PRODUCT:
+			currentOutput=product();
+			break;
+		case DIVIDE:
+			currentOutput=divide();
 			break;
 		default:
 			perror("Undefined neural function");
@@ -57,14 +60,25 @@ void NeuralNode::compute()
 		}
 }
 
-float NeuralNode::sum(){
+inline float NeuralNode::sum(){
 	if(nrOfInputs!=2){perror("Wrong number of inputs for function: SUM... erratic behavior expected");}
-	return in1->currentOutput+in2->currentOutput;
+	return	in1->currentOutput * weight1
+			+ 
+			in2->currentOutput * weight2;
 }
 
-float NeuralNode::multiply(){
+inline float NeuralNode::product(){
 	if(nrOfInputs!=2){perror("Wrong number of inputs for function: MULTIPLY... erratic behavior expected");}
-	return in1->currentOutput*in2->currentOutput;
+	return	in1->currentOutput * weight1
+			* 
+			in2->currentOutput * weight2;
+}
+
+inline float NeuralNode::divide(){
+	if(nrOfInputs!=2){perror("Wrong number of inputs for function: DIVIDE... erratic behavior expected");}
+	return	in1->currentOutput * weight1 
+			/ 
+			in2->currentOutput * weight2;
 }
 
 NeuralNode::~NeuralNode(void)
