@@ -44,18 +44,7 @@ float NeuralNode::getOutput()
 
 void NeuralNode::compute()
 {
-	switch(nrOfInputs){
-	case 0://constant... nothing should happen
-		break;
-	case 1:
-		switch(function){
-		default:
-			perror("Undefined neural function");
-			break;
-		}
-		break;
-	case 2:
-		switch(function){
+	switch(function){
 		case SUM:
 			currentOutput=sum();
 			break;
@@ -66,22 +55,15 @@ void NeuralNode::compute()
 			perror("Undefined neural function");
 			break;
 		}
-		break;
-	case 3:
-		switch(function){
-		default:
-			perror("Undefined neural function");
-			break;
-		}
-		break;
-	}
 }
 
 float NeuralNode::sum(){
+	if(nrOfInputs!=2){perror("Wrong number of inputs for function: SUM... erratic behavior expected");}
 	return in1->currentOutput+in2->currentOutput;
 }
 
 float NeuralNode::multiply(){
+	if(nrOfInputs!=2){perror("Wrong number of inputs for function: MULTIPLY... erratic behavior expected");}
 	return in1->currentOutput*in2->currentOutput;
 }
 

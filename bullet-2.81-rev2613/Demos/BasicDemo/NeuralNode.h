@@ -1,7 +1,7 @@
 #pragma once
 #include <stdio.h>
 
-//2 inputs
+//Definition of functions
 enum{SUM,MULTIPLY};
 
 class NeuralNode
