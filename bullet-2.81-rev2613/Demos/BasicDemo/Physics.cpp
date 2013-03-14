@@ -262,14 +262,16 @@ int Physics::createJoint(	int box1,
 	btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithoutMargin();
 	btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
 	btQuaternion rotation2 = getLocalRotation(preS, postS)+rotation1;
-	btVector3 center2 = center1+rotate(&connection1,&rotation1)+rotate(&connection2,&rotation2);
-	
+	btVector3 center2 = center1+rotate(&connection1,&rotation1)-rotate(&connection2,&rotation2);
+	//btVector3 center2 = center1+connection1+connection2;
+	printf("%f %f %f\n",rotate(&connection1,&rotation1).getX(),rotate(&connection1,&rotation1).getY(),rotate(&connection1,&rotation1).getZ());
+	printf("%f %f %f\n",rotate(&connection2,&rotation2).getX(),rotate(&connection2,&rotation2).getY(),rotate(&connection2,&rotation2).getZ());
 
 
 	//rotate and translate box
 	btTransform trans2;
 	trans2.setIdentity();
-	trans2.setRotation(rotation2);
+	trans2.setRotation(rotation2.inverse());
 	trans2.setOrigin(center2);
 	Box2->setCenterOfMassTransform(trans2);
 
@@ -311,10 +313,13 @@ int Physics::createJoint(	int box1,
 
 //rotates vec by quant
 btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
+	//switch x and z
+
 	btVector3 result = *vec;
-	
-	
-	return result;
+	btVector3 enheds = btVector3(1,1,1);
+	btMatrix3x3 rot = btMatrix3x3(*quant);
+
+	return result*rot;
 }
 
 btQuaternion Physics::getLocalRotation(int pre, int post){
@@ -352,9 +357,12 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 		}else if(pre<4){
 		//22 33
 		rot=btQuaternion(0,2*PI,0);
-		}else if(pre<6){
-		//44 55
+		}else if(pre==4){
+		//44
 		rot=btQuaternion(0,0,2*PI);
+		}else if (pre==5){
+		//55
+		rot=btQuaternion(0,2*PI,0);
 		}
 	}
 	
@@ -399,13 +407,13 @@ void	Physics::clientResetScene()
 }
 	
 void Physics::testPhysics(){
-	int box = createBox(3,3,1);
-	int box2 = createBox(3,3,1);
-	//int box3 = WWDPhysics.createBox(3,3,1);
-	createJoint(box, box2, GENERIC6DOF,0.5, 0.5, 1, 0.5, 0.5, 4, 45,45,0);
-	//WWDPhysics.createJoint(box, box3, GENERIC6DOF,0.5, 0.5, 5, 0.5, 0.5, 1, 45,45,0);
+	int box = createBox(1,1,1);
+	int box2 = createBox(1,1,1);
+	int box3 = createBox(1,1,1);
+	createJoint(box, box2, GENERIC6DOF,0.5, 0.5, 0, 0.5, 0.5, 5, 45,45,0);
+	createJoint(box, box3, GENERIC6DOF,0.5, 0.5, 2, 0.5, 0.5, 1, 45,45,0);
 
-	//WWDPhysics.createSensor(box, pressure);
+	//createSensor(box, pressure);
 }
 
 void	Physics::exitPhysics()
