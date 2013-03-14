@@ -25,6 +25,7 @@ subject to the following restrictions:
 
 #include "LinearMath/btAlignedObjectArray.h"
 #include <math.h>
+
 #define PI 3.1415926
 enum{pressure, angle, light};
 
@@ -87,9 +88,11 @@ class Physics : public PlatformDemoApplication
 							int preX, int preY, int preS,
 							int postX, int postY, int postS,
 							int dofX, int dofY, int dofZ);
-	btVector3 getLocalTransform(float x, float y, int s, btVector3* halfSizes);
+	btVector3 getLocalJointPosition(float x, float y, int s, btVector3* halfSizes);
+	btQuaternion getLocalRotation(int myS, int opS);
+	btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
 	void testPhysics();
-	void setLocalRotation(int myS, int opS, btTransform* myTrans, btTransform* opTrans);
+
 	int setEffect(int jointIndex, int valueX,int valueY,int valueZ);
 };
 

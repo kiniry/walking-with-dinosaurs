@@ -30,7 +30,7 @@ void Physics::clientMoveAndDisplay()
 	//TODO: insert fitness test here
 	
 
-
+	//Sleep(200);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
@@ -75,7 +75,7 @@ void Physics::clientMoveAndDisplay()
 				x = constraint1->getRotationalLimitMotor(0)->m_currentPosition;
 				y = constraint1->getRotationalLimitMotor(1)->m_currentPosition;
 				z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
-				printf("%f %f %f\n", x, y, z);
+				//printf("%f %f %f\n", x, y, z);
 				break;
 		}
 	}
@@ -167,12 +167,16 @@ int Physics::createBox(int x, int y, int z)
 
 	btTransform startTransform;
 	startTransform.setIdentity();
-
+	btRigidBody* box;
 	btScalar mass = btScalar(x*y*z*KG);
 	if(currentBoxIndex == 1){
 		startTransform.setOrigin(btVector3(0,10,0));
+
 	}
-	btRigidBody* box= localCreateRigidBody(mass,startTransform,boxShape);
+	
+	//box= localCreateRigidBody(0,startTransform,boxShape);
+	box= localCreateRigidBody(mass,startTransform,boxShape);
+
 	int* thePoint = (int*) malloc(sizeof(int));
 	*thePoint=-1;
 	box->setUserPointer(thePoint);
@@ -211,11 +215,6 @@ int Physics::setEffect(int jointIndex, int valueX,int valueY,int valueZ){
 		((btHingeConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->enableAngularMotor(true,btScalar(MAXDWORD),btScalar(valueX));
 		return HINGE;
 		break;
-	/*case CONETWIST_CONSTRAINT_TYPE:
-		((btConeTwistConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->setMaxMotorImpulse(valueX*valueX+valueY*valueY+valueZ*valueZ);
-		((btConeTwistConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->setMotorTarget(btQuaternion(valueX,valueY,valueZ,100));
-		return CONETWIST;
-		break;*/
 	case D6_CONSTRAINT_TYPE:
 		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0)->m_maxMotorForce=valueX;
 		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1)->m_maxMotorForce=valueY;
@@ -243,36 +242,44 @@ int Physics::createJoint(	int box1,
 	btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
 	btRigidBody* Box2 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box2);
 
-	//Define the local transform on the shapes regarding to the joints. (prolly from the center of the shape)
-	btTransform localA, localB;
-	localA.setIdentity();localB.setIdentity();
-	//Rotation
-	//only box2(localB) is rotated
-	setLocalRotation(preS, postS, &localA, &localB);
-	//Translation in regards to the boxes.
-	btVector3 box1HalfSize = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithoutMargin();
-	btVector3 box2HalfSize = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithoutMargin();
-	localA.setOrigin(getLocalTransform(preX,preY,preS,&box1HalfSize));
-	localB.setOrigin(getLocalTransform(postX,postY,postS,&box2HalfSize));
+	//Define the local transform on the shapes regarding to the joint. (properbly from the center of the shape)
+	btTransform localBox1, localBox2;
+	localBox1.setIdentity();
+	localBox2.setIdentity();
 
-	//rotate and move box2 to new posistion
-	btScalar rotx;
-	btScalar roty;
-	btScalar rotz;
-	float x = Box1->getCenterOfMassTransform().getOrigin().getX();
-	float y = Box1->getCenterOfMassTransform().getOrigin().getY();
-	float z = Box1->getCenterOfMassTransform().getOrigin().getZ();
-	float xOff;
-	float yOff;
-	float zOff;
+
+	//box1
+	btVector3 halfside1 = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithoutMargin();
+	btVector3 center1 =	Box1->getCenterOfMassPosition();
+	btQuaternion rotation1 = Box1->getCenterOfMassTransform().getRotation();
+	btVector3 connection1 = getLocalJointPosition(preX,preY,preS,&halfside1);
 	
-	btTransform trans;
-	trans.setIdentity();
-	trans.setRotation(localB.getRotation());
-	trans.setOrigin(btVector3(x+xOff, y+yOff, z+zOff));
+	//translate joint
+	localBox1.setOrigin(connection1);
+
+
+	//box2
+	btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithoutMargin();
+	btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
+	btQuaternion rotation2 = getLocalRotation(preS, postS)+rotation1;
+	btVector3 center2 = center1+rotate(&connection1,&rotation1)+rotate(&connection2,&rotation2);
 	
-	Box2->setCenterOfMassTransform(trans);
-		
+
+
+	//rotate and translate box
+	btTransform trans2;
+	trans2.setIdentity();
+	trans2.setRotation(rotation2);
+	trans2.setOrigin(center2);
+	Box2->setCenterOfMassTransform(trans2);
+
+	//rotate and translate joint
+	localBox2.setRotation(rotation2);
+	localBox2.setOrigin(connection2);
+
+
+
+
 		
 	//setup contraint/joint
 	btHingeConstraint* hingeC;
@@ -281,13 +288,13 @@ int Physics::createJoint(	int box1,
 	float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
 	switch(type){
 	case HINGE:
-		hingeC = new btHingeConstraint(*Box1,*Box2,localA,localB);
+		hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
 		hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
 		m_dynamicsWorld->addConstraint(hingeC,true);
 		break;
 	case GENERIC6DOF:
-		gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localA,localB,true);
-		gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist) if wanted
+		gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
+		gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist) 
 		gen6C->setLimit(1,0,0);
 		gen6C->setLimit(2,0,0);
 		gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
@@ -302,66 +309,80 @@ int Physics::createJoint(	int box1,
 	return returnVal;
 }
 
-
-void Physics::setLocalRotation(int myS, int opS, btTransform* myTrans, btTransform* opTrans)
-{
-	myTrans->getBasis().setEulerZYX(0,0,0);
-	//if equal
-	if(myS==opS&&myS!=0&&myS!=1){
-
-		opTrans->getBasis().setEulerZYX(0,0,PI);
-	}
-	else if(myS==opS){
-		opTrans->getBasis().setEulerZYX(0,PI,0);
-	}
-	//02 04 12 14
-	else if(myS==4&&opS==0 || myS==0&&opS==2 || myS==2&&opS==1 || myS==1&&opS==4){
-		opTrans->getBasis().setEulerZYX(0,PI/2,0);
-	}
-	else if(myS==0&&opS==4 || myS==2&&opS==0 || myS==1&&opS==2 || myS==4&&opS==1){
-		opTrans->getBasis().setEulerZYX(0,-PI/2,0);
-	}
-	//03 05 13 15
-	else if(myS==3&&opS==1 || myS==1&&opS==5 || myS==0&&opS==3 || myS==5&&opS==0){
-		opTrans->getBasis().setEulerZYX(-PI/2,0,0);
-	}
-	else if(myS==1&&opS==3 || myS==5&&opS==1 || myS==3&&opS==0 || myS==0&&opS==5){
-		opTrans->getBasis().setEulerZYX(PI/2,0,0);
-	}
-	//23 25 43 45
-	else if(myS==2&&opS==3 || myS==5&&opS==2 || myS==3&&opS==4 || myS==4&&opS==5){
-		opTrans->getBasis().setEulerZYX(0,0,-PI/2);
-	}
-	else if(myS==3&&opS==2 || myS==2&&opS==5 || myS==4&&opS==3 || myS==5&&opS==4){
-		opTrans->getBasis().setEulerZYX(0,0,PI/2);
-	}
-	//if opposite
-	else{
-		opTrans->getBasis().setEulerZYX(0,0,0);
-	}
+//rotates vec by quant
+btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
+	btVector3 result = *vec;
+	
+	
+	return result;
 }
 
+btQuaternion Physics::getLocalRotation(int pre, int post){
 
-btVector3 Physics::getLocalTransform(float x, float y, int s, btVector3* halfSizes)
+	btQuaternion rot;
+
+
+	if((pre==0 && post==4) || (pre==1 && post==0) || (pre==4 && post==5) || (pre==5 && post==1)){
+	//04 10 45 51
+	rot=btQuaternion(PI,0 ,0);
+	}else if((pre==4 && post==0) || (pre==0 && post==1) || (pre==5 && post==4) || (pre==1 && post==5)){
+	//01 15 40 54
+	rot=btQuaternion(-PI,0 ,0);
+	}else if((pre==0 && post==2) || (pre==2 && post==5) || (pre==3 && post==0) || (pre==5 && post==3)){
+	//02 25 30 53
+	rot=btQuaternion(0,PI,0);
+	}else if((pre==2 && post==0) || (pre==5 && post==2) || (pre==0 && post==3) || (pre==3 && post==5)){
+	//03 20 35 52
+	rot=btQuaternion(0,-PI,0);
+	}else if((pre==1 && post==3) || (pre==2 && post==1) || (pre==3 && post==4) || (pre==4 && post==2)){
+	//13 21 34 42
+	rot=btQuaternion(0, 0, PI);
+	}else if((pre==3 && post==1) || (pre==1 && post==2) || (pre==4 && post==3) || (pre==2 && post==4)){
+	//12 24 31 43
+	rot=btQuaternion(0, 0, -PI);
+	}else if(pre+post==5){
+	//opposite
+	//05 14 23 32 41 50
+	rot=btQuaternion(0,0,0);
+	}else if(pre==post){
+		//equals
+		if(pre<2){
+		//00 11
+		rot=btQuaternion(2*PI,0,0);
+		}else if(pre<4){
+		//22 33
+		rot=btQuaternion(0,2*PI,0);
+		}else if(pre<6){
+		//44 55
+		rot=btQuaternion(0,0,2*PI);
+		}
+	}
+	
+	return rot;
+}
+//calculates the poistion of where the joint connects to the box in regards to the local box origo
+//TODO: ændre værdier så de fungere som procent af sidderne i stedet for absolutte
+btVector3 Physics::getLocalJointPosition(float x, float y, int s, btVector3* halfSizes)
 {
 	switch(s){
 	case 0://bottom (y-)
 		return btVector3(x,y,-halfSizes->z());
 		break;
 	case 1://top (y+)
-		return btVector3(x,y,halfSizes->z());
+		return btVector3(-halfSizes->x(),x,y);
 		break;
 	case 2://x+
-		return btVector3(halfSizes->x(),x,y);
+		return btVector3(x,-halfSizes->y(),y);
 		break;
 	case 3://z+
 		return btVector3(x,halfSizes->y(),y);
 		break;
 	case 4://x-
-		return btVector3(-halfSizes->x(),x,y);
+		return btVector3(halfSizes->x(),x,y);
 		break;
 	case 5://z-
-		return btVector3(x,-halfSizes->y(),y);
+		return btVector3(x,y,halfSizes->z());
+		
 		break;
 	default:
 		perror("not a legal s value");
@@ -374,9 +395,18 @@ void	Physics::clientResetScene()
 {
 	exitPhysics();
 	initPhysics();
-	
+	testPhysics();
 }
 	
+void Physics::testPhysics(){
+	int box = createBox(3,3,1);
+	int box2 = createBox(3,3,1);
+	//int box3 = WWDPhysics.createBox(3,3,1);
+	createJoint(box, box2, GENERIC6DOF,0.5, 0.5, 1, 0.5, 0.5, 4, 45,45,0);
+	//WWDPhysics.createJoint(box, box3, GENERIC6DOF,0.5, 0.5, 5, 0.5, 0.5, 1, 45,45,0);
+
+	//WWDPhysics.createSensor(box, pressure);
+}
 
 void	Physics::exitPhysics()
 {
