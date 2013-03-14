@@ -108,9 +108,6 @@ void Physics::displayCallback(void) {
 }
 
 
-
-
-
 void	Physics::initPhysics()
 {
 	timeUsed=0;
@@ -231,9 +228,7 @@ int Physics::setEffect(int jointIndex, int valueX,int valueY,int valueZ){
 	return -1;
 }
 
-int Physics::createJoint(	int box1,
-							int box2,
-							int type,
+int Physics::createJoint(	int box1, int box2,	int type,
 							int preX, int preY, int preS,
 							int postX, int postY, int postS,
 							int dofX, int dofY, int dofZ)
@@ -263,9 +258,9 @@ int Physics::createJoint(	int box1,
 	btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
 	btQuaternion rotation2 = getLocalRotation(preS, postS)+rotation1;
 	btVector3 center2 = center1+rotate(&connection1,&rotation1)-rotate(&connection2,&rotation2);
-	//btVector3 center2 = center1+connection1+connection2;
-	printf("%f %f %f\n",rotate(&connection1,&rotation1).getX(),rotate(&connection1,&rotation1).getY(),rotate(&connection1,&rotation1).getZ());
-	printf("%f %f %f\n",rotate(&connection2,&rotation2).getX(),rotate(&connection2,&rotation2).getY(),rotate(&connection2,&rotation2).getZ());
+	
+//	printf("%f %f %f\n",rotate(&connection1,&rotation1).getX(),rotate(&connection1,&rotation1).getY(),rotate(&connection1,&rotation1).getZ());
+//	printf("%f %f %f\n",rotate(&connection2,&rotation2).getX(),rotate(&connection2,&rotation2).getY(),rotate(&connection2,&rotation2).getZ());
 
 
 	//rotate and translate box
@@ -311,10 +306,8 @@ int Physics::createJoint(	int box1,
 	return returnVal;
 }
 
-//rotates vec by quant
+//rotates vector3 by a Quaternion
 btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
-	//switch x and z
-
 	btVector3 result = *vec;
 	btVector3 enheds = btVector3(1,1,1);
 	btMatrix3x3 rot = btMatrix3x3(*quant);
@@ -325,8 +318,6 @@ btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
 btQuaternion Physics::getLocalRotation(int pre, int post){
 
 	btQuaternion rot;
-
-
 	if((pre==0 && post==4) || (pre==1 && post==0) || (pre==4 && post==5) || (pre==5 && post==1)){
 	//04 10 45 51
 	rot=btQuaternion(PI,0 ,0);
