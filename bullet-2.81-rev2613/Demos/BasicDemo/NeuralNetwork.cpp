@@ -4,9 +4,10 @@
 NeuralNetwork::NeuralNetwork(std::vector<NeuralNode*> inputs)
 {
 	previousLayerOutputs = inputs;
-	//initialLayer.push_back(n);
-	//currentLayer.push_back(n);
+	initialInputs=inputs;
 	init=true;
+
+	layerIndex=0;
 }
 
 
@@ -14,23 +15,25 @@ NeuralNetwork::~NeuralNetwork(void)
 {
 }
 
-void NeuralNetwork::insertNode(int f, int i1, int w1)
+void NeuralNetwork::insertNode(int f, int i1, float w1)
 {
-	NeuralNode* n = new NeuralNode(f,previousLayerOutputs.at(i1),w1);
+	NeuralNode* n = new NeuralNode(f,previousLayerOutputs.at(i1%previousLayerOutputs.size()),w1);
 	if(init){initialLayer.push_back(n);}
 	currentLayer.push_back(n);
 }
 
-void NeuralNetwork::insertNode(int f, int i1, int i2, int w1, int w2)
+void NeuralNetwork::insertNode(int f, int i1, int i2, float w1, float w2)
 {
-	NeuralNode* n = new NeuralNode(f,previousLayerOutputs.at(i1),previousLayerOutputs.at(i2),w1,w2);
+	int size = previousLayerOutputs.size();
+	NeuralNode* n = new NeuralNode(f,previousLayerOutputs.at(i1%size),previousLayerOutputs.at(i2%size),w1,w2);
 	if(init){initialLayer.push_back(n);}
 	currentLayer.push_back(n);
 }
 
-void NeuralNetwork::insertNode(int f, int i1, int i2, int i3, int w1, int w2, int w3)
+void NeuralNetwork::insertNode(int f, int i1, int i2, int i3, float w1, float w2, float w3)
 {
-	NeuralNode* n = new NeuralNode(f,previousLayerOutputs.at(i1),previousLayerOutputs.at(i2),previousLayerOutputs.at(i3),w1,w2,w3);
+	int size = previousLayerOutputs.size();
+	NeuralNode* n = new NeuralNode(f,previousLayerOutputs.at(i1%size),previousLayerOutputs.at(i2%size),previousLayerOutputs.at(i3%size),w1,w2,w3);
 	if(init){initialLayer.push_back(n);}
 	currentLayer.push_back(n);	
 }
@@ -39,17 +42,39 @@ void NeuralNetwork::changeLayer()
 {
 	if(init){init=false;}
 	previousLayerOutputs.clear();
-	std::vector<NeuralNode*> flipVariable;
 	
-	//we have to flip the vector to maintain the ordering of nodes...
-	while(!currentLayer.empty()){
-		flipVariable.push_back(currentLayer.back());
-		currentLayer.pop_back();
-	}
-	while(!flipVariable.empty()){
-		previousLayerOutputs.push_back(flipVariable.back());
-		flipVariable.pop_back();
-	}
+	if(!layerIndex==lastLayer){
+		std::vector<NeuralNode*> flipVariable;
 
+		//we have to flip the vector to maintain the ordering of nodes...
+		while(!currentLayer.empty()){
+			flipVariable.push_back(currentLayer.back());
+			currentLayer.pop_back();
+		}
+		while(!flipVariable.empty()){
+			previousLayerOutputs.push_back(flipVariable.back());
+			flipVariable.pop_back();
+		}
+		layerIndex++;
+	}
+	else
+	{
+		previousLayerOutputs=initialInputs;
+		currentLayer=initialLayer;
+	}
+}
 
+void NeuralNetwork::stopBuilding()
+{
+	lastLayerIndex=layerIndex;
+	lastLayer=currentLayer;
+	changeLayer();
+}
+
+void NeuralNetwork::computeLayer()
+{
+	for(int i=0;i<currentLayer.size();i++){
+		currentLayer.at(i)->compute();
+	}
+	changeLayer();
 }
