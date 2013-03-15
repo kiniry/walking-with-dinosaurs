@@ -26,5 +26,7 @@ public:
 	void changeLayer();
 	void stopBuilding();
 	void computeLayer();
+
+	float getOutput(int index);
 };
 

@@ -43,7 +43,7 @@ void NeuralNetwork::changeLayer()
 	if(init){init=false;}
 	previousLayerOutputs.clear();
 	
-	if(!layerIndex==lastLayer){
+	if(!layerIndex==lastLayerIndex){
 		std::vector<NeuralNode*> flipVariable;
 
 		//we have to flip the vector to maintain the ordering of nodes...
@@ -77,4 +77,14 @@ void NeuralNetwork::computeLayer()
 		currentLayer.at(i)->compute();
 	}
 	changeLayer();
+}
+
+float NeuralNetwork::getOutput(int index){
+	if(index<lastLayer.size()){
+		return lastLayer.at(index)->getOutput();
+	}
+	else{
+		//no defined output in network. Defaulting...
+		return 0;
+	}
 }

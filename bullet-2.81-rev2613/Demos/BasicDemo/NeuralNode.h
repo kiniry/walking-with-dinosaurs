@@ -3,6 +3,7 @@
 #include <math.h>
 
 //Definition of functions
+#define SENSOR -1
 enum{SUM,PRODUCT,DIVIDE,SUMTHRESHOLD,GREATERTHAN,SIGNOF,MIN,MAX,ABS,IF,INTERPOLATE,SIN,COS,ATAN,LOG,EXPT,SIGMOID};
 
 class NeuralNode
@@ -10,12 +11,14 @@ class NeuralNode
 	int function;
 	int nrOfInputs;
 	float currentOutput;
+	float* sensorInput;
 	NeuralNode* input1;
 	NeuralNode* input2;
 	NeuralNode* input3;
 	float weight1,weight2,weight3;
 
 public:
+	NeuralNode(float* pointer);
 	NeuralNode(float value);
 	NeuralNode(int function, NeuralNode* input, float weight);
 	NeuralNode(int function, NeuralNode* input1, NeuralNode* input2, float weight1, float weight2);
