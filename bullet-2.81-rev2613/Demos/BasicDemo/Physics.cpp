@@ -231,8 +231,19 @@ int Physics::setEffect(int jointIndex, int valueX,int valueY,int valueZ){
 int Physics::createJoint(	int box1, int box2,	int type,
 							int preX, int preY, int preS,
 							int postX, int postY, int postS,
-							int dofX, int dofY, int dofZ)
-{	
+							int dofX, int dofY, int dofZ){
+	
+	//tjek input in debug mode
+	btAssert(preX>0 && preX<101);							
+	btAssert(preY>0 && preY<101);
+	btAssert(preS>-1 && preS<6);
+
+	btAssert(postX>0 && postX<101);							
+	btAssert(postY>0 && postY<101);
+	btAssert(postS>-1 && postS<6);
+
+
+
 	//Get box pointers
 	btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
 	btRigidBody* Box2 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box2);
@@ -244,7 +255,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 
 	//box1
-	btVector3 halfside1 = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithoutMargin();
+	btVector3 halfside1 = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithMargin();
 	btVector3 center1 =	Box1->getCenterOfMassPosition();
 	btQuaternion rotation1 = Box1->getCenterOfMassTransform().getRotation();
 	btVector3 connection1 = getLocalJointPosition(preX,preY,preS,&halfside1);
@@ -254,7 +265,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 
 	//box2
-	btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithoutMargin();
+	btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithMargin();
 	btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
 	btQuaternion rotation2 = getLocalRotation(preS, postS)+rotation1;
 	btVector3 center2 = center1+rotate(&connection1,&rotation1)-rotate(&connection2,&rotation2);
@@ -361,26 +372,32 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 }
 //calculates the poistion of where the joint connects to the box in regards to the local box origo
 //TODO: ændre værdier så de fungere som procent af sidderne i stedet for absolutte
-btVector3 Physics::getLocalJointPosition(float x, float y, int s, btVector3* halfSizes)
+btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSizes)
 {
+	double h,w;
+
+	h=(x-50)/50.f;
+	w=(x-50)/50.f;
+
+
 	switch(s){
 	case 0://bottom (y-)
-		return btVector3(x,y,-halfSizes->z());
+		return btVector3(h*halfSizes->x(),h*halfSizes->y(),-halfSizes->z());
 		break;
 	case 1://top (y+)
-		return btVector3(-halfSizes->x(),x,y);
+		return btVector3(-halfSizes->x(),h*halfSizes->x(),h*halfSizes->y());
 		break;
 	case 2://x+
-		return btVector3(x,-halfSizes->y(),y);
+		return btVector3(h*halfSizes->x(),-halfSizes->y(),h*halfSizes->y());
 		break;
 	case 3://z+
-		return btVector3(x,halfSizes->y(),y);
+		return btVector3(h*halfSizes->x(),halfSizes->y(),h*halfSizes->y());
 		break;
 	case 4://x-
-		return btVector3(halfSizes->x(),x,y);
+		return btVector3(halfSizes->x(),h*halfSizes->x(),h*halfSizes->y());
 		break;
 	case 5://z-
-		return btVector3(x,y,halfSizes->z());
+		return btVector3(h*halfSizes->x(),h*halfSizes->y(),halfSizes->z());
 		
 		break;
 	default:
@@ -398,11 +415,11 @@ void	Physics::clientResetScene()
 }
 	
 void Physics::testPhysics(){
-	int box = createBox(1,1,1);
-	int box2 = createBox(1,1,1);
-	int box3 = createBox(1,1,1);
-	createJoint(box, box2, GENERIC6DOF,0.5, 0.5, 0, 0.5, 0.5, 5, 45,45,0);
-	createJoint(box, box3, GENERIC6DOF,0.5, 0.5, 2, 0.5, 0.5, 1, 45,45,0);
+	int box = createBox(2,2,2);
+	int box2 = createBox(2,2,2);
+	int box3 = createBox(2,2,2);
+	createJoint(box, box2, GENERIC6DOF,50, 50, 0, 50, 50, 5, 45,45,0);
+	createJoint(box, box3, GENERIC6DOF,1, 50, 2, 50, 50, 1, 45,45,0);
 
 	//createSensor(box, pressure);
 }

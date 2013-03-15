@@ -82,13 +82,11 @@ class Physics : public PlatformDemoApplication
 
 	int createBox(int x,int y,int z);
 	int createSensor(int box, int type);
-	int createJoint(		int box1,
-							int box2,
-							int type,
+	int createJoint(		int box1, int box2, int type,
 							int preX, int preY, int preS,
 							int postX, int postY, int postS,
 							int dofX, int dofY, int dofZ);
-	btVector3 getLocalJointPosition(float x, float y, int s, btVector3* halfSizes);
+	btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
 	btQuaternion getLocalRotation(int myS, int opS);
 	btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
 	void testPhysics();
