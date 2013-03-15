@@ -412,6 +412,15 @@ void	Physics::exitPhysics()
 
 	//cleanup in the reverse order of creation/initialization
 
+	//delete contraints
+	//for (int j=0;j<m_dynamicsWorld->getNumConstraints();j++)
+	while(m_dynamicsWorld->getNumConstraints()>0)
+	{
+		btTypedConstraint* deathPointer = m_dynamicsWorld->getConstraint(0);
+		m_dynamicsWorld->removeConstraint(deathPointer);
+		delete deathPointer;
+	}
+	
 	//remove the rigidbodies from the dynamics world and delete them
 	int i;
 	for (i=m_dynamicsWorld->getNumCollisionObjects()-1; i>=0 ;i--)
