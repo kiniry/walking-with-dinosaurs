@@ -65,7 +65,14 @@ int B(int index, const int* DNA, Physics *world, int *blocks, int part){
 
 int J(int index, const int* DNA, Physics *world, int *blocks, int part1){
 	int part2 = world->createBox(DNA[index+10]%maxHeight+1, DNA[index+11]%maxWidth+1, DNA[index+12]%maxDepth+1);
-	world->createJoint(part1, part2, DNA[index]%2, DNA[index+1], DNA[index+2], DNA[index+3]%6, DNA[index+4], DNA[index+5], DNA[index+6]%6, DNA[index+7], DNA[index+8], DNA[index+9]);
-	index = B(index+13, DNA, world, blocks, part2);
+	int j_index = world->createJoint(part1, part2, DNA[index]%2, DNA[index+1], DNA[index+2], DNA[index+3]%6, DNA[index+4], DNA[index+5], DNA[index+6]%6, DNA[index+7], DNA[index+8], DNA[index+9]);
+	index = NN(index+13, DNA, world);
+	index = B(index, DNA, world, blocks, part2);
+	return index;
+}
+
+int NN(int index, const int* DNA, Physics *world){
+	
+	index = NN(index, DNA, world);
 	return index;
 }

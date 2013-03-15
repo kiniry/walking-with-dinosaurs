@@ -33,6 +33,7 @@ struct Part2 {
 
 int B(int index, const int* DNA, Physics *world, int *blocks, int part);
 int J(int index, const int* DNA, Physics *world, int *blocks, int part1);
+int NN(int index, const int* DNA, Physics *world);
 int readDNA(const int* DNA, Physics *world);
 
 #endif

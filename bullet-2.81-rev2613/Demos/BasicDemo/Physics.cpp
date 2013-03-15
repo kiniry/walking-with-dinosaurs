@@ -30,7 +30,7 @@ void Physics::clientMoveAndDisplay()
 	//TODO: insert fitness test here
 	
 
-	//Sleep(200);
+	
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
@@ -44,38 +44,68 @@ void Physics::clientMoveAndDisplay()
 	//optional but useful: debug drawing
 	m_dynamicsWorld->debugDrawWorld();
 	
-
-
+	//reset sensors
+	for(int i=0; i < (int) sensors.size();i++){
+		sensors.at(i)=99;
+	}
 	//collision detection
 	//one per btPersistentManifold for each collision 
 	int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
-	for (int i=0;i<numManifolds;i++)
+	for (int i=0;i<<numManifolds;i++)
 	{
 		btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-
-		//printf("collision between box %d and %d\n", *((int*)contactManifold->getBody0()->getUserPointer()), *((int*)contactManifold->getBody1()->getUserPointer()));
+		int box1 = (int)contactManifold->getBody0()->getUserPointer();
+		int box2 = (int)contactManifold->getBody1()->getUserPointer();
+		
+		if(box1 >= 0){
+			//printf("%d \n",sensors.at(box1));
+			sensors.at(box1)=1;
+		}
+		if(box2 >= 0){
+			sensors.at(box2)=1;
+		}
+		
 			
 	}
-
+	
 	
 	//angel sensor
 	for(int i = 0; i < m_dynamicsWorld->getNumConstraints(); i++){
 		btHingeConstraint* constraint;
 		btGeneric6DofConstraint* constraint1;
 		float x,y,z; 
+
+		//pointer == -1 if its not a sensor
+		if(((int)(m_dynamicsWorld->getConstraint(i)->getUserConstraintPtr()))>=0)
 		switch((m_dynamicsWorld->getConstraint(i))->getConstraintType()){
 
 			case HINGE_CONSTRAINT_TYPE:
 				constraint = (btHingeConstraint*) m_dynamicsWorld->getConstraint(i);
+				sensors.at(*((int*)constraint->getUserConstraintPtr()));
 				x = constraint->getHingeAngle();
-				printf("%f\n",x);
+				
+				
+				sensors.at((int)constraint1->getUserConstraintPtr())=x;
+				
+				//printf("%f\n",x);
+				//printf("%d\n", (int)constraint1->getUserConstraintPtr());
+
 				break;
 			case D6_CONSTRAINT_TYPE:
+				if(((int)constraint1->getUserConstraintPtr())>=0);{
 				constraint1 = (btGeneric6DofConstraint*) m_dynamicsWorld->getConstraint(i);
 				x = constraint1->getRotationalLimitMotor(0)->m_currentPosition;
 				y = constraint1->getRotationalLimitMotor(1)->m_currentPosition;
 				z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
+
+				printf("%d\n",constraint1->getUserConstraintPtr());
+				sensors.at(((int)constraint1->getUserConstraintPtr()))=x;
+				sensors.at(((int)constraint1->getUserConstraintPtr())+1)=y;
+				sensors.at(((int)constraint1->getUserConstraintPtr())+2)=z;
+
+				//printf("%d\n",(int)constraint1->getUserConstraintPtr());
 				//printf("%f %f %f\n", x, y, z);
+				}
 				break;
 		}
 	}
@@ -146,12 +176,12 @@ void	Physics::initPhysics()
 	groundTransform.setOrigin(btVector3(0,0,0));
 
 	btRigidBody* ground = localCreateRigidBody(0.,groundTransform,groundShape);
-	malloc(sizeof(int));
-	int* thePoint = (int*) malloc(sizeof(int));
-	*thePoint=-1;
-	ground->setUserPointer(thePoint);
+
+	ground->setUserPointer((void*)(-1));;
 	
 	currentBoxIndex++;
+
+
 
 
 }
@@ -171,7 +201,6 @@ int Physics::createBox(int x, int y, int z)
 
 	}
 	
-	//box= localCreateRigidBody(0,startTransform,boxShape);
 	box= localCreateRigidBody(mass,startTransform,boxShape);
 
 	int* thePoint = (int*) malloc(sizeof(int));
@@ -183,25 +212,22 @@ int Physics::createBox(int x, int y, int z)
 	return returnVal;
 }
 
-//skal udvides
 int Physics::createSensor(int boxIndex, int type){
 	btRigidBody* box = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(boxIndex);
-	int* thePoint = (int*) malloc(sizeof(int));
-	*thePoint=boxIndex;
-	box->setUserPointer(thePoint);
+	//int* thePoint = (int*) malloc(sizeof(int));
+	//*thePoint=-1;
+
 	switch (type){
 		case pressure:
 			box->setCollisionFlags(box->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+			
+			sensors.push_back(0);
+			box->setUserPointer((void*)(sensors.size()-1));
 			break;
 		case light:
 			break;
 
-		case angle:
-
-			break;
 	}
-
-
 
 	return 0;
 }
@@ -294,11 +320,16 @@ int Physics::createJoint(	int box1, int box2,	int type,
 	btGeneric6DofConstraint* gen6C;
 	int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
 	float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
+
+
 	switch(type){
 	case HINGE:
 		hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
 		hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
 		m_dynamicsWorld->addConstraint(hingeC,true);
+
+		sensors.push_back(0);
+		hingeC->setUserConstraintPtr((void*)(sensors.size()-1));
 		break;
 	case GENERIC6DOF:
 		gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
@@ -309,6 +340,12 @@ int Physics::createJoint(	int box1, int box2,	int type,
 		gen6C->setLimit(4,-DOFyR/2,DOFyR/2);
 		gen6C->setLimit(5,-DOFzR/2,DOFzR/2);
 		m_dynamicsWorld->addConstraint(gen6C,true);
+
+		sensors.push_back(0);
+		sensors.push_back(0);
+		sensors.push_back(0);	
+		
+		gen6C->setUserConstraintPtr((void*)(sensors.size()-3));
 		break;
 	}
 	

@@ -25,6 +25,7 @@ subject to the following restrictions:
 
 #include "LinearMath/btAlignedObjectArray.h"
 #include <math.h>
+#include <vector>
 
 #define PI 3.1415926
 enum{pressure, angle, light};
@@ -71,7 +72,8 @@ class Physics : public PlatformDemoApplication
 
 	virtual void displayCallback();
 	virtual void clientResetScene();
-	btScalar startBoxMass;
+
+	std::vector<float> sensors;
 	static DemoApplication* Create()
 	{
 		Physics* demo = new Physics;
