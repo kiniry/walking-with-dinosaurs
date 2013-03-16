@@ -98,7 +98,7 @@ void Physics::clientMoveAndDisplay()
 				y = constraint1->getRotationalLimitMotor(1)->m_currentPosition;
 				z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
 
-				printf("%d\n",constraint1->getUserConstraintPtr());
+				//printf("%d\n",constraint1->getUserConstraintPtr());
 				sensors.at(((int)constraint1->getUserConstraintPtr()))=x;
 				sensors.at(((int)constraint1->getUserConstraintPtr())+1)=y;
 				sensors.at(((int)constraint1->getUserConstraintPtr())+2)=z;
@@ -268,7 +268,8 @@ int Physics::createJoint(	int box1, int box2,	int type,
 	btAssert(postY>0 && postY<101);
 	btAssert(postS>-1 && postS<6);
 
-
+//	printf("%d %d\n",preX,preY);
+//	printf("%d %d\n",postX,postY);
 
 	//Get box pointers
 	btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
@@ -414,27 +415,29 @@ btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSiz
 	double h,w;
 
 	h=(x-50)/50.f;
-	w=(x-50)/50.f;
+	w=(y-50)/50.f;
 
+	//printf("%d %d\n",x,y);
+	//printf("%f %f\n",h,w);
 
 	switch(s){
 	case 0://bottom (y-)
-		return btVector3(h*halfSizes->x(),h*halfSizes->y(),-halfSizes->z());
+		return btVector3(h*halfSizes->x(),w*halfSizes->y(),-halfSizes->z());
 		break;
 	case 1://top (y+)
-		return btVector3(-halfSizes->x(),h*halfSizes->x(),h*halfSizes->y());
+		return btVector3(-halfSizes->x(),w*halfSizes->x(),h*halfSizes->y());
 		break;
 	case 2://x+
-		return btVector3(h*halfSizes->x(),-halfSizes->y(),h*halfSizes->y());
+		return btVector3(h*halfSizes->x(),-halfSizes->y(),w*halfSizes->y());
 		break;
 	case 3://z+
-		return btVector3(h*halfSizes->x(),halfSizes->y(),h*halfSizes->y());
+		return btVector3(h*halfSizes->x(),halfSizes->y(),w*halfSizes->y());
 		break;
 	case 4://x-
-		return btVector3(halfSizes->x(),h*halfSizes->x(),h*halfSizes->y());
+		return btVector3(halfSizes->x(),w*halfSizes->x(),h*halfSizes->y());
 		break;
 	case 5://z-
-		return btVector3(h*halfSizes->x(),h*halfSizes->y(),halfSizes->z());
+		return btVector3(h*halfSizes->x(),w*halfSizes->y(),halfSizes->z());
 		
 		break;
 	default:
@@ -455,8 +458,8 @@ void Physics::testPhysics(){
 	int box = createBox(2,2,2);
 	int box2 = createBox(2,2,2);
 	int box3 = createBox(2,2,2);
-	createJoint(box, box2, GENERIC6DOF,50, 50, 0, 50, 50, 5, 45,45,0);
-	createJoint(box, box3, GENERIC6DOF,1, 50, 2, 50, 50, 1, 45,45,0);
+	createJoint(box, box2, GENERIC6DOF,10, 50, 1, 50, 50, 5, 45,45,0);
+	createJoint(box, box3, GENERIC6DOF,50, 50, 5, 50, 50, 1, 45,45,0);
 
 	//createSensor(box, pressure);
 }
