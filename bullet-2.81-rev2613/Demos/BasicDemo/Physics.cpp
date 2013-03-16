@@ -92,20 +92,22 @@ void Physics::clientMoveAndDisplay()
 
 				break;
 			case D6_CONSTRAINT_TYPE:
-				if(((int)constraint1->getUserConstraintPtr())>=0);{
 				constraint1 = (btGeneric6DofConstraint*) m_dynamicsWorld->getConstraint(i);
+				
+				if(((int)constraint1->getUserConstraintPtr())>=0){
 				x = constraint1->getRotationalLimitMotor(0)->m_currentPosition;
 				y = constraint1->getRotationalLimitMotor(1)->m_currentPosition;
 				z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
-
+			
 				//printf("%d\n",constraint1->getUserConstraintPtr());
 				sensors.at(((int)constraint1->getUserConstraintPtr()))=x;
 				sensors.at(((int)constraint1->getUserConstraintPtr())+1)=y;
 				sensors.at(((int)constraint1->getUserConstraintPtr())+2)=z;
-
+			
 				//printf("%d\n",(int)constraint1->getUserConstraintPtr());
 				//printf("%f %f %f\n", x, y, z);
 				}
+				
 				break;
 		}
 	}
@@ -455,12 +457,13 @@ void	Physics::clientResetScene()
 }
 	
 void Physics::testPhysics(){
+	
 	int box = createBox(2,2,2);
-	int box2 = createBox(2,2,2);
-	int box3 = createBox(2,2,2);
+	int box2 = createBox(3,2,1);
+	int box3 = createBox(2,1,1);
 	createJoint(box, box2, GENERIC6DOF,10, 50, 1, 50, 50, 5, 45,45,0);
 	createJoint(box, box3, GENERIC6DOF,50, 50, 5, 50, 50, 1, 45,45,0);
-
+	
 	//createSensor(box, pressure);
 }
 
