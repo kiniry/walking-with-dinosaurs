@@ -81,7 +81,7 @@ void Physics::clientMoveAndDisplay()
 
 			case HINGE_CONSTRAINT_TYPE:
 				constraint = (btHingeConstraint*) m_dynamicsWorld->getConstraint(i);
-				sensors.at(*((int*)constraint->getUserConstraintPtr()));
+				sensors.at((int)(constraint->getUserConstraintPtr()));
 				x = constraint->getHingeAngle();
 				
 				
@@ -89,12 +89,11 @@ void Physics::clientMoveAndDisplay()
 				
 				//printf("%f\n",x);
 				//printf("%d\n", (int)constraint1->getUserConstraintPtr());
-
+				
 				break;
 			case D6_CONSTRAINT_TYPE:
 				constraint1 = (btGeneric6DofConstraint*) m_dynamicsWorld->getConstraint(i);
 				
-				if(((int)constraint1->getUserConstraintPtr())>=0){
 				x = constraint1->getRotationalLimitMotor(0)->m_currentPosition;
 				y = constraint1->getRotationalLimitMotor(1)->m_currentPosition;
 				z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
@@ -106,7 +105,6 @@ void Physics::clientMoveAndDisplay()
 			
 				//printf("%d\n",(int)constraint1->getUserConstraintPtr());
 				//printf("%f %f %f\n", x, y, z);
-				}
 				
 				break;
 		}
@@ -414,6 +412,12 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 //TODO: ændre værdier så de fungere som procent af sidderne i stedet for absolutte
 btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSizes)
 {
+	//tjek input in debug mode
+	btAssert(x>0 && x<101);							
+	btAssert(y>0 && y<101);
+	btAssert(s>-1 && s<6);
+	btAssert(halfSizes);
+
 	double h,w;
 
 	h=(x-50)/50.f;
