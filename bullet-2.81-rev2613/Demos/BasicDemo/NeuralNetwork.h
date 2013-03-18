@@ -21,15 +21,19 @@ public:
 	//std::vector<NeuralNode*> currentLayer;
 	//std::vector<NeuralNode*> lastLayer;
 
-	NeuralNetwork(std::vector<NeuralNode*> inputs);
+	NeuralNetwork(std::vector<NeuralNode*> inputs); //should not be public?
+	std::vector<NeuralNode*> getLastLayer();
 	~NeuralNetwork(void);
 	
+	void insertNode(float value);
 	void insertNode(int f, int i1, float w1);
 	void insertNode(int f, int i1, int i2, float w1, float w2);
 	void insertNode(int f, int i1, int i2, int i3, float w1, float w2, float w3);
 	void changeLayer();
 	void stopBuilding();
 	void computeLayer();
+	void computeNetwork();
+
 
 	float getOutput(int index);
 };

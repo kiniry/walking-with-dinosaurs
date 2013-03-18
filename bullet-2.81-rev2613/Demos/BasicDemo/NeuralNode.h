@@ -4,7 +4,7 @@
 
 //Definition of functions
 #define SENSOR -1
-enum{SUM,PRODUCT,DIVIDE,SUMTHRESHOLD,GREATERTHAN,SIGNOF,MIN,MAX,ABS,IF,INTERPOLATE,SIN,COS,ATAN,LOG,EXPT,SIGMOID};
+enum{SUM,PRODUCT,DIVIDE,SUMTHRESHOLD,GREATERTHAN,SIGNOF,MIN,MAX,ABS,IF,INTERPOLATE,SIN,COS,ATAN,LOG,EXPT,SIGMOID, NR_OF_FUNCTIONS};
 
 class NeuralNode
 {
@@ -27,6 +27,7 @@ public:
 	~NeuralNode(void);
 	float getOutput();
 	void compute();
+	void setWeights(float w1, float w2, float w3);
 
 private:
 	inline float sum();

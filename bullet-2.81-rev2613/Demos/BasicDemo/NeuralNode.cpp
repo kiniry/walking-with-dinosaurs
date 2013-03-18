@@ -20,7 +20,7 @@ NeuralNode::NeuralNode(float* pointer)
 
 NeuralNode::NeuralNode(int function, NeuralNode* input, float weight)
 {
-	this->function=function;
+	this->function=function%NR_OF_FUNCTIONS;
 	this->input1=input;
 	this->input2=NULL;
 	this->input3=NULL;
@@ -32,9 +32,9 @@ NeuralNode::NeuralNode(int function, NeuralNode* input, float weight)
 
 NeuralNode::NeuralNode(int function, NeuralNode* input1, NeuralNode* input2, float weight1, float weight2)
 {
-	printf("ENUM PROD %d, func: %d \n",PRODUCT,function);
+	//printf("ENUM PROD %d, func: %d \n",PRODUCT,function);
 	
-	this->function=function;
+	this->function=function%NR_OF_FUNCTIONS;
 	this->input1=input1;
 	this->input2=input2;
 	this->input3=NULL;
@@ -46,7 +46,7 @@ NeuralNode::NeuralNode(int function, NeuralNode* input1, NeuralNode* input2, flo
 
 NeuralNode::NeuralNode(int function, NeuralNode* input1, NeuralNode* input2, NeuralNode* input3, float weight1, float weight2, float weight3)
 {
-	this->function=function;
+	this->function=function%NR_OF_FUNCTIONS;
 	this->input1=input1;
 	this->input2=input2;
 	this->input3=input3;
@@ -67,13 +67,13 @@ void NeuralNode::compute()
 	switch(function){
 		case SENSOR:
 			currentOutput=*sensorInput;
-			printf("sensor out: %f",currentOutput);
+			//printf("sensor out: %f",currentOutput);
 			break;
 		case SUM:
 			currentOutput=sum();
 			break;
 		case PRODUCT:
-			printf("hej");
+			//printf("hej");
 			currentOutput=product();
 			break;
 		case DIVIDE:
@@ -130,10 +130,10 @@ void NeuralNode::compute()
 
 inline float NeuralNode::sum(){
 	if(input2 == NULL){input2=new NeuralNode((float)0);}
-	printf("in1:%f in2:%f sum %f \n",input1->currentOutput,input2->currentOutput,
+	/*printf("in1:%f in2:%f sum %f \n",input1->currentOutput,input2->currentOutput,
 			input1->currentOutput * weight1
 			+ 
-			input2->currentOutput * weight2);
+			input2->currentOutput * weight2);*/
 	return	input1->currentOutput * weight1
 			+ 
 			input2->currentOutput * weight2;
@@ -141,10 +141,10 @@ inline float NeuralNode::sum(){
 
 inline float NeuralNode::product(){
 	if(input2 == NULL){input2=new NeuralNode((float)1);}
-	printf("in1:%f in2:%f product %f \n",input1->currentOutput,input2->currentOutput,
+	/*printf("in1:%f in2:%f product %f \n",input1->currentOutput,input2->currentOutput,
 			input1->currentOutput * weight1
 			* 
-			input2->currentOutput * weight2);
+			input2->currentOutput * weight2);*/
 	return	input1->currentOutput * weight1
 			* 
 			input2->currentOutput * weight2;
@@ -262,6 +262,11 @@ inline float NeuralNode::sigmoid(){
 }*/
 
 //, differentiate, smooth, memory, oscillate-wave, and oscillate-saw
+
+
+void NeuralNode::setWeights(float w1, float w2, float w3){
+
+}
 
 NeuralNode::~NeuralNode(void)
 {

@@ -46,7 +46,6 @@ class Physics : public PlatformDemoApplication
 	//NN test variables
 	float* testPoint;
 	int inc;
-	NeuralNetwork* theNet;
 	
 	int currentBoxIndex,currentJointIndex;
 	unsigned long timeUsed;
@@ -67,6 +66,10 @@ class Physics : public PlatformDemoApplication
 
 	public:
 
+	NeuralNetwork* theNet;
+
+	std::vector<NeuralNetwork*> subnets;
+
 	Physics()
 	{
 		initPhysics();
@@ -83,6 +86,7 @@ class Physics : public PlatformDemoApplication
 	virtual void clientResetScene();
 
 	std::vector<float> sensors;
+	std::vector<int> effectorNNindex;
 	static DemoApplication* Create()
 	{
 		Physics* demo = new Physics;

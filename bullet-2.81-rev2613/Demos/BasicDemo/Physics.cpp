@@ -30,13 +30,25 @@ void Physics::clientMoveAndDisplay()
 	//NN test
 	inc = inc + 1;
 	//*testPoint = inc*2*PI/360;
-	theNet->computeLayer();
+	theNet->computeNetwork();
+	for(int i=0;i<subnets.size();i++){
+		subnets.at(i)->computeNetwork();
+	}
+
 	//printf("output 0: %f 1: %f\n",theNet->getOutput(0),theNet->getOutput(1));
-	setEffect(1,theNet->getOutput(1),0,0);
-	
-	//TODO: insert fitness test here
+	//setEffect(1,theNet->getOutput(1),0,0);
+	//setEffect(1,1000,1000,1000);
 	
 
+	//TODO: insert fitness test here
+	
+	for(int i=0;i<effectorNNindex.size();i=i+3){
+		setEffect(i/3,
+			subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
+			subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
+			subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
+		);
+	}
 	
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 

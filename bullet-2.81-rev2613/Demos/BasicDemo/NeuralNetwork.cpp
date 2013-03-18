@@ -18,6 +18,14 @@ NeuralNetwork::~NeuralNetwork(void)
 {
 }
 
+void NeuralNetwork::insertNode(float value)
+{
+//1: get value and create node from it
+	NeuralNode* n = new NeuralNode(value);
+//2: insert created node in current layers
+	layers.at(layerIndex).push_back(n);
+}
+
 void NeuralNetwork::insertNode(int f, int i1, float w1)
 {
 //1: get input node from previous layer and create node from it
@@ -95,15 +103,28 @@ void NeuralNetwork::stopBuilding()
 
 void NeuralNetwork::computeLayer()
 {
-	printf("computing layer: %d  size =%d \n",layerIndex,layers.at(layerIndex).size());
+	//printf("computing layer: %d  size =%d \n",layerIndex,layers.at(layerIndex).size());
 	for(int i=0;i<layers.at(layerIndex).size();i++){
-		printf("atENUM %d \n",layers.at(layerIndex).at(i)->function);
+		//printf("atENUM %d \n",layers.at(layerIndex).at(i)->function);
 		layers.at(layerIndex).at(i)->compute();
 	}
 	
 	if(layerIndex==lastLayerIndex){outputUndefined=false;}
 
 	changeLayer();
+}
+
+void NeuralNetwork::computeNetwork()
+{
+	for(int j=0;j<layers.size();j++){
+		for(int i=0;i<layers.at(j).size();i++){
+			layers.at(j).at(i)->compute();
+		}
+	}
+}
+
+std::vector<NeuralNode*> NeuralNetwork::getLastLayer(){
+	return layers.at(lastLayerIndex);
 }
 
 float NeuralNetwork::getOutput(int index){
