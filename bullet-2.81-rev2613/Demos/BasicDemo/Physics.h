@@ -60,19 +60,22 @@ class Physics : public PlatformDemoApplication
 	btConstraintSolver*	m_solver;
 
 	btDefaultCollisionConfiguration* m_collisionConfiguration;
+	
+	void	initPhysics();
+
+	void	exitPhysics();
 
 	public:
 
 	Physics()
 	{
+		initPhysics();
 	}
 	virtual ~Physics()
 	{
 		exitPhysics();
 	}
-	void	initPhysics();
 
-	void	exitPhysics();
 
 	virtual void clientMoveAndDisplay();
 
