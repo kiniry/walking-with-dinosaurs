@@ -96,6 +96,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <DebugInformationFormat>
       </DebugInformationFormat>
+      <UndefinePreprocessorDefinitions>No</UndefinePreprocessorDefinitions>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_HAS_EXCEPTIONS=0;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -214,12 +215,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Demos\BasicDemo\Evolution.h" />
     <ClInclude Include="..\..\Demos\BasicDemo\NeuralNetwork.h" />
     <ClInclude Include="..\..\Demos\BasicDemo\NeuralNode.h" />
     <ClInclude Include="..\..\Demos\BasicDemo\Physics.h" />
     <ClInclude Include="..\..\Demos\BasicDemo\Grammar.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Demos\BasicDemo\Evolution.cpp" />
     <ClCompile Include="..\..\Demos\BasicDemo\NeuralNetwork.cpp" />
     <ClCompile Include="..\..\Demos\BasicDemo\NeuralNode.cpp" />
     <ClCompile Include="..\..\Demos\BasicDemo\Physics.cpp">

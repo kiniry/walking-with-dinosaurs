@@ -6,20 +6,31 @@
 	
 int main(int argc,char** argv)
 {
-
-	Physics WWDPhysics;
-	WWDPhysics.initPhysics();
-	WWDPhysics.testPhysics();
-	//insert random shite
-	int dof = 0,S1=5,S2=4;
-	//int string[] = {3,2,1,1,0,0,0,S1,0,0,S2,dof,0,0,3,2,1,0};
-
-	//int string[] = {3,2,1,0};
+	int populationSize = 1;
+	std::vector<Physics*> creatures;
+	int ancestor[] = {3,2,1,1,0,0,0,5,0,0,4,45,0,0,3,2,1,0};
 
 
-	//readDNA(string,&WWDPhysics);
+	
+	for(int i =0; i<populationSize; i++){
+		//init world
+		Physics* WWDPhysics = new Physics();
+	
+		//init creature
+		//mutate(ancestor);
+		//readDNA(ancestor,&WWDPhysics);
+		
+		creatures.push_back(WWDPhysics);
+	
+	}
 
-	//default glut doesn't return from mainloop
-	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",&WWDPhysics);
+
+		//start simulations
+		creatures.at(0)->testPhysics();
+		//default glut doesn't return from mainloop
+		return glutmain(argc, argv,1024,600,"Walking with dinosaurs",creatures.at(0));
+
+	
+	
 }
 
