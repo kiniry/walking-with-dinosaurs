@@ -27,6 +27,13 @@ static GLDebugDrawer gDebugDraw;
 
 void Physics::clientMoveAndDisplay()
 {
+	//NN test
+	inc = inc + 1;
+	*testPoint = inc*2*PI/360;
+	theNet->computeLayer();
+	//printf("output 0: %f 1: %f\n",theNet->getOutput(0),theNet->getOutput(1));
+	setEffect(1,theNet->getOutput(1),0,0);
+	
 	//TODO: insert fitness test here
 	
 
@@ -469,6 +476,21 @@ void Physics::testPhysics(){
 	createJoint(box, box3, GENERIC6DOF,50, 50, 5, 50, 50, 1, 45,45,0);
 	
 	//createSensor(box, pressure);
+
+	//NN test
+	std::vector<NeuralNode*> inputs;
+	inputs.push_back(new NeuralNode(1));
+	inputs.push_back(new NeuralNode(-2));
+	testPoint = new float;
+	*testPoint = 5;
+	inc = 0;
+	inputs.push_back(new NeuralNode(testPoint));
+	theNet = new NeuralNetwork(inputs);
+	theNet->insertNode(SUM,0,1,3,1);
+	theNet->insertNode(SIN,2,1);
+	theNet->changeLayer();
+	theNet->insertNode(PRODUCT,0,1,2,1);
+	theNet->stopBuilding();
 }
 
 void	Physics::exitPhysics()

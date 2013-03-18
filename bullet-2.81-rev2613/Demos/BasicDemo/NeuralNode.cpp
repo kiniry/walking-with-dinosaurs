@@ -67,6 +67,7 @@ void NeuralNode::compute()
 	switch(function){
 		case SENSOR:
 			currentOutput=*sensorInput;
+			printf("sensor out: %f",currentOutput);
 			break;
 		case SUM:
 			currentOutput=sum();
@@ -128,18 +129,20 @@ void NeuralNode::compute()
 }
 
 inline float NeuralNode::sum(){
-	if(input2 != NULL){input2=new NeuralNode((float)0);}
-//	printf("sum %f \n",input1->currentOutput * weight1
-//			+ 
-//			input2->currentOutput * weight2);
+	if(input2 == NULL){input2=new NeuralNode((float)0);}
+	printf("in1:%f in2:%f sum %f \n",input1->currentOutput,input2->currentOutput,
+			input1->currentOutput * weight1
+			+ 
+			input2->currentOutput * weight2);
 	return	input1->currentOutput * weight1
 			+ 
 			input2->currentOutput * weight2;
 }
 
 inline float NeuralNode::product(){
-	if(input2 != NULL){input2=new NeuralNode((float)1);}
-	printf("product %f \n",input1->currentOutput * weight1
+	if(input2 == NULL){input2=new NeuralNode((float)1);}
+	printf("in1:%f in2:%f product %f \n",input1->currentOutput,input2->currentOutput,
+			input1->currentOutput * weight1
 			* 
 			input2->currentOutput * weight2);
 	return	input1->currentOutput * weight1
@@ -148,7 +151,7 @@ inline float NeuralNode::product(){
 }
 
 inline float NeuralNode::divide(){
-	if(input2 != NULL){input2=new NeuralNode((float)1);}
+	if(input2 == NULL){input2=new NeuralNode((float)1);}
 	return	input1->currentOutput * weight1 
 			/ 
 			input2->currentOutput * weight2;
@@ -159,15 +162,15 @@ inline float NeuralNode::divide(){
 * Returns 0 otherwise.
 */
 inline float NeuralNode::sumThreshold(){
-	if(input2 != NULL){input2=new NeuralNode((float)0);}
-	if(input3 != NULL){input3=new NeuralNode((float)0);}
+	if(input2 == NULL){input2=new NeuralNode((float)0);}
+	if(input3 == NULL){input3=new NeuralNode((float)0);}
 	return	(input1->currentOutput * weight1 + input2->currentOutput * weight2)
 			>
 			input3->currentOutput * weight3;
 }
 
 inline float NeuralNode::greaterThan(){
-	if(input2 != NULL){input2=new NeuralNode((float)0);}
+	if(input2 == NULL){input2=new NeuralNode((float)0);}
 	return	input1->currentOutput*weight1
 			>
 			input2->currentOutput*weight2;
@@ -180,8 +183,8 @@ inline float NeuralNode::signOf(){
 }
 
 inline float NeuralNode::myMin(){
-	if(input2 != NULL){input2=new NeuralNode((float)0xffffffff);}
-	if(input3 != NULL){input3=new NeuralNode((float)0xffffffff);}
+	if(input2 == NULL){input2=new NeuralNode((float)0xffffffff);}
+	if(input3 == NULL){input3=new NeuralNode((float)0xffffffff);}
 	float temporaryMin = input1->currentOutput*weight1;
 	if(input2->currentOutput*weight2<temporaryMin){temporaryMin=input2->currentOutput*weight2;}
 	if(input3->currentOutput*weight3<temporaryMin){temporaryMin=input3->currentOutput*weight3;}
@@ -189,8 +192,8 @@ inline float NeuralNode::myMin(){
 }
 
 inline float NeuralNode::myMax(){
-	if(input2 != NULL){input2=new NeuralNode((float)-0xffffffff);}
-	if(input3 != NULL){input3=new NeuralNode((float)-0xffffffff);}
+	if(input2 == NULL){input2=new NeuralNode((float)-0xffffffff);}
+	if(input3 == NULL){input3=new NeuralNode((float)-0xffffffff);}
 	float temporaryMax = input1->currentOutput*weight1;
 	if(input2->currentOutput*weight2>temporaryMax){temporaryMax=input2->currentOutput*weight2;}
 	if(input3->currentOutput*weight3>temporaryMax){temporaryMax=input3->currentOutput*weight3;}
@@ -204,7 +207,7 @@ inline float NeuralNode::abs(){
 }
 
 inline float NeuralNode::myIf(){
-	if(input2 != NULL){input2=new NeuralNode((float)1);}
+	if(input2 == NULL){input2=new NeuralNode((float)1);}
 	if(input2->currentOutput*weight2){
 		return input1->currentOutput*weight1;
 	}
@@ -213,15 +216,16 @@ inline float NeuralNode::myIf(){
 
 inline float NeuralNode::interpolate(){
 	float wi1 = input1->currentOutput*weight1;
-	if(input2 != NULL){input2=new NeuralNode(wi1);}
+	if(input2 == NULL){input2=new NeuralNode(wi1);}
 	float wi2 = input2->currentOutput*weight2;
-	if(input3 != NULL){input3=new NeuralNode(wi2);}
+	if(input3 == NULL){input3=new NeuralNode(wi2);}
 	float wi3 = input3->currentOutput*weight3;
 
 	return (wi1+wi2+wi3)/3;
 }
 
 inline float NeuralNode::mySin(){
+	printf("in1:%f sin %f \n",input1->currentOutput, sin(input1->currentOutput*weight1));
 	return sin(input1->currentOutput*weight1);
 }
 	
@@ -238,7 +242,7 @@ inline float NeuralNode::myLog(){
 }
 
 inline float NeuralNode::myExpt(){
-	if(input2 != NULL){input2=new NeuralNode((float)1);}
+	if(input2 == NULL){input2=new NeuralNode((float)1);}
 	return	pow(
 				input1->currentOutput*weight1 ,
 				input2->currentOutput*weight2

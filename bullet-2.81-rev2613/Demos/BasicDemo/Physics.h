@@ -24,6 +24,7 @@ subject to the following restrictions:
 #endif
 
 #include "LinearMath/btAlignedObjectArray.h"
+#include "NeuralNetwork.h"
 #include <math.h>
 #include <vector>
 
@@ -42,6 +43,11 @@ class btDefaultCollisionConfiguration;
 ///Physics is good starting point for learning the code base and porting.
 class Physics : public PlatformDemoApplication
 {
+	//NN test variables
+	float* testPoint;
+	int inc;
+	NeuralNetwork* theNet;
+	
 	int currentBoxIndex,currentJointIndex;
 	unsigned long timeUsed;
 	//keep the collision shapes, for deletion/cleanup

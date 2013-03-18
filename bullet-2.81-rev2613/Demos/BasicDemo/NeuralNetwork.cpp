@@ -3,12 +3,14 @@
 
 NeuralNetwork::NeuralNetwork(std::vector<NeuralNode*> inputs)
 {
-	lastLayerIndex=100000;
-	previousLayerOutputs = inputs;
-	initialInputs=inputs;
-	init=true;
-
-	layerIndex=0;
+	lastLayerIndex=MAX_LAYERS;
+	//previousLayerOutputs = inputs;
+	//initialInputs=inputs;
+	layers.push_back(inputs);
+	init=true;outputUndefined=true;
+	std::vector<NeuralNode*> aLayer;
+	layers.push_back(aLayer);
+	layerIndex=1;
 }
 
 
@@ -18,44 +20,41 @@ NeuralNetwork::~NeuralNetwork(void)
 
 void NeuralNetwork::insertNode(int f, int i1, float w1)
 {
-	NeuralNode* n = new NeuralNode(f,previousLayerOutputs.at(i1%previousLayerOutputs.size()),w1);
-	if(init){initialLayer.push_back(n);}
-	currentLayer.push_back(n);
+//1: get input node from previous layer and create node from it
+	NeuralNode* n = new NeuralNode(f,layers.at(layerIndex-1).at(i1%layers.at(layerIndex-1).size()),w1);
+//2: insert created node in current layers
+	layers.at(layerIndex).push_back(n);
 }
 
 void NeuralNetwork::insertNode(int f, int i1, int i2, float w1, float w2)
 {
-	
-	int size = previousLayerOutputs.size();
-	//printf("insert i1:%d i2:%d prev_size:%d\n",i1,i2,size);
-	//printf("insert prev size %d\n",i1%size);
-	//printf("insert prev size %d\n",i2%size);
-	NeuralNode* n = new NeuralNode(f,previousLayerOutputs.at(i1%size),previousLayerOutputs.at(i2%size),w1,w2);
-	if(init){initialLayer.push_back(n);}
-	currentLayer.push_back(n);
+//1: get input nodes from previous layer and create node from it	
+	int size = layers.at(layerIndex-1).size();
+	NeuralNode* inputNode1 = layers.at(layerIndex-1).at(i1%size);
+	NeuralNode* inputNode2 = layers.at(layerIndex-1).at(i2%size);
+	NeuralNode* n = new NeuralNode(f,inputNode1,inputNode2,w1,w2);
+//2: insert created node in current layers
+	layers.at(layerIndex).push_back(n);
 }
 
 void NeuralNetwork::insertNode(int f, int i1, int i2, int i3, float w1, float w2, float w3)
 {
-	int size = previousLayerOutputs.size();
-	NeuralNode* n = new NeuralNode(f,previousLayerOutputs.at(i1%size),previousLayerOutputs.at(i2%size),previousLayerOutputs.at(i3%size),w1,w2,w3);
-	if(init){initialLayer.push_back(n);}
-	currentLayer.push_back(n);	
+//1: get input nodes from previous layer and create node from it	
+	int size = layers.at(layerIndex-1).size();
+	NeuralNode* inputNode1 = layers.at(layerIndex-1).at(i1%size);
+	NeuralNode* inputNode2 = layers.at(layerIndex-1).at(i2%size);
+	NeuralNode* inputNode3 = layers.at(layerIndex-1).at(i3%size);
+	NeuralNode* n = new NeuralNode(f,inputNode1,inputNode2,inputNode3,w1,w2,w3);
+//2: insert created node in current layers
+	layers.at(layerIndex).push_back(n);
 }
 
 void NeuralNetwork::changeLayer()
 {
-	//failing... trashes all other layers than initialLayer
-
-	//printf("current layer %d \n",layerIndex);
 	
-	if(init){init=false;}
-	previousLayerOutputs.clear();
-	//printf("LLI %d \n",lastLayerIndex);
-	//printf("LI %d \n",layerIndex);
+	//previousLayerOutputs.clear();
 	if(!(layerIndex==lastLayerIndex)){
-		//printf("inside\n");
-		std::vector<NeuralNode*> flipVariable;
+		/*std::vector<NeuralNode*> flipVariable;
 
 		//we have to flip the vector to maintain the ordering of nodes...
 		while(!currentLayer.empty()){
@@ -65,14 +64,21 @@ void NeuralNetwork::changeLayer()
 		while(!flipVariable.empty()){
 			previousLayerOutputs.push_back(flipVariable.back());
 			flipVariable.pop_back();
-		}
+		}*/
+
+		//TODO set currentlayer...
+
+
 		layerIndex++;
-		//printf("inside LI %d \n",layerIndex);
+		if(init){
+			std::vector<NeuralNode*> aLayer;
+			layers.push_back(aLayer);
+		}
 	}
 	else
 	{
-		previousLayerOutputs=initialInputs;
-		currentLayer=initialLayer;
+		//previousLayerOutputs=initialInputs;
+		//currentLayer=initialLayer;
 		layerIndex=0;
 	}
 }
@@ -80,7 +86,8 @@ void NeuralNetwork::changeLayer()
 void NeuralNetwork::stopBuilding()
 {
 	lastLayerIndex=layerIndex;
-	lastLayer=currentLayer;
+	init=false;
+	//lastLayer=currentLayer;
 	printf("LLI %d \n",lastLayerIndex);
 	changeLayer();
 	printf("LI %d \n",layerIndex);
@@ -88,21 +95,27 @@ void NeuralNetwork::stopBuilding()
 
 void NeuralNetwork::computeLayer()
 {
-	printf("computing layer: %d  size =%d \n",layerIndex,currentLayer.size());
-	for(int i=0;i<currentLayer.size();i++){
-		printf("atENUM %d \n",currentLayer.at(i)->function);
-		currentLayer.at(i)->compute();
+	printf("computing layer: %d  size =%d \n",layerIndex,layers.at(layerIndex).size());
+	for(int i=0;i<layers.at(layerIndex).size();i++){
+		printf("atENUM %d \n",layers.at(layerIndex).at(i)->function);
+		layers.at(layerIndex).at(i)->compute();
 	}
+	
+	if(layerIndex==lastLayerIndex){outputUndefined=false;}
+
 	changeLayer();
 }
 
 float NeuralNetwork::getOutput(int index){
 	//printf("size %d \n",lastLayer.size());
-	if(index<lastLayer.size()){
+	/*if(index<lastLayer.size()){
 		return lastLayer.at(index)->getOutput();
 	}
 	else{
 		//no defined output in network. Defaulting...
 		return 0;
-	}
+	}*/
+	if(outputUndefined){return 0;}
+	
+	return layers.at(lastLayerIndex).at(index%layers.at(lastLayerIndex).size())->getOutput();
 }

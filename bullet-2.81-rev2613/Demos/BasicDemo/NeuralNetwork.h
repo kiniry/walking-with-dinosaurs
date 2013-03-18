@@ -1,21 +1,25 @@
 #pragma once
 #include "NeuralNode.h"
 #include <vector>
+
+#define MAX_LAYERS 10000
 class NeuralNetwork
 {
+	/*
 	std::vector<NeuralNode*> initialLayer;
 	std::vector<NeuralNode*> initialInputs;
 	std::vector<NeuralNode*> previousLayerOutputs;
-	bool init;
+	*/
+	std::vector<std::vector<NeuralNode*>> layers;
+	
+	bool init,outputUndefined;
 
-	//debug var's?
 	int layerIndex;
 	int lastLayerIndex;
-	//\debug var's?
 
 public:
-	std::vector<NeuralNode*> currentLayer;
-	std::vector<NeuralNode*> lastLayer;
+	//std::vector<NeuralNode*> currentLayer;
+	//std::vector<NeuralNode*> lastLayer;
 
 	NeuralNetwork(std::vector<NeuralNode*> inputs);
 	~NeuralNetwork(void);
