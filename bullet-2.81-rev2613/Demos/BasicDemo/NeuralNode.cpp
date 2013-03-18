@@ -32,6 +32,8 @@ NeuralNode::NeuralNode(int function, NeuralNode* input, float weight)
 
 NeuralNode::NeuralNode(int function, NeuralNode* input1, NeuralNode* input2, float weight1, float weight2)
 {
+	printf("ENUM PROD %d, func: %d \n",PRODUCT,function);
+	
 	this->function=function;
 	this->input1=input1;
 	this->input2=input2;
@@ -70,6 +72,7 @@ void NeuralNode::compute()
 			currentOutput=sum();
 			break;
 		case PRODUCT:
+			printf("hej");
 			currentOutput=product();
 			break;
 		case DIVIDE:
@@ -85,10 +88,10 @@ void NeuralNode::compute()
 			currentOutput=signOf();
 			break;
 		case MIN:
-			currentOutput=min();
+			currentOutput=myMin();
 			break;
 		case MAX:
-			currentOutput=max();
+			currentOutput=myMax();
 			break;
 		case ABS:
 			currentOutput=abs();
@@ -126,6 +129,9 @@ void NeuralNode::compute()
 
 inline float NeuralNode::sum(){
 	if(input2 != NULL){input2=new NeuralNode((float)0);}
+//	printf("sum %f \n",input1->currentOutput * weight1
+//			+ 
+//			input2->currentOutput * weight2);
 	return	input1->currentOutput * weight1
 			+ 
 			input2->currentOutput * weight2;
@@ -133,6 +139,9 @@ inline float NeuralNode::sum(){
 
 inline float NeuralNode::product(){
 	if(input2 != NULL){input2=new NeuralNode((float)1);}
+	printf("product %f \n",input1->currentOutput * weight1
+			* 
+			input2->currentOutput * weight2);
 	return	input1->currentOutput * weight1
 			* 
 			input2->currentOutput * weight2;
@@ -170,7 +179,7 @@ inline float NeuralNode::signOf(){
 	else return i>0;
 }
 
-inline float NeuralNode::min(){
+inline float NeuralNode::myMin(){
 	if(input2 != NULL){input2=new NeuralNode((float)0xffffffff);}
 	if(input3 != NULL){input3=new NeuralNode((float)0xffffffff);}
 	float temporaryMin = input1->currentOutput*weight1;
@@ -179,7 +188,7 @@ inline float NeuralNode::min(){
 	return temporaryMin;
 }
 
-inline float NeuralNode::max(){
+inline float NeuralNode::myMax(){
 	if(input2 != NULL){input2=new NeuralNode((float)-0xffffffff);}
 	if(input3 != NULL){input3=new NeuralNode((float)-0xffffffff);}
 	float temporaryMax = input1->currentOutput*weight1;

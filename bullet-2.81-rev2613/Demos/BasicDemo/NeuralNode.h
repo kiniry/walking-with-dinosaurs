@@ -8,7 +8,7 @@ enum{SUM,PRODUCT,DIVIDE,SUMTHRESHOLD,GREATERTHAN,SIGNOF,MIN,MAX,ABS,IF,INTERPOLA
 
 class NeuralNode
 {
-	int function;
+	
 	int nrOfInputs;
 	float currentOutput;
 	float* sensorInput;
@@ -18,6 +18,7 @@ class NeuralNode
 	float weight1,weight2,weight3;
 
 public:
+	int function;
 	NeuralNode(float* pointer);
 	NeuralNode(float value);
 	NeuralNode(int function, NeuralNode* input, float weight);
@@ -34,8 +35,8 @@ private:
 	inline float sumThreshold();
 	inline float greaterThan();
 	inline float signOf();
-	inline float min();
-	inline float max();
+	inline float myMin();
+	inline float myMax();
 	inline float abs();
 	inline float myIf();
 	inline float interpolate();
