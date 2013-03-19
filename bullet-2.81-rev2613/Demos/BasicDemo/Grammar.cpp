@@ -91,9 +91,9 @@ int B(int index, const int* DNA, Physics *world, int *blocks, int part, std::vec
 int J(int index, const int* DNA, Physics *world, int *blocks, int part1, std::vector<int> tempNeural){
 	int part2 = world->createBox(DNA[index+10]%maxHeight+1, DNA[index+11]%maxWidth+1, DNA[index+12]%maxDepth+1);
 	int j_index = world->createJoint(part1, part2, DNA[index]%2, DNA[index+1], DNA[index+2], DNA[index+3]%6, DNA[index+4], DNA[index+5], DNA[index+6]%6, DNA[index+7], DNA[index+8], DNA[index+9]);
-	
-	tempNeural.push_back(index+13);
-	index = NN(index+13);
+	index+=13;
+	tempNeural.push_back(index);
+	index = NN(index);
 
 	world->effectorNNindex.push_back(DNA[index]);
 	world->effectorNNindex.push_back(DNA[index+1]);

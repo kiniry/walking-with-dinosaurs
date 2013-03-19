@@ -18,7 +18,7 @@
 #include "GlutStuff.h"
 #include "btBulletDynamicsCommon.h"
 
-#include <stdio.h> //printf debugging
+#include <stdio.h>
 #include "GLDebugDrawer.h"
 
 
@@ -31,7 +31,7 @@ void Physics::clientMoveAndDisplay()
 	inc = inc + 1;
 	//*testPoint = inc*2*PI/360;
 	theNet->computeNetwork();
-	for(int i=0;i<subnets.size();i++){
+	for(int i=0;i< (int) subnets.size();i++){
 		subnets.at(i)->computeNetwork();
 	}
 
@@ -42,7 +42,7 @@ void Physics::clientMoveAndDisplay()
 
 	//TODO: insert fitness test here
 	
-	for(int i=0;i<effectorNNindex.size();i=i+3){
+	for(int i=0;i< (int) effectorNNindex.size();i=i+3){
 		setEffect(i/3,
 			subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
 			subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
@@ -71,22 +71,29 @@ void Physics::clientMoveAndDisplay()
 	//reset sensors
 	for(int i=0; i < (int) sensors.size();i++){
 		sensors.at(i)=99;
+
 	}
+
+
 	//collision detection
 	//one per btPersistentManifold for each collision 
+
 	int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
-	for (int i=0;i<<numManifolds;i++)
+
+	for (int i=0;i<numManifolds;i++)
 	{
+			
 		btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
 		int box1 = (int)contactManifold->getBody0()->getUserPointer();
 		int box2 = (int)contactManifold->getBody1()->getUserPointer();
-		
+			
 		if(box1 >= 0){
-			//printf("%d \n",sensors.at(box1));
 			sensors.at(box1)=1;
+			
 		}
 		if(box2 >= 0){
 			sensors.at(box2)=1;
+	
 		}
 		
 			
@@ -167,6 +174,8 @@ void	Physics::initPhysics()
 	timeUsed=0;
 	currentBoxIndex=0;
 	currentJointIndex=0;
+	
+	
 	setTexturing(true);
 	setShadows(true);
 
@@ -210,10 +219,10 @@ void	Physics::initPhysics()
 
 }
 
-
+//creates a box with side lengths x,y,z
 int Physics::createBox(int x, int y, int z)
 {
-	btBoxShape* boxShape = new btBoxShape(btVector3(x,y,z));
+	btBoxShape* boxShape = new btBoxShape(btVector3(2*x,2*y,2*z));
 	m_collisionShapes.push_back(boxShape);
 
 	btTransform startTransform;
@@ -227,14 +236,14 @@ int Physics::createBox(int x, int y, int z)
 	
 	box= localCreateRigidBody(mass,startTransform,boxShape);
 
-	int* thePoint = (int*) malloc(sizeof(int));
-	*thePoint=-1;
-	box->setUserPointer(thePoint);
+
+	box->setUserPointer((void*)-1);
 
 	int returnVal = currentBoxIndex;
 	currentBoxIndex++;
 	return returnVal;
 }
+
 
 int Physics::createSensor(int boxIndex, int type){
 	btRigidBody* box = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(boxIndex);
@@ -243,8 +252,7 @@ int Physics::createSensor(int boxIndex, int type){
 
 	switch (type){
 		case pressure:
-			box->setCollisionFlags(box->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
-			
+			box->setCollisionFlags(box->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);			
 			sensors.push_back(0);
 			box->setUserPointer((void*)(sensors.size()-1));
 			break;
@@ -292,14 +300,12 @@ int Physics::createJoint(	int box1, int box2,	int type,
 	btAssert(postY>0 && postY<101);
 	btAssert(postS>-1 && postS<6);
 
-//	printf("%d %d\n",preX,preY);
-//	printf("%d %d\n",postX,postY);
 
 	//Get box pointers
 	btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
 	btRigidBody* Box2 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box2);
 
-	//Define the local transform on the shapes regarding to the joint. (properbly from the center of the shape)
+	//Define the local transform on the shapes regarding to the joint.
 	btTransform localBox1, localBox2;
 	localBox1.setIdentity();
 	localBox2.setIdentity();
@@ -432,8 +438,7 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 	
 	return rot;
 }
-//calculates the poistion of where the joint connects to the box in regards to the local box origo
-//TODO: ændre værdier så de fungere som procent af sidderne i stedet for absolutte
+//calculates the poistion of where the joint connects to the box in regards to the local box center
 btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSizes)
 {
 	//tjek input in debug mode
@@ -442,38 +447,40 @@ btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSiz
 	btAssert(s>-1 && s<6);
 	btAssert(halfSizes);
 
-	double h,w;
 
-	h=(x-50)/50.f;
-	w=(y-50)/50.f;
 
-	//printf("%d %d\n",x,y);
-	//printf("%f %f\n",h,w);
+	btVector3 result;
+
+	//calculate offset from center of the side
+	double h=(x-50)/50.f;
+	double w=(y-50)/50.f;
+
 
 	switch(s){
 	case 0://bottom (y-)
-		return btVector3(h*halfSizes->x(),w*halfSizes->y(),-halfSizes->z());
+		result = btVector3(h*halfSizes->x(),w*halfSizes->y(),-halfSizes->z());
 		break;
 	case 1://top (y+)
-		return btVector3(-halfSizes->x(),w*halfSizes->x(),h*halfSizes->y());
+		result = btVector3(-halfSizes->x(),w*halfSizes->x(),h*halfSizes->y());
 		break;
 	case 2://x+
-		return btVector3(h*halfSizes->x(),-halfSizes->y(),w*halfSizes->y());
+		result = btVector3(h*halfSizes->x(),-halfSizes->y(),w*halfSizes->y());
 		break;
 	case 3://z+
-		return btVector3(h*halfSizes->x(),halfSizes->y(),w*halfSizes->y());
+		result = btVector3(h*halfSizes->x(),halfSizes->y(),w*halfSizes->y());
 		break;
 	case 4://x-
-		return btVector3(halfSizes->x(),w*halfSizes->x(),h*halfSizes->y());
+		result = btVector3(halfSizes->x(),w*halfSizes->x(),h*halfSizes->y());
 		break;
 	case 5://z-
-		return btVector3(h*halfSizes->x(),w*halfSizes->y(),halfSizes->z());
-		
+		result = btVector3(h*halfSizes->x(),w*halfSizes->y(),halfSizes->z());
 		break;
 	default:
 		perror("not a legal s value");
 		break;
 	}
+
+	return result;
 }
 
 
@@ -492,12 +499,12 @@ void Physics::testPhysics(){
 	createJoint(box, box2, GENERIC6DOF,10, 50, 1, 50, 50, 5, 45,45,0);
 	createJoint(box, box3, GENERIC6DOF,50, 50, 5, 50, 50, 1, 45,45,0);
 	
-	//createSensor(box, pressure);
+	createSensor(box, pressure);
 
 	//NN test
 	std::vector<NeuralNode*> inputs;
 	
-	for(int i=0;i<sensors.size();i++){
+	for(int i=0;i< (int) sensors.size();i++){
 		inputs.push_back(new NeuralNode(&sensors.at(i)));
 	}
 
