@@ -1,8 +1,12 @@
 #pragma once
-class NNodeTest
-{
-public:
-	NNodeTest(void);
-	~NNodeTest(void);
-};
+#include "NeuralNode.h"
+#include "assert2.h"
 
+#include <stdlib.h> 
+/*
+namespace NNode
+{
+void construct1();
+
+void construct2();
+}*/

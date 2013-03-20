@@ -29,7 +29,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletDynamics", "BulletDyn
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletSoftBody", "BulletSoftBody.vcxproj", "{87F29C2A-5CF1-A740-84F3-A44CFC3C9946}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WWDTest", "..\..\Demos\WWDTest\WWDTest.vcxproj", "{A76EA276-BB1F-4832-9231-AEF04A0CF304}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WWDTest", "WWDTest.vcxproj", "{A76EA276-BB1F-4832-9231-AEF04A0CF304}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
