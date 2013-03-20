@@ -292,12 +292,12 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							int dofX, int dofY, int dofZ){
 	
 	//tjek input in debug mode
-	btAssert(preX>0 && preX<101);							
-	btAssert(preY>0 && preY<101);
+	btAssert(preX>=0 && preX<=100);							
+	btAssert(preY>=0 && preY<=100);
 	btAssert(preS>-1 && preS<6);
 
-	btAssert(postX>0 && postX<101);							
-	btAssert(postY>0 && postY<101);
+	btAssert(postX>=0 && postX<=100);							
+	btAssert(postY>=0 && postY<=100);
 	btAssert(postS>-1 && postS<6);
 
 
@@ -442,8 +442,8 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSizes)
 {
 	//tjek input in debug mode
-	btAssert(x>0 && x<101);							
-	btAssert(y>0 && y<101);
+	btAssert(x>=0 && x<=100);							
+	btAssert(y>=0 && y<=100);
 	btAssert(s>-1 && s<6);
 	btAssert(halfSizes);
 

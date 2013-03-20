@@ -22,10 +22,10 @@ int J(int index, const int* DNA, Physics *world, int *blocks, int part1, std::ve
 
 int readDNA(const int* DNA, Physics *world);
 
-int NN(int index);
-int NI(int index);
-int II(int index);
-int I(int index);
+int NN(int index,const int* DNA);
+int NI(int index,const int* DNA);
+//int II(int index);
+//int I(int index);
 
 
 int NN(int index, const int* DNA, NeuralNetwork* net);
