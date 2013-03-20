@@ -6,43 +6,43 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Demos\BasicDemo\Grammar.h">
-      <Filter>source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Demos\BasicDemo\Physics.h">
-      <Filter>source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Demos\BasicDemo\NeuralNode.h">
-      <Filter>source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Demos\BasicDemo\NeuralNetwork.h">
-      <Filter>source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Demos\BasicDemo\Evolution.h">
-      <Filter>source</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\Demos\BasicDemo\Grammar.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Demos\BasicDemo\main.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Demos\BasicDemo\Physics.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Demos\BasicDemo\NeuralNode.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Demos\BasicDemo\NeuralNetwork.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Demos\BasicDemo\Evolution.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="..\bullet.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Demos\WWD\NeuralNetwork.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\NeuralNode.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\Physics.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\Evolution.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\Grammar.h">
+      <Filter>source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\WWD\Physics.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\WWD\Evolution.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\WWD\Grammar.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\WWD\main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\WWD\NeuralNetwork.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -70,8 +70,8 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">App_BasicDemo_vs2010_x64_release</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">obj\x32\Debug\App_BasicDemo\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">App_BasicDemo_vs2010_debug</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">obj\x64\Debug\App_BasicDemo\</IntDir>
@@ -173,7 +173,6 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glut32.lib;..\..\lib\OpenGLSupport_vs2010_debug.lib;..\..\lib\BulletDynamics_vs2010_debug.lib;..\..\lib\BulletCollision_vs2010_debug.lib;..\..\lib\LinearMath_vs2010_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)App_BasicDemo_vs2010_debug.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\Glut;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -215,24 +214,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Demos\BasicDemo\Evolution.h" />
-    <ClInclude Include="..\..\Demos\BasicDemo\NeuralNetwork.h" />
-    <ClInclude Include="..\..\Demos\BasicDemo\NeuralNode.h" />
-    <ClInclude Include="..\..\Demos\BasicDemo\Physics.h" />
-    <ClInclude Include="..\..\Demos\BasicDemo\Grammar.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\Demos\BasicDemo\Evolution.cpp" />
-    <ClCompile Include="..\..\Demos\BasicDemo\NeuralNetwork.cpp" />
-    <ClCompile Include="..\..\Demos\BasicDemo\NeuralNode.cpp" />
-    <ClCompile Include="..\..\Demos\BasicDemo\Physics.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\Demos\BasicDemo\Grammar.cpp" />
-    <ClCompile Include="..\..\Demos\BasicDemo\main.cpp">
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="..\bullet.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Demos\WWD\Evolution.h" />
+    <ClInclude Include="..\..\Demos\WWD\Grammar.h" />
+    <ClInclude Include="..\..\Demos\WWD\NeuralNetwork.h" />
+    <ClInclude Include="..\..\Demos\WWD\NeuralNode.h" />
+    <ClInclude Include="..\..\Demos\WWD\Physics.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Demos\WWD\Evolution.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\Grammar.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\main.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\NeuralNetwork.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\Physics.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -39,15 +39,15 @@ int main(int argc,char** argv)
 	
 		//init creature
 		//mutate(ancestor);
-		readDNA(ancestor,WWDPhysics);
+		//readDNA(ancestor,WWDPhysics);
 		
-		//creatures.push_back(WWDPhysics);
+		creatures.push_back(WWDPhysics);
 	
 	}
 
 
 		//start simulations
-		//creatures.at(0)->testPhysics();
+		creatures.at(0)->testPhysics();
 		//default glut doesn't return from mainloop
 		return glutmain(argc, argv,1024,600,"Walking with dinosaurs",creatures.at(0));
 
