@@ -17,8 +17,8 @@
 #define toFloat(X) X/100.f
 
 
-int B(int index, const int* DNA, Physics *world, int *blocks, int part, std::vector<int> tempNeural);
-int J(int index, const int* DNA, Physics *world, int *blocks, int part1, std::vector<int> tempNeural);
+int B(int index, const int* DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural);
+int J(int index, const int* DNA, Physics *world, int *blocks, int part1, std::vector<int>* tempNeural);
 
 int readDNA(const int* DNA, Physics *world);
 

@@ -4,7 +4,7 @@ int readDNA(const int* DNA, Physics *world){
 
 	int index = 0;
 	int blocks = 0;
-	std::vector<int> tempNeural;
+	std::vector<int>* tempNeural = new std::vector<int>;
 	
 	try{	
 		int part = world->createBox(DNA[index]%maxHeight+1, DNA[index+1]%maxWidth+1, DNA[index+2]%maxDepth+1);
@@ -31,17 +31,17 @@ int readDNA(const int* DNA, Physics *world){
 
 	//link create sub NNs
 	std::vector<NeuralNode*> mainOutputs = world->theNet->getLastLayer();
-	for(int i=0;i<(int)tempNeural.size();i++){
+	for(int i=0;i<(int)tempNeural->size();i++){
 		NeuralNetwork* subnet = new NeuralNetwork(mainOutputs);
 		world->subnets.push_back(subnet);
-		NN(tempNeural.at(i),DNA,subnet);
+		NN(tempNeural->at(i),DNA,subnet);
 		subnet->stopBuilding();
 	}
-	
+	delete tempNeural;
 	return Gsucces;
 }
 
-int B(int index, const int* DNA, Physics *world, int *blocks, int part, std::vector<int> tempNeural){
+int B(int index, const int* DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural){
 	if(*blocks >= maxBlocks){
 		throw Gfail;
 	}
@@ -90,11 +90,11 @@ int B(int index, const int* DNA, Physics *world, int *blocks, int part, std::vec
 	return index;
 }
 
-int J(int index, const int* DNA, Physics *world, int *blocks, int part1, std::vector<int> tempNeural){
+int J(int index, const int* DNA, Physics *world, int *blocks, int part1, std::vector<int>* tempNeural){
 	int part2 = world->createBox(DNA[index+10]%maxHeight+1, DNA[index+11]%maxWidth+1, DNA[index+12]%maxDepth+1);
 	int j_index = world->createJoint(part1, part2, DNA[index]%2, DNA[index+1], DNA[index+2], DNA[index+3]%6, DNA[index+4], DNA[index+5], DNA[index+6]%6, DNA[index+7], DNA[index+8], DNA[index+9]);
 	index+=13;
-	tempNeural.push_back(index);
+	tempNeural->push_back(index);
 	index = NN(index,DNA);
 
 	world->effectorNNindex.push_back(DNA[index]);

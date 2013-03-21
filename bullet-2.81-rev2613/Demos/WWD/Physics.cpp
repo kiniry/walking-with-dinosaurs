@@ -60,7 +60,7 @@ void Physics::clientMoveAndDisplay()
 
 	///step the simulation
 	//fixed step
-	m_dynamicsWorld->stepSimulation(1/1000.f);
+	m_dynamicsWorld->stepSimulation(1/100.f);
 
 
 	//dynamic step
