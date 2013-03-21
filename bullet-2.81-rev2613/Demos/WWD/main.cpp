@@ -2,10 +2,20 @@
 //#include "Physics.h"
 #include "Grammar.h"
 #include "GlutStuff.h"
-
+#include "test.h"
 	
 int main(int argc,char** argv)
 {
+
+	#ifdef  _DEBUG
+		test();
+
+	#else
+		
+
+	#endif
+
+
 	int populationSize = 1;
 	std::vector<Physics*> creatures;
 	//int ancestor[] = {3,2,1,1,0,0,0,5,0,0,4,45,0,0,3,2,1,0};

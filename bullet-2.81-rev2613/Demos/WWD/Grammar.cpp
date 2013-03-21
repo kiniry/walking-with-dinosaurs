@@ -18,7 +18,7 @@ int readDNA(const int* DNA, Physics *world){
 	//hoved NN
 		//NN - define inputs
 	std::vector<NeuralNode*> inputs;
-	for(int i=0;i<world->sensors.size();i++){
+	for(int i=0;i<(int)world->sensors.size();i++){
 		inputs.push_back(new NeuralNode(& (world->sensors.at(i)) ));
 	}
 	world->theNet=new NeuralNetwork(inputs);
@@ -31,7 +31,7 @@ int readDNA(const int* DNA, Physics *world){
 
 	//link create sub NNs
 	std::vector<NeuralNode*> mainOutputs = world->theNet->getLastLayer();
-	for(int i=0;i<tempNeural.size();i++){
+	for(int i=0;i<(int)tempNeural.size();i++){
 		NeuralNetwork* subnet = new NeuralNetwork(mainOutputs);
 		world->subnets.push_back(subnet);
 		NN(tempNeural.at(i),DNA,subnet);

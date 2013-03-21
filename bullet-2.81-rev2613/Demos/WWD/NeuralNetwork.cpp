@@ -104,7 +104,7 @@ void NeuralNetwork::stopBuilding()
 void NeuralNetwork::computeLayer()
 {
 	//printf("computing layer: %d  size =%d \n",layerIndex,layers.at(layerIndex).size());
-	for(int i=0;i<layers.at(layerIndex).size();i++){
+	for(int i=0;i<(int)layers.at(layerIndex).size();i++){
 		//printf("atENUM %d \n",layers.at(layerIndex).at(i)->function);
 		layers.at(layerIndex).at(i)->compute();
 	}
@@ -116,8 +116,8 @@ void NeuralNetwork::computeLayer()
 
 void NeuralNetwork::computeNetwork()
 {
-	for(int j=0;j<layers.size();j++){
-		for(int i=0;i<layers.at(j).size();i++){
+	for(int j=0;j<(int)layers.size();j++){
+		for(int i=0;i<(int)layers.at(j).size();i++){
 			layers.at(j).at(i)->compute();
 		}
 	}

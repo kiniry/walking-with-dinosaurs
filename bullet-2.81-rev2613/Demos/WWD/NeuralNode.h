@@ -1,6 +1,9 @@
 #pragma once
 #include <stdio.h>
 #include <math.h>
+#include <limits>
+
+
 
 //Definition of functions
 #define SENSOR -1

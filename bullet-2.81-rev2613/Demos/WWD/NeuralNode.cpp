@@ -183,8 +183,8 @@ inline float NeuralNode::signOf(){
 }
 
 inline float NeuralNode::myMin(){
-	if(input2 == NULL){input2=new NeuralNode((float)0xffffffff);}
-	if(input3 == NULL){input3=new NeuralNode((float)0xffffffff);}
+	if(input2 == NULL){input2=new NeuralNode(std::numeric_limits<float>::max());}
+	if(input3 == NULL){input3=new NeuralNode(std::numeric_limits<float>::max());}
 	float temporaryMin = input1->currentOutput*weight1;
 	if(input2->currentOutput*weight2<temporaryMin){temporaryMin=input2->currentOutput*weight2;}
 	if(input3->currentOutput*weight3<temporaryMin){temporaryMin=input3->currentOutput*weight3;}
@@ -192,8 +192,8 @@ inline float NeuralNode::myMin(){
 }
 
 inline float NeuralNode::myMax(){
-	if(input2 == NULL){input2=new NeuralNode((float)-0xffffffff);}
-	if(input3 == NULL){input3=new NeuralNode((float)-0xffffffff);}
+	if(input2 == NULL){input2=new NeuralNode(std::numeric_limits<float>::min());}
+	if(input3 == NULL){input3=new NeuralNode(std::numeric_limits<float>::min());}
 	float temporaryMax = input1->currentOutput*weight1;
 	if(input2->currentOutput*weight2>temporaryMax){temporaryMax=input2->currentOutput*weight2;}
 	if(input3->currentOutput*weight3>temporaryMax){temporaryMax=input3->currentOutput*weight3;}

@@ -217,19 +217,25 @@
     <ResourceCompile Include="..\bullet.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Demos\WWD\assert2.h" />
     <ClInclude Include="..\..\Demos\WWD\Evolution.h" />
     <ClInclude Include="..\..\Demos\WWD\Grammar.h" />
     <ClInclude Include="..\..\Demos\WWD\NeuralNetwork.h" />
     <ClInclude Include="..\..\Demos\WWD\NeuralNode.h" />
+    <ClInclude Include="..\..\Demos\WWD\NNodeTest.h" />
     <ClInclude Include="..\..\Demos\WWD\Physics.h" />
+    <ClInclude Include="..\..\Demos\WWD\test.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Demos\WWD\assert2.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Evolution.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Grammar.cpp" />
     <ClCompile Include="..\..\Demos\WWD\main.cpp" />
     <ClCompile Include="..\..\Demos\WWD\NeuralNetwork.cpp" />
     <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\NNodeTest.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Physics.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
