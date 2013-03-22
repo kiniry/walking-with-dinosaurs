@@ -2,5 +2,6 @@
 
 void test(){
 
+	NNode::all();
 
 }

@@ -1,6 +1,6 @@
 #include <assert.h>
 
 
-void assert2(int val1, int val2);
+#define assertFloat(val1,val2,margin) assert((val1-val2)>=(-margin) && (val1-val2)<=margin);
 
-void assert2(float val1, float val2, float margin);
+#define assertInt(val1, val2) assert(val1==val2);

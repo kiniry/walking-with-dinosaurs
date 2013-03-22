@@ -62,9 +62,6 @@
     <ClCompile Include="..\..\Demos\WWD\NNodeTest.cpp">
       <Filter>Test</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Demos\WWD\assert2.cpp">
-      <Filter>Test</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Demos\WWD\test.cpp">
       <Filter>Test</Filter>
     </ClCompile>

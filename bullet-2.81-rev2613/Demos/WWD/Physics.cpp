@@ -60,11 +60,11 @@ void Physics::clientMoveAndDisplay()
 
 	///step the simulation
 	//fixed step
-	m_dynamicsWorld->stepSimulation(1/100.f);
+	//m_dynamicsWorld->stepSimulation(1/100.f);
 
 
 	//dynamic step
-	//m_dynamicsWorld->stepSimulation(ms / 1000000.f);
+	m_dynamicsWorld->stepSimulation(ms / 1000000.f);
 	//optional but useful: debug drawing
 	m_dynamicsWorld->debugDrawWorld();
 	
@@ -222,7 +222,7 @@ void	Physics::initPhysics()
 //creates a box with side lengths x,y,z
 int Physics::createBox(int x, int y, int z)
 {
-	btBoxShape* boxShape = new btBoxShape(btVector3(2*x,2*y,2*z));
+	btBoxShape* boxShape = new btBoxShape(btVector3(x/2,y/2,z/2));
 	m_collisionShapes.push_back(boxShape);
 
 	btTransform startTransform;

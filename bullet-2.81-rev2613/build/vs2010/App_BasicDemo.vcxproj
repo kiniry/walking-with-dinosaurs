@@ -228,7 +228,6 @@
     <ClInclude Include="..\..\Demos\WWD\test.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Demos\WWD\assert2.cpp" />
     <ClCompile Include="..\..\Demos\WWD\DinoTreeNode.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Evolution.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Grammar.cpp" />
