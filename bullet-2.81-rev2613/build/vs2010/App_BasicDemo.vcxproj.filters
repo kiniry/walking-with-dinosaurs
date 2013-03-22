@@ -36,6 +36,9 @@
     <ClInclude Include="..\..\Demos\WWD\test.h">
       <Filter>Test</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\DinoTreeNode.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp">
@@ -64,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Demos\WWD\test.cpp">
       <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\WWD\DinoTreeNode.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -218,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Demos\WWD\assert2.h" />
+    <ClInclude Include="..\..\Demos\WWD\DinoTreeNode.h" />
     <ClInclude Include="..\..\Demos\WWD\Evolution.h" />
     <ClInclude Include="..\..\Demos\WWD\Grammar.h" />
     <ClInclude Include="..\..\Demos\WWD\NeuralNetwork.h" />
@@ -228,6 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\WWD\assert2.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\DinoTreeNode.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Evolution.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Grammar.cpp" />
     <ClCompile Include="..\..\Demos\WWD\main.cpp" />

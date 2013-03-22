@@ -12,6 +12,7 @@
 
 #include "LinearMath/btAlignedObjectArray.h"
 #include "NeuralNetwork.h"
+#include "DinoTreeNode.h"
 #include <math.h>
 #include <vector>
 
@@ -56,6 +57,8 @@ class Physics : public PlatformDemoApplication
 	NeuralNetwork* theNet;
 
 	std::vector<NeuralNetwork*> subnets;
+
+	DinoTreeNode* DinoStructure;
 
 	Physics(){
 		initPhysics();
