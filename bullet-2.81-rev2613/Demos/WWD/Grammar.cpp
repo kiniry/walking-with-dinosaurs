@@ -3,7 +3,7 @@
 /**
 *Here be Dinos!!!
 */
-int readDNA(const int* DNA, Physics *world){
+int readDNA(const std::vector<int> DNA, Physics *world){
 
 	int index = 0;
 	int blocks = 0;
@@ -300,3 +300,4 @@ int II(int index){
 		return index+1+1;
 	}
 }*/
+

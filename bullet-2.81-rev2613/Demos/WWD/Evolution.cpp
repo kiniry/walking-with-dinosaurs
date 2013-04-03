@@ -1,6 +1,6 @@
 #include "Evolution.h"
 
-int* evolv(int* dna, int size){
+std::vector<int> evolv(const std::vector<int> dna, int size){
 
 	int random = rand()%100+1;
 
@@ -10,15 +10,15 @@ int* evolv(int* dna, int size){
 
 	if(random<=mut){
 
-		return mutate(dna, size);
+		return mutate(dna);
 
 	}else if(random<=mut+cross1){
 
-		return crossOver1(dna, size);
+		return crossOver1(dna);
 
 	}else{
 
-		return crossOver2(dna, size);
+		return crossOver2(dna);
 	}
 
 }
@@ -26,20 +26,30 @@ int* evolv(int* dna, int size){
 
 
 
-int* mutate(int* dna, int size){
+std::vector<int> mutate(const std::vector<int> dna){
 	
+	std::vector<int> newCreature = dna;
+	for (int i = 0; i<dna.size(); i++){
+		int random = rand()%dna.size();
+		if(random==0){
+
+			newCreature.at(i)=rand()%maxDNAValue;
+		}
+
+
+	}
 	
 
+
+	return newCreature;
+}
+
+std::vector<int> crossOver1(std::vector<int> dna){
 
 	return dna;
 }
 
-int* crossOver1(int* dna, int size){
-
-	return dna;
-}
-
-int* crossOver2(int* dna, int size){
+std::vector<int> crossOver2(std::vector<int> dna){
 
 
 	return dna;

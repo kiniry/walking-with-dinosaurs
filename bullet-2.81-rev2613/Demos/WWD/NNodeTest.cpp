@@ -11,6 +11,8 @@ void construct1(){
 	node->compute();
 
 	assertFloat(node->getOutput(), val, 0.00001);
+
+	delete node;
 }
 
 
@@ -35,8 +37,16 @@ void construct2(){
 
 	assertFloat(node->getOutput(), *val, 0.00001);
 
+	delete  node;
+
 }
 
+
+void functionsAndWeights(){
+
+	
+
+}
  void all(){
 
 	 construct1();

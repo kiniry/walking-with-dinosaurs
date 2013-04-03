@@ -9,5 +9,8 @@ namespace NNode
 void construct1();
 
 void construct2();
+
+void functionsAndWeights();
+
 void all();
 }
