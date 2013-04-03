@@ -33,7 +33,7 @@ void Physics::runSimulation(){
 	}
 
 	//TODO: insert fitness test here
-	
+
 	for(int i=0;i< (int) effectorNNindex.size();i=i+3){
 		setEffect(i/3,
 			subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
@@ -138,7 +138,11 @@ void Physics::clientMoveAndDisplay()
 	
 
 	//TODO: insert fitness test here
-	
+	btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
+	//printf("placement x:%f y:%f z: %f \n",origin.x(),origin.y(),origin.z());
+	float movementFittness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));
+	printf("fittness: %f \n",movementFittness);
+
 	for(int i=0;i< (int) effectorNNindex.size();i=i+3){
 		setEffect(i/3,
 			subnets.at(i/3)->getOutput(effectorNNindex.at(i)),

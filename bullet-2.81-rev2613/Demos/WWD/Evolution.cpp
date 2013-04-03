@@ -14,11 +14,11 @@ std::vector<int> evolv(const std::vector<int> dna, int size){
 
 	}else if(random<=mut+cross1){
 
-		return crossOver1(dna);
+		return crossOver1(dna,dna);
 
 	}else{
 
-		return crossOver2(dna);
+		return crossOver2(dna,dna);
 	}
 
 }
