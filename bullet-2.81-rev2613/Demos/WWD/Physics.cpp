@@ -70,7 +70,7 @@ void Physics::clientMoveAndDisplay()
 	
 	//reset sensors
 	for(int i=0; i < (int) sensors.size();i++){
-		sensors.at(i)=99;
+		sensors.at(i)=0;
 
 	}
 
@@ -222,7 +222,7 @@ void	Physics::initPhysics()
 //creates a box with side lengths x,y,z
 int Physics::createBox(int x, int y, int z)
 {
-	btBoxShape* boxShape = new btBoxShape(btVector3(x/2,y/2,z/2));
+	btBoxShape* boxShape = new btBoxShape(btVector3(x/2.f,y/2.f,z/2.f));
 	m_collisionShapes.push_back(boxShape);
 
 	btTransform startTransform;
