@@ -47,21 +47,36 @@ int main(int argc,char** argv)
 	
 	for(int i =0; i<populationSize; i++){
 		//init world
-		Physics* WWDPhysics = new Physics();
+		Physics* WWDPhysics = new Physics(ancestor);
 	
 		//init creature
 		//mutate(ancestor);
-		readDNA(ancestor,WWDPhysics);
+		readDNA(WWDPhysics->getAncestor(),WWDPhysics);
 		
 		creatures.push_back(WWDPhysics);
 	
 	}
 
+	int nrOfGenerations=5; //temp var... todo:replace
 
-		//start simulations
-		//creatures.at(0)->testPhysics();
-		//default glut doesn't return from mainloop
-		return glutmain(argc, argv,1024,600,"Walking with dinosaurs",creatures.at(0));
+	for(int i=0;i<nrOfGenerations;i++){
+		//start simulations - Todo: run for all creatures in population
+		for(int j=0;j<creatures.size();j++){
+			creatures.at(j)->runSimulation(); //this should run a physics simulation and save the fitness values
+		}
+		//Todo: mutate/breed population to a new population
+		std::vector<Physics*> creaturesBuffer;
+		for(int j=0;j<creatures.size();j++){
+			//todo mutate creatures[j]
+			creaturesBuffer.push_back(creatures.at(j));
+		}
+		printf("round %d \n",i);
+		creatures=creaturesBuffer;
+	}
+
+	//Show end result if we want to...
+	//default glut doesn't return from mainloop
+	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",creatures.at(0));
 
 	
 	

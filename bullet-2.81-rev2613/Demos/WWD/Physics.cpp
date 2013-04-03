@@ -24,6 +24,103 @@
 
 static GLDebugDrawer gDebugDraw;
 
+void Physics::runSimulation(){
+	while(timeUsed<10000){ //10 s = 10000 ms
+	
+	theNet->computeNetwork();
+	for(int i=0;i< (int) subnets.size();i++){
+		subnets.at(i)->computeNetwork();
+	}
+
+	//TODO: insert fitness test here
+	
+	for(int i=0;i< (int) effectorNNindex.size();i=i+3){
+		setEffect(i/3,
+			subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
+			subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
+			subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
+		);
+	}
+
+	m_dynamicsWorld->stepSimulation(1/10000.f); //do a fixed step... 1ms?
+
+
+	for(int i=0; i < (int) sensors.size();i++){
+		sensors.at(i)=0;
+
+	}
+
+
+	//collision detection
+	//one per btPersistentManifold for each collision 
+
+	int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
+
+	for (int i=0;i<numManifolds;i++)
+	{
+			
+		btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+		int box1 = (int)contactManifold->getBody0()->getUserPointer();
+		int box2 = (int)contactManifold->getBody1()->getUserPointer();
+			
+		if(box1 >= 0){
+			sensors.at(box1)=1;
+			
+		}
+		if(box2 >= 0){
+			sensors.at(box2)=1;
+	
+		}
+		
+			
+	}
+	
+	
+	//angel sensor
+	for(int i = 0; i < m_dynamicsWorld->getNumConstraints(); i++){
+		btHingeConstraint* constraint;
+		btGeneric6DofConstraint* constraint1;
+		float x,y,z; 
+
+		//pointer == -1 if its not a sensor
+		if(((int)(m_dynamicsWorld->getConstraint(i)->getUserConstraintPtr()))>=0)
+		switch((m_dynamicsWorld->getConstraint(i))->getConstraintType()){
+
+			case HINGE_CONSTRAINT_TYPE:
+				constraint = (btHingeConstraint*) m_dynamicsWorld->getConstraint(i);
+				sensors.at((int)(constraint->getUserConstraintPtr()));
+				x = constraint->getHingeAngle();
+				
+				
+				sensors.at((int)constraint1->getUserConstraintPtr())=x;
+				
+				//printf("%f\n",x);
+				//printf("%d\n", (int)constraint1->getUserConstraintPtr());
+				
+				break;
+			case D6_CONSTRAINT_TYPE:
+				constraint1 = (btGeneric6DofConstraint*) m_dynamicsWorld->getConstraint(i);
+				
+				x = constraint1->getRotationalLimitMotor(0)->m_currentPosition;
+				y = constraint1->getRotationalLimitMotor(1)->m_currentPosition;
+				z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
+			
+				//printf("%d\n",constraint1->getUserConstraintPtr());
+				sensors.at(((int)constraint1->getUserConstraintPtr()))=x;
+				sensors.at(((int)constraint1->getUserConstraintPtr())+1)=y;
+				sensors.at(((int)constraint1->getUserConstraintPtr())+2)=z;
+			
+				//printf("%d\n",(int)constraint1->getUserConstraintPtr());
+				//printf("%f %f %f\n", x, y, z);
+				
+				break;
+		}
+	}
+
+	timeUsed++;
+
+	}
+}
 
 void Physics::clientMoveAndDisplay()
 {

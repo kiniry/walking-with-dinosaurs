@@ -31,6 +31,8 @@ class btDefaultCollisionConfiguration;
 ///Physics is good starting point for learning the code base and porting.
 class Physics : public PlatformDemoApplication
 {
+	std::vector<int> ancestor;
+
 	//NN test variables
 	float* testPoint;
 	int inc;
@@ -60,9 +62,19 @@ class Physics : public PlatformDemoApplication
 
 	DinoTreeNode* DinoStructure;
 
+	Physics(std::vector<int> Ancestor){
+		ancestor=Ancestor;
+		initPhysics();
+	}
 	Physics(){
 		initPhysics();
 	}
+	std::vector<int> getAncestor(){
+		return ancestor;
+	}
+
+	void runSimulation();
+
 	virtual ~Physics(){
 		exitPhysics();
 	}
