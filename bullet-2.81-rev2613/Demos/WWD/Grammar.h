@@ -16,6 +16,17 @@
 
 #define toFloat(X) X/100.f
 
+/**
+* checks the of the dna, and returns add 0 if the range is excided by one.
+* 0 == default terminate value
+*/
+inline int getDNA(int x, std::vector<int> dna){ 
+	if(x==dna.size()){
+		dna.push_back(0);
+	}
+		return dna.at(x);
+	
+};
 
 
 int B(int index, const std::vector<int> DNA, Physics *world, int *blocks, int part, std::vector<DinoTreeNode*>* tempNeural,DinoTreeNode* partTree);

@@ -13,7 +13,7 @@ int readDNA(const std::vector<int> DNA, Physics *world){
 	try{	
 		DinoTreeNode* firstPart = new DinoTreeNode(index,false);
 		world->DinoStructure->addChild(firstPart);
-		int part = world->createBox(DNA[index]%maxHeight+1, DNA[index+1]%maxWidth+1, DNA[index+2]%maxDepth+1);
+		int part = world->createBox(getDNA(index,DNA)%maxHeight+1, getDNA(index+1,DNA)%maxWidth+1, getDNA(index+2,DNA)%maxDepth+1);
 		blocks++;
 		index = index+3;
 		firstPart->setEnd(index+1);
@@ -57,7 +57,7 @@ int readDNA(const std::vector<int> DNA, Physics *world){
 	return Gsucces;
 }
 
-int B(int index, const int* DNA, Physics *world, int *blocks, int part, std::vector<DinoTreeNode*>* tempNeural, DinoTreeNode* partTree){
+int B(int index, const std::vector<int> DNA, Physics *world, int *blocks, int part, std::vector<DinoTreeNode*>* tempNeural, DinoTreeNode* partTree){
 	if(*blocks >= maxBlocks){
 		throw Gfail;
 	}
@@ -68,7 +68,7 @@ int B(int index, const int* DNA, Physics *world, int *blocks, int part, std::vec
 	DinoTreeNode* part4;
 	DinoTreeNode* part5;
 
-	switch (DNA[index]%6){
+	switch (getDNA(index,DNA)%6){
 		case 0:
 			index++;
 			break;
@@ -172,25 +172,25 @@ int B(int index, const int* DNA, Physics *world, int *blocks, int part, std::vec
 	return index;
 }
 
-int J(int index, const int* DNA, Physics *world, int *blocks, int part1, std::vector<DinoTreeNode*>* tempNeural,DinoTreeNode* partTree){
-	int part2 = world->createBox(DNA[index+10]%maxHeight+1, DNA[index+11]%maxWidth+1, DNA[index+12]%maxDepth+1);
-	int j_index = world->createJoint(part1, part2, DNA[index]%2, DNA[index+1], DNA[index+2], DNA[index+3]%6, DNA[index+4], DNA[index+5], DNA[index+6]%6, DNA[index+7], DNA[index+8], DNA[index+9]);
+int J(int index, const std::vector<int> DNA, Physics *world, int *blocks, int part1, std::vector<DinoTreeNode*>* tempNeural,DinoTreeNode* partTree){
+	int part2 = world->createBox(getDNA(index+10,DNA)%maxHeight+1, getDNA(index+11,DNA)%maxWidth+1, getDNA(index+12,DNA)%maxDepth+1);
+	int j_index = world->createJoint(part1, part2, getDNA(index,DNA)%2, getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA)%6, getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA)%6, getDNA(index+7,DNA), getDNA(index+8,DNA), getDNA(index+9,DNA));
 	index+=13;
 	tempNeural->push_back(new DinoTreeNode(index,true));
 	index = NN(index,DNA);
 
-	world->effectorNNindex.push_back(DNA[index]);
-	world->effectorNNindex.push_back(DNA[index+1]);
-	world->effectorNNindex.push_back(DNA[index+2]);
+	world->effectorNNindex.push_back(getDNA(index,DNA));
+	world->effectorNNindex.push_back(getDNA(index+1,DNA));
+	world->effectorNNindex.push_back(getDNA(index+2,DNA));
 	index+=3;
 
 	index = B(index, DNA, world, blocks, part2, tempNeural,partTree);
 	return index;
 }
 
-int NN(int index,const int* DNA){
+int NN(int index,const std::vector<int> DNA){
 	
-	switch(DNA[index]%3){
+	switch(getDNA(index,DNA)%3){
 	case 0: //this is the last node.
 		index= NI(index+1,DNA);
 		break;
@@ -206,12 +206,12 @@ int NN(int index,const int* DNA){
 	return index;
 }
 
-int NN(int index, const int* DNA, NeuralNetwork* net,DinoTreeNode* partTree){
+int NN(int index, const std::vector<int> DNA, NeuralNetwork* net,DinoTreeNode* partTree){
 
 	DinoTreeNode* aNode = new DinoTreeNode(index,true);
 	partTree->addChild(aNode);
 
-	switch(DNA[index]%3){
+	switch(getDNA(index,DNA)%3){
 	case 0: //this is the last node.
 		index= NI(index+1, DNA, net);
 		aNode->setEnd(index);
@@ -232,8 +232,8 @@ int NN(int index, const int* DNA, NeuralNetwork* net,DinoTreeNode* partTree){
 
 }
 
-int NI(int index,const int* DNA){
-	switch(DNA[index]%4){
+int NI(int index,const std::vector<int> DNA){
+	switch(getDNA(index,DNA)%4){
 	case 0:
 		index+=2;
 		break;
@@ -250,22 +250,22 @@ int NI(int index,const int* DNA){
 	return index;
 }
 
-int NI(int index, const int* DNA, NeuralNetwork* net){
-	switch(DNA[index]%4){
+int NI(int index, const std::vector<int> DNA, NeuralNetwork* net){
+	switch(getDNA(index,DNA)%4){
 	case 0:
-		net->insertNode(toFloat(DNA[index+1]));
+		net->insertNode(toFloat(getDNA(index+1,DNA)));
 		index+=2;
 		break;
 	case 1:
-		net->insertNode(DNA[index+1],DNA[index+2],toFloat(DNA[index+3]));
+		net->insertNode(getDNA(index+1,DNA),getDNA(index+2,DNA),toFloat(getDNA(index+3,DNA)));
 		index+=4;
 		break;
 	case 2:
-		net->insertNode(DNA[index+1],DNA[index+2],DNA[index+4],toFloat(DNA[index+3]),toFloat(DNA[index+5]));
+		net->insertNode(getDNA(index+1,DNA),getDNA(index+2,DNA),getDNA(index+4,DNA),toFloat(getDNA(index+3,DNA)),toFloat(getDNA(index+5,DNA)));
 		index+=6;
 		break;
 	case 3:
-		net->insertNode(DNA[index+1],DNA[index+2],DNA[index+4],DNA[index+6],toFloat(DNA[index+3]),toFloat(DNA[index+5]),toFloat(DNA[index+7]));
+		net->insertNode(getDNA(index+1,DNA),getDNA(index+2,DNA),getDNA(index+4,DNA),getDNA(index+6,DNA),toFloat(getDNA(index+3,DNA)),toFloat(getDNA(index+5,DNA)),toFloat(getDNA(index+7,DNA)));
 		index+=8;
 		break;
 	}
