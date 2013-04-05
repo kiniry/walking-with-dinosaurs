@@ -1,39 +1,60 @@
 #include "Evolution.h"
-
-std::vector<creature> evolv(const std::vector<creature> creatures){
-
+#include <algorithm>
 
 
+std::vector<creature> evolve(std::vector<creature> creatures){
+
+	std::vector<creature> result;
+
+	std::sort(creatures.begin(), creatures.end(), compareCreatures);
+
+	int survivors = (creatures.size()/100.f)*((float)survivalRatio);
 
 
-
-
-
-	int random = rand()%100+1;
-
-	int mut = 40;
-	int cross1 = 30;
-	int cross2 = 30;
-
-	if(random<=mut){
-
-		return mutate(dna);
-
-	}else if(random<=mut+cross1){
-
-		return crossOver1(dna,dna);
-
-	}else{
-
-		return crossOver2(dna,dna);
+	for(int i =0; i<survivors; i++){
+		result.push_back(creatures.at(i));
 	}
+
+	for(int i =0; i<creatures.size()-survivors;i++){
+
+		creature creat;
+		creat.fitness=0;
+
+		int random = rand()%100+1;
+
+		int mut = 40;
+		int cross1 = 30;
+		int cross2 = 30;
+		std::vector<int> dna = creatures.at(i%survivors).dna;
+		std::vector<int> dna2 = creatures.at(rand()%survivors).dna;
+		
+		if(random<=mut){
+
+			creat.dna=mutate(dna);
+
+		}else if(random<=mut+cross1){
+
+			creat.dna=crossOver1(dna,dna2);
+
+		}else{
+
+			creat.dna= crossOver2(dna,dna2);
+		}
+
+
+		result.push_back(creat);
+
+
+	}
+
+
 
 }
 
 
 
 std::vector<int> mutate(const std::vector<int> dna){
-	
+
 	std::vector<int> newCreature = dna;
 	for (int i = 0; i<dna.size(); i++){
 		int random = rand()%dna.size();
@@ -44,7 +65,7 @@ std::vector<int> mutate(const std::vector<int> dna){
 
 
 	}
-	
+
 
 
 	return newCreature;

@@ -11,7 +11,11 @@
 		float fitness;
 	};
 
-std::vector<creature> evolv(const std::vector<creature> creatures);
+
+static bool compareCreatures(const creature &a, const creature &b){
+    return a.fitness < b.fitness;
+}
+std::vector<creature> evolve(std::vector<creature> creatures);
 
 std::vector<int> mutate(const std::vector<int>  dna);
 
@@ -19,7 +23,7 @@ std::vector<int> crossOver1(std::vector<int> dna1, std::vector<int> dna2);
 
 std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2);
 
-int survivalRatio 20;
+const int survivalRatio = 20;
 
 
 

@@ -75,7 +75,7 @@ int main(int argc,char** argv)
 			worlds.at(j)->runSimulation(); //this should run a physics simulation and save the fitness values
 		}
 		//Todo: mutate/breed population to a new population
-		std::vector<Physics*> creaturesBuffer;
+
 		while(worlds.size()>0){
 			//todo get fitness
 			creatures.at(worlds.size()-1).fitness = worlds.at(worlds.size()-1)->getFitness();
@@ -86,7 +86,7 @@ int main(int argc,char** argv)
 		//Todo mutate
 		//creatures=evolve(creatures);
 
-
+		/*
 		for(int j =0; j<populationSize; j++){
 			//init world
 			Physics* WWDPhysics = new Physics(creatures.at(j).dna);
@@ -97,7 +97,7 @@ int main(int argc,char** argv)
 			worlds.push_back(WWDPhysics);
 	
 		}
-		
+		*/
 		printf("round %d \n",i);
 	}
 
@@ -105,7 +105,7 @@ int main(int argc,char** argv)
 
 	//Show end result if we want to...
 	//default glut doesn't return from mainloop
-	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",worlds.at(0));
+	//return glutmain(argc, argv,1024,600,"Walking with dinosaurs",worlds.at(0));
 
 	
 	
