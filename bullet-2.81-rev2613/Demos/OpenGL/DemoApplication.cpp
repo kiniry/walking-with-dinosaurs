@@ -460,9 +460,9 @@ void DemoApplication::keyboardCallback(unsigned char key, int x, int y)
 		}
 	case 's' : clientMoveAndDisplay(); break;
 		//    case ' ' : newRandom(); break;
-	case ' ':
-		clientResetScene();
-		break;
+	//case ' ':
+	//	clientResetScene();
+	//	break;
 	case '1':
 		{
 			if (m_debugMode & btIDebugDraw::DBG_EnableCCD)
