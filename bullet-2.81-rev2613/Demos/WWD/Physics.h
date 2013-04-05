@@ -31,11 +31,12 @@ class btDefaultCollisionConfiguration;
 ///Physics is good starting point for learning the code base and porting.
 class Physics : public PlatformDemoApplication
 {
+
+	int inc;
+	float* testPoint;
 	std::vector<int> ancestor;
 
-	//NN test variables
-	float* testPoint;
-	int inc;
+	float fitness;
 	
 	int currentBoxIndex,currentJointIndex;
 	unsigned long timeUsed;
@@ -55,6 +56,12 @@ class Physics : public PlatformDemoApplication
 	void	exitPhysics();
 
 	public:
+
+	float getFitness(){
+		return fitness;
+	}
+
+	void calcFitness();
 
 	NeuralNetwork* theNet;
 

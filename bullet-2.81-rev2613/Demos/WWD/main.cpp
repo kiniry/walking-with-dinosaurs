@@ -1,8 +1,10 @@
 
 //#include "Physics.h"
 #include "Grammar.h"
+#include "Evolution.h"
 #include "GlutStuff.h"
 #include "test.h"
+
 	
 int main(int argc,char** argv)
 {
@@ -19,7 +21,10 @@ int main(int argc,char** argv)
 	int populationSize = 1;
 	int nrOfGenerations=5; //temp var... todo:replace
 	
-	std::vector<Physics*> creatures;
+
+
+
+	std::vector<Physics*> worlds;
 	//int ancestor[] = {3,2,1,1,0,0,0,5,0,0,4,45,0,0,3,2,1,0};
 	 
 	const int temp[] = {
@@ -47,15 +52,18 @@ int main(int argc,char** argv)
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
 	
+	std::vector<creature> creatures;
+	creatures.push_back(creature());
+	creatures.at(0).dna=ancestor;
+
 	for(int i =0; i<populationSize; i++){
 		//init world
-		Physics* WWDPhysics = new Physics(ancestor);
+		Physics* WWDPhysics = new Physics(creatures.at(i).dna);
 	
 		//init creature
-		//mutate(ancestor);
-		readDNA(WWDPhysics->getAncestor(),WWDPhysics);
+		readDNA(creatures.at(i).dna,WWDPhysics);
 		
-		creatures.push_back(WWDPhysics);
+		worlds.push_back(WWDPhysics);
 	
 	}
 
@@ -63,25 +71,41 @@ int main(int argc,char** argv)
 
 	for(int i=0;i<nrOfGenerations;i++){
 		//start simulations - Todo: run for all creatures in population
-		for(int j=0;j<creatures.size();j++){
-			creatures.at(j)->runSimulation(); //this should run a physics simulation and save the fitness values
+		for(int j=0;j< (int) worlds.size();j++){
+			worlds.at(j)->runSimulation(); //this should run a physics simulation and save the fitness values
 		}
 		//Todo: mutate/breed population to a new population
 		std::vector<Physics*> creaturesBuffer;
-		while(creatures.size()>0){
+		while(worlds.size()>0){
 			//todo get fitness
-			creatures.at(creatures.size()-1).getFitness();
-			creatures.pop_back();
+			creatures.at(worlds.size()-1).fitness = worlds.at(worlds.size()-1)->getFitness();
+			delete worlds.at(worlds.size()-1);
+			worlds.pop_back();
 		}
 
-		//todo mutate
+		//Todo mutate
+		//creatures=evolve(creatures);
 
+
+		for(int j =0; j<populationSize; j++){
+			//init world
+			Physics* WWDPhysics = new Physics(creatures.at(j).dna);
+	
+			//init creature
+			readDNA(creatures.at(j).dna,WWDPhysics);
+		
+			worlds.push_back(WWDPhysics);
+	
+		}
+		
 		printf("round %d \n",i);
 	}
 
+
+
 	//Show end result if we want to...
 	//default glut doesn't return from mainloop
-	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",creatures.at(0));
+	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",worlds.at(0));
 
 	
 	

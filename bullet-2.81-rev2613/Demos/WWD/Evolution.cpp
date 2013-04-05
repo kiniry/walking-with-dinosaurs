@@ -1,6 +1,13 @@
 #include "Evolution.h"
 
-std::vector<int> evolv(const std::vector<int> dna, int size){
+std::vector<creature> evolv(const std::vector<creature> creatures){
+
+
+
+
+
+
+
 
 	int random = rand()%100+1;
 
@@ -22,7 +29,6 @@ std::vector<int> evolv(const std::vector<int> dna, int size){
 	}
 
 }
-
 
 
 
