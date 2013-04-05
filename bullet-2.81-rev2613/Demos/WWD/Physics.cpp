@@ -627,6 +627,13 @@ void	Physics::exitPhysics()
 
 	//cleanup in the reverse order of creation/initialization
 
+	//delete NNs
+	delete theNet;
+	while(subnets.size()>0){
+		delete subnets.at(subnets.size()-1);
+		subnets.pop_back();
+	}
+
 	//delete contraints
 	//for (int j=0;j<m_dynamicsWorld->getNumConstraints();j++)
 	while(m_dynamicsWorld->getNumConstraints()>0)

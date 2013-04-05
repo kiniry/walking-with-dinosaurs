@@ -16,6 +16,14 @@ NeuralNetwork::NeuralNetwork(std::vector<NeuralNode*> inputs)
 
 NeuralNetwork::~NeuralNetwork(void)
 {
+	while(layers.size()>0){
+		std::vector<NeuralNode*> L = layers.at(layers.size()-1);
+		while(L.size()>0){
+			delete L.at(layers.size()-1);
+			L.pop_back();
+		}
+		layers.pop_back();
+	}
 }
 
 void NeuralNetwork::insertNode(float value)
@@ -96,9 +104,9 @@ void NeuralNetwork::stopBuilding()
 	lastLayerIndex=layerIndex;
 	init=false;
 	//lastLayer=currentLayer;
-	printf("LLI %d \n",lastLayerIndex);
+	//printf("LLI %d \n",lastLayerIndex);
 	changeLayer();
-	printf("LI %d \n",layerIndex);
+	//printf("LI %d \n",layerIndex);
 }
 
 void NeuralNetwork::computeLayer()
