@@ -84,9 +84,9 @@ int main(int argc,char** argv)
 		}
 
 		//Todo mutate
-		//creatures=evolve(creatures);
+		creatures=evolve(creatures);
 
-		/*
+		
 		for(int j =0; j<populationSize; j++){
 			//init world
 			Physics* WWDPhysics = new Physics(creatures.at(j).dna);
@@ -97,7 +97,7 @@ int main(int argc,char** argv)
 			worlds.push_back(WWDPhysics);
 	
 		}
-		*/
+		
 		printf("round %d \n",i);
 	}
 
@@ -105,7 +105,7 @@ int main(int argc,char** argv)
 
 	//Show end result if we want to...
 	//default glut doesn't return from mainloop
-	//return glutmain(argc, argv,1024,600,"Walking with dinosaurs",worlds.at(0));
+	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",worlds.at(0));
 
 	
 	
