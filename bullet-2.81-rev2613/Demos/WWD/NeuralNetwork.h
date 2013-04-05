@@ -33,7 +33,7 @@ public:
 	void stopBuilding();
 	void computeLayer();
 	void computeNetwork();
-
+	void killFirstLayer();
 
 	float getOutput(int index);
 };

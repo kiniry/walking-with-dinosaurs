@@ -48,7 +48,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 	}
 
 
-
+	return result;
 }
 
 

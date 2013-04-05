@@ -16,10 +16,10 @@ NeuralNetwork::NeuralNetwork(std::vector<NeuralNode*> inputs)
 
 NeuralNetwork::~NeuralNetwork(void)
 {
-	while(layers.size()>0){
+	while(layers.size()>1){
 		std::vector<NeuralNode*> L = layers.at(layers.size()-1);
 		while(L.size()>0){
-			delete L.at(layers.size()-1);
+			delete L.at(L.size()-1);
 			L.pop_back();
 		}
 		layers.pop_back();
@@ -147,4 +147,12 @@ float NeuralNetwork::getOutput(int index){
 	if(outputUndefined){return 0;}
 	
 	return layers.at(lastLayerIndex).at(index%layers.at(lastLayerIndex).size())->getOutput();
+}
+
+void NeuralNetwork::killFirstLayer(){
+	std::vector<NeuralNode*> L = layers.at(0);
+		while(L.size()>0){
+			delete L.at(L.size()-1);
+			L.pop_back();
+		}
 }
