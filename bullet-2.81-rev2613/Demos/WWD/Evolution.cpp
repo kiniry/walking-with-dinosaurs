@@ -8,7 +8,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 	std::sort(creatures.begin(), creatures.end(), compareCreatures);
 
-	int survivors = (creatures.size()/100.f)*((float)survivalRatio);
+	int survivors = (int) (creatures.size()/100.f)*((float)survivalRatio);
 	if(survivors == 0 && creatures.size() != 0){
 
 		survivors =1;
@@ -18,7 +18,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		result.push_back(creatures.at(i));
 	}
 
-	for(int i =0; i<creatures.size()-survivors;i++){
+	for(int i =0; i<(int) creatures.size()-survivors;i++){
 
 		creature creat;
 		creat.fitness=0;
@@ -59,7 +59,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 std::vector<int> mutate(const std::vector<int> dna){
 
 	std::vector<int> newCreature = dna;
-	for (int i = 0; i<dna.size(); i++){
+	for (int i = 0; i< (int) dna.size(); i++){
 		int random = rand()%dna.size();
 		if(random==0){
 
@@ -86,7 +86,7 @@ std::vector<int> crossOver1(std::vector<int> dna1, std::vector<int> dna2){
 
 
 	int random2 = rand()%dna2.size();
-	for(int i = random2; i<dna2.size();i++){
+	for(int i = random2; i< (int) dna2.size();i++){
 
 		newCreature.push_back(dna2.at(i));
 
@@ -118,7 +118,7 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 	}
 
 
-	for(int i = random1+length; i<dna1.size();i++){
+	for(int i = random1+length; i< (int) dna1.size();i++){
 
 		newCreature.push_back(dna1.at(i));
 

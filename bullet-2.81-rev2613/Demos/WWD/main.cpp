@@ -1,5 +1,5 @@
 
-//#include "Physics.h"
+#include "Physics.h"
 #include "Grammar.h"
 #include "Evolution.h"
 #include "GlutStuff.h"
@@ -90,7 +90,7 @@ int main(int argc,char** argv)
 
 		//Todo mutate
 		creatures=evolve(creatures);
-		for(int k=0;k<(populationSize/5)-1;k++){
+		for(int k=0;k<(populationSize/5);k++){
 			printf("nr%d : %f \n",k,creatures.at(k).fitness);
 		}
 		

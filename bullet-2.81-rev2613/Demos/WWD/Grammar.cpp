@@ -272,32 +272,5 @@ int NI(int index, const std::vector<int> DNA, NeuralNetwork* net){
 	return index;
 }
 
-/*
-int I(int index){
-	switch(index%3){
-	case 0:
-		index+=II(index+1);
-		break;
-	case 1:
-		index+=II(index+1);
-		index+=II(index);
-		break;
-	case 2:
-		index+=II(index+1);
-		index+=II(index);
-		index+=II(index);
-		break;
-	}
-	return index;
-}
 
-int II(int index){
-	switch(index%2){
-	case 0:
-		return index+1+2;
-		break;
-	case 1:
-		return index+1+1;
-	}
-}*/
 

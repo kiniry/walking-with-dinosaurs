@@ -1,19 +1,26 @@
-#include <cstdlib>
-#include <vector>
+/**
+*	this files handels removing the creatures with lowest fitness score and adding new creatures based on the surving creatures. 
+*	this means the resulting batch of creatures will be a combination of surviors and children of the survivors
+*	
+*	the correctness of the new dna belonging to the children are not check in this file.
+*	
+**/
 
 #ifndef EVOLV_H
 #define EVOLV_H
 
+#include <cstdlib>
+#include <vector>
+
 #define maxDNAValue 2000
 
-	struct creature{
-		std::vector<int> dna;
-		float fitness;
-	};
-
+struct creature{
+	std::vector<int> dna;
+	float fitness;
+};
 
 static bool compareCreatures(const creature &a, const creature &b){
-    return a.fitness > b.fitness;
+	return a.fitness > b.fitness;
 }
 std::vector<creature> evolve(std::vector<creature> creatures);
 

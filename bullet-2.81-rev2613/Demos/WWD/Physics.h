@@ -1,3 +1,11 @@
+/**
+*
+*	Physics engine
+*
+*	also contains parts of visualisation at the monent
+*
+**/
+
 
 #ifndef PHYSICS_H
 #define PHYSICS_H
