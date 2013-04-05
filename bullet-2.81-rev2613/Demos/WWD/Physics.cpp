@@ -42,7 +42,7 @@ void Physics::runSimulation(){
 		);
 	}
 
-	m_dynamicsWorld->stepSimulation(1/10000.f); //do a fixed step... 1ms?
+	m_dynamicsWorld->stepSimulation(1/1000.f); //fixed step... 1ms
 
 
 	for(int i=0; i < (int) sensors.size();i++){

@@ -17,6 +17,8 @@ int main(int argc,char** argv)
 
 
 	int populationSize = 1;
+	int nrOfGenerations=5; //temp var... todo:replace
+	
 	std::vector<Physics*> creatures;
 	//int ancestor[] = {3,2,1,1,0,0,0,5,0,0,4,45,0,0,3,2,1,0};
 	 
@@ -57,7 +59,7 @@ int main(int argc,char** argv)
 	
 	}
 
-	int nrOfGenerations=5; //temp var... todo:replace
+
 
 	for(int i=0;i<nrOfGenerations;i++){
 		//start simulations - Todo: run for all creatures in population
@@ -66,12 +68,15 @@ int main(int argc,char** argv)
 		}
 		//Todo: mutate/breed population to a new population
 		std::vector<Physics*> creaturesBuffer;
-		for(int j=0;j<creatures.size();j++){
-			//todo mutate creatures[j]
-			creaturesBuffer.push_back(creatures.at(j));
+		while(creatures.size()>0){
+			//todo get fitness
+			creatures.at(creatures.size()-1).getFitness();
+			creatures.pop_back();
 		}
+
+		//todo mutate
+
 		printf("round %d \n",i);
-		creatures=creaturesBuffer;
 	}
 
 	//Show end result if we want to...
