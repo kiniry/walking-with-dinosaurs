@@ -56,7 +56,7 @@ int main(int argc,char** argv)
 		creatures.push_back(WWDPhysics);
 	
 	}
-
+	//return of the merge tools!!!
 	int nrOfGenerations=5; //temp var... todo:replace
 
 	for(int i=0;i<nrOfGenerations;i++){
@@ -68,6 +68,7 @@ int main(int argc,char** argv)
 		std::vector<Physics*> creaturesBuffer;
 		for(int j=0;j<creatures.size();j++){
 			//todo mutate creatures[j]
+			//return of the merge tools!!!
 			creaturesBuffer.push_back(creatures.at(j));
 		}
 		printf("round %d \n",i);
