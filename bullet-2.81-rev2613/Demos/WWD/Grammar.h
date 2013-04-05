@@ -21,7 +21,7 @@
 * 0 == default terminate value
 */
 inline int getDNA(int x, std::vector<int> dna){ 
-	if(x==dna.size()){
+	while(x>=dna.size()){
 		dna.push_back(0);
 	}
 		return dna.at(x);

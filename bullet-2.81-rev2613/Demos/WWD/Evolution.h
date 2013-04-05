@@ -13,7 +13,7 @@
 
 
 static bool compareCreatures(const creature &a, const creature &b){
-    return a.fitness < b.fitness;
+    return a.fitness > b.fitness;
 }
 std::vector<creature> evolve(std::vector<creature> creatures);
 

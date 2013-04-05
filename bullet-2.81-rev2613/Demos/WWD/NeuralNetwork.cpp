@@ -3,6 +3,9 @@
 
 NeuralNetwork::NeuralNetwork(std::vector<NeuralNode*> inputs)
 {
+	if(inputs.size()<=0){
+		inputs.push_back(new NeuralNode(0.f)); //if no inputs, use default constant node as input
+	}
 	lastLayerIndex=MAX_LAYERS;
 	//previousLayerOutputs = inputs;
 	//initialInputs=inputs;

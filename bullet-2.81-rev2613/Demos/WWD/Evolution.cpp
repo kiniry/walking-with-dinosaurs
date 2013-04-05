@@ -22,12 +22,12 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 		creature creat;
 		creat.fitness=0;
-
+		
 		int random = rand()%100+1;
 
 		int mut = 40;
 		int cross1 = 30;
-		int cross2 = 30;
+		//int cross2 = 30;
 		std::vector<int> dna = creatures.at(i%survivors).dna;
 		std::vector<int> dna2 = creatures.at(rand()%survivors).dna;
 		
@@ -118,7 +118,7 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 	}
 
 
-	for(int i = random1+length; i<=dna1.size();i++){
+	for(int i = random1+length; i<dna1.size();i++){
 
 		newCreature.push_back(dna1.at(i));
 

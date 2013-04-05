@@ -93,7 +93,7 @@ void Physics::runSimulation(){
 				x = constraint->getHingeAngle();
 				
 				
-				sensors.at((int)constraint1->getUserConstraintPtr())=x;
+				sensors.at((int)constraint->getUserConstraintPtr())=x;
 				
 				//printf("%f\n",x);
 				//printf("%d\n", (int)constraint1->getUserConstraintPtr());
@@ -390,7 +390,13 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							int preX, int preY, int preS,
 							int postX, int postY, int postS,
 							int dofX, int dofY, int dofZ){
-	
+	preX=preX%101;
+	preY=preY%101;
+	preS=preS%6;
+	postX=postX%101;
+	postY=postY%101;
+	postS=postS%6;
+
 	//tjek input in debug mode
 	btAssert(preX>=0 && preX<=100);							
 	btAssert(preY>=0 && preY<=100);

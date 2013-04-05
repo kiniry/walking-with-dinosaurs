@@ -225,7 +225,7 @@ inline float NeuralNode::interpolate(){
 }
 
 inline float NeuralNode::mySin(){
-	printf("in1:%f sin %f \n",input1->currentOutput, sin(input1->currentOutput*weight1));
+	//printf("in1:%f sin %f \n",input1->currentOutput, sin(input1->currentOutput*weight1));
 	return sin(input1->currentOutput*weight1);
 }
 	

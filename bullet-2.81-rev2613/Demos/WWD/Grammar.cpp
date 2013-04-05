@@ -174,7 +174,7 @@ int B(int index, const std::vector<int> DNA, Physics *world, int *blocks, int pa
 
 int J(int index, const std::vector<int> DNA, Physics *world, int *blocks, int part1, std::vector<DinoTreeNode*>* tempNeural,DinoTreeNode* partTree){
 	int part2 = world->createBox(getDNA(index+10,DNA)%maxHeight+1, getDNA(index+11,DNA)%maxWidth+1, getDNA(index+12,DNA)%maxDepth+1);
-	int j_index = world->createJoint(part1, part2, getDNA(index,DNA)%2, getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA)%6, getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA)%6, getDNA(index+7,DNA), getDNA(index+8,DNA), getDNA(index+9,DNA));
+	int j_index = world->createJoint(part1, part2, getDNA(index,DNA)%2, getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA), getDNA(index+9,DNA));
 	index+=13;
 	tempNeural->push_back(new DinoTreeNode(index,true));
 	index = NN(index,DNA);

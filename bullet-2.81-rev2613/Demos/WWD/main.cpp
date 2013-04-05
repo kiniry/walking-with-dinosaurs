@@ -16,10 +16,8 @@ int main(int argc,char** argv)
 		
 
 	#endif
-
-
-	int populationSize = 1;
-	int nrOfGenerations=5; //temp var... todo:replace
+	int populationSize = 100;
+	int nrOfGenerations=10; //temp var... todo:replace
 	
 
 
@@ -53,8 +51,15 @@ int main(int argc,char** argv)
 	std::vector<int> ancestor (temp, temp+size);
 	
 	std::vector<creature> creatures;
-	creatures.push_back(creature());
-	creatures.at(0).dna=ancestor;
+	//creatures.push_back(creature());
+	//creatures.at(0).dna=ancestor;
+
+	//mult. creatures test
+	for(int i=0; i<populationSize;i++){
+		creatures.push_back(creature());
+		creatures.at(i).dna=ancestor;
+	}
+	//\mult. creatures test
 
 	for(int i =0; i<populationSize; i++){
 		//init world
@@ -85,14 +90,16 @@ int main(int argc,char** argv)
 
 		//Todo mutate
 		creatures=evolve(creatures);
-
+		for(int k=0;k<(populationSize/5)-1;k++){
+			printf("nr%d : %f \n",k,creatures.at(k).fitness);
+		}
 		
 		for(int j =0; j<populationSize; j++){
 			//init world
 			Physics* WWDPhysics = new Physics(creatures.at(j).dna);
 	
 			//init creature
-			readDNA(creatures.at(j).dna,WWDPhysics);
+			readDNA(creatures.at(j).dna,WWDPhysics); //problem...
 		
 			worlds.push_back(WWDPhysics);
 	
@@ -105,6 +112,13 @@ int main(int argc,char** argv)
 
 	//Show end result if we want to...
 	//default glut doesn't return from mainloop
+	for(int i=0;i<5;i++){
+		/*for(int j=0;j<creatures.at(i).dna.size();j++){
+			printf("%d ",creatures.at(i).dna.at(j));
+		}*/
+
+	//	printf("%f \n",worlds.at(i)->getFitness());
+	}
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",worlds.at(0));
 
 	
