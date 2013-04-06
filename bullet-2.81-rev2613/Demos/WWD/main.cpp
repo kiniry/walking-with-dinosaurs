@@ -4,10 +4,12 @@
 #include "Evolution.h"
 #include "GlutStuff.h"
 #include "test.h"
-
+#include <ctime>
 	
 int main(int argc,char** argv)
 {
+	//seeds random generator
+	srand(time(0));
 
 	#ifdef  _DEBUG
 		test();
@@ -17,13 +19,10 @@ int main(int argc,char** argv)
 
 	#endif
 	int populationSize = 100;
-	int nrOfGenerations=10; //temp var... todo:replace
-	
-
+	int nrOfGenerations=10;
 
 
 	std::vector<Physics*> worlds;
-	//int ancestor[] = {3,2,1,1,0,0,0,5,0,0,4,45,0,0,3,2,1,0};
 	 
 	const int temp[] = {
 	//Body
@@ -51,8 +50,7 @@ int main(int argc,char** argv)
 	std::vector<int> ancestor (temp, temp+size);
 	
 	std::vector<creature> creatures;
-	//creatures.push_back(creature());
-	//creatures.at(0).dna=ancestor;
+
 
 	//mult. creatures test
 	for(int i=0; i<populationSize;i++){
@@ -76,23 +74,32 @@ int main(int argc,char** argv)
 
 	for(int i=0;i<nrOfGenerations;i++){
 		//start simulations - Todo: run for all creatures in population
-		for(int j=0;j< (int) worlds.size();j++){
-			worlds.at(j)->runSimulation(); //this should run a physics simulation and save the fitness values
-		}
-		//Todo: mutate/breed population to a new population
+		printf("%d\n", worlds.size());
 
-		while(worlds.size()>0){
-			//todo get fitness
-			creatures.at(worlds.size()-1).fitness = worlds.at(worlds.size()-1)->getFitness();
-			delete worlds.at(worlds.size()-1);
+		for(int j=0;j< (int) worlds.size();j++){
+			worlds.at(j)->runSimulation(); //runs a physics simulation and save the fitness values
+		}
+
+		//print all unsorted
+		/*for(int j=0;j< (int) worlds.size();j++){
+			printf("nr %d %f\n",j,worlds.at(j)->getFitness());
+		}*/
+
+		for(int j= worlds.size()-1; j>=0; j--){
+			creatures.at(j).fitness = worlds.at(j)->getFitness();
+			delete worlds.at(j);
 			worlds.pop_back();
 		}
 
-		//Todo mutate
+
+		//mutate
 		creatures=evolve(creatures);
-		for(int k=0;k<(populationSize/5);k++){
-			printf("nr%d : %f \n",k,creatures.at(k).fitness);
+
+		//print survivors sorted
+		for(int j=0;j< (int) (creatures.size()/5.f);j++){
+			printf("nr %d %f\n",j,creatures.at(j).fitness);
 		}
+
 		
 		for(int j =0; j<populationSize; j++){
 			//init world
@@ -110,15 +117,17 @@ int main(int argc,char** argv)
 
 
 
-	//Show end result if we want to...
-	//default glut doesn't return from mainloop
-	for(int i=0;i<5;i++){
-		/*for(int j=0;j<creatures.at(i).dna.size();j++){
+	/*
+	for(int i=0;i<populationSize;i++){
+		for(int j=0;j<creatures.at(i).dna.size();j++){
 			printf("%d ",creatures.at(i).dna.at(j));
-		}*/
+		}
 
-	//	printf("%f \n",worlds.at(i)->getFitness());
+		printf("%f \n",worlds.at(i)->getFitness());
 	}
+	*/
+		//Show end result if we want to...
+	//default glut doesn't return from mainloop
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",worlds.at(0));
 
 	
