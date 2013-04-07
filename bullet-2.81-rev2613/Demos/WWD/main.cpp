@@ -5,7 +5,10 @@
 #include "GlutStuff.h"
 #include "test.h"
 #include <ctime>
-	
+
+const int populationSize = 100;
+const int nrOfGenerations = 10;
+
 int main(int argc,char** argv)
 {
 	//seeds random generator
@@ -18,8 +21,7 @@ int main(int argc,char** argv)
 		
 
 	#endif
-	int populationSize = 100;
-	int nrOfGenerations=10;
+
 
 
 	std::vector<Physics*> worlds;
@@ -52,83 +54,69 @@ int main(int argc,char** argv)
 	std::vector<creature> creatures;
 
 
-	//mult. creatures test
-	for(int i=0; i<populationSize;i++){
+	//Creates one ancestor and the rest is mutation of the ancestor
+	creatures.push_back(creature());
+	creatures.at(0).dna=ancestor;
+	creatures.at(0).fitness=0;
+	for(int i=1; i<populationSize;i++){
 		creatures.push_back(creature());
-		creatures.at(i).dna=ancestor;
+		creatures.at(i).dna=mutate(ancestor);
+		creatures.at(i).fitness=0;
 	}
-	//\mult. creatures test
 
-	for(int i =0; i<populationSize; i++){
-		//init world
-		Physics* WWDPhysics = new Physics(creatures.at(i).dna);
-	
-		//init creature
-		readDNA(creatures.at(i).dna,WWDPhysics);
-		
-		worlds.push_back(WWDPhysics);
-	
-	}
 
 
 
 	for(int i=0;i<nrOfGenerations;i++){
-		//start simulations - Todo: run for all creatures in population
-		printf("%d\n", worlds.size());
 
+
+		//initialise
+		for(int j =0; j<populationSize; j++){
+			//init world
+			Physics* WWDPhysics = new Physics(creatures.at(j).dna);
+	
+			//init creature
+			readDNA(creatures.at(j).dna,WWDPhysics);
+		
+			worlds.push_back(WWDPhysics);
+	
+		}
+		
+		//run simulator
 		for(int j=0;j< (int) worlds.size();j++){
 			worlds.at(j)->runSimulation(); //runs a physics simulation and save the fitness values
 		}
 
-		//print all unsorted
-		/*for(int j=0;j< (int) worlds.size();j++){
-			printf("nr %d %f\n",j,worlds.at(j)->getFitness());
-		}*/
+
 
 		for(int j= worlds.size()-1; j>=0; j--){
 			creatures.at(j).fitness = worlds.at(j)->getFitness();
 			delete worlds.at(j);
 			worlds.pop_back();
 		}
-
-
+		//print all unsorted
+		/*for(int j=0;j< (int) worlds.size();j++){
+			printf("nr %d %f\n",j,worlds.at(j)->getFitness());
+		}*/
+				
 		//mutate
 		creatures=evolve(creatures);
-
 		//print survivors sorted
 		for(int j=0;j< (int) (creatures.size()/5.f);j++){
 			printf("nr %d %f\n",j,creatures.at(j).fitness);
 		}
-
-		
-		for(int j =0; j<populationSize; j++){
-			//init world
-			Physics* WWDPhysics = new Physics(creatures.at(j).dna);
-	
-			//init creature
-			readDNA(creatures.at(j).dna,WWDPhysics); //problem...
-		
-			worlds.push_back(WWDPhysics);
-	
-		}
-		
 		printf("round %d \n",i);
 	}
 
 
 
-	/*
-	for(int i=0;i<populationSize;i++){
-		for(int j=0;j<creatures.at(i).dna.size();j++){
-			printf("%d ",creatures.at(i).dna.at(j));
-		}
 
-		printf("%f \n",worlds.at(i)->getFitness());
-	}
-	*/
-		//Show end result if we want to...
+	//Show end result if we want to...
+	Physics* WWDPhysics = new Physics(creatures.at(0).dna);
+	//init creature
+	readDNA(creatures.at(0).dna,WWDPhysics);
 	//default glut doesn't return from mainloop
-	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",worlds.at(0));
+	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 
 	
 	

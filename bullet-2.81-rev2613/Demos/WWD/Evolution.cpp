@@ -8,7 +8,10 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 	std::sort(creatures.begin(), creatures.end(), compareCreatures);
 
-	int survivors = (int) ((creatures.size()/100.f)*((float)survivalRatio));
+	int survivors = (int) ((creatures.size()/100.f)*((float)survivalRatio)+0.5);
+
+	printf("suvivors %d\n", survivors);
+
 	if(survivors == 0 && creatures.size() != 0){
 
 		survivors =1;

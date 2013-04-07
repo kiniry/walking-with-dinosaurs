@@ -12,7 +12,6 @@
 #define START_POS_X -5
 #define START_POS_Y -5
 #define START_POS_Z -3
-#define KG 1
 
 #include "Physics.h"
 #include "GlutStuff.h"
@@ -298,7 +297,7 @@ int Physics::createBox(int x, int y, int z)
 	btTransform startTransform;
 	startTransform.setIdentity();
 	btRigidBody* box;
-	btScalar mass = btScalar(x*y*z*KG);
+	btScalar mass = btScalar(x*y*z*DensityHuman);
 	if(currentBoxIndex == 1){
 		startTransform.setOrigin(btVector3(0,10,0));
 

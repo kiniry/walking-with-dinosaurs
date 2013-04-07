@@ -24,7 +24,25 @@
 #include <math.h>
 #include <vector>
 
+
+
+//bullet units
+/**
+*	Bullet assumes units to be in meters and time in seconds.
+*	Moving objects are assumed to be in the range of 0.05 units, about the size of a pebble, to 10, the size of a truck. 
+*	The simulation steps in fraction of seconds (1/60 sec or 60 hertz), and gravity in meters per square second (9.8 m/s^2).
+*/
+
+//real world units
+//average density of the human body 1062 kg/m3 acording to http://www.dtic.mil/dtic/tr/fulltext/u2/639241.pdf
+#define DensityHuman 1062 
+
+//average strength human cross-sectional area 6.3 kg/cm2 http://link.springer.com/article/10.1007%2FBF00696087
+#define csa 6.3*100.f*100.f
+
 #define PI 3.1415926
+
+
 enum{pressure, angle, light};
 
 enum{HINGE,GENERIC6DOF};
