@@ -23,7 +23,45 @@
 
 static GLDebugDrawer gDebugDraw;
 
+				struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallback
+				{
+					bool m_connected;
+					btScalar m_margin;
+					MyContactResultCallback() :m_connected(false),m_margin(0.05)
+					{
+					}
+					virtual   btScalar   addSingleResult(btManifoldPoint& cp,   const btCollisionObjectWrapper* colObj0Wrap,int partId0,int index0,const btCollisionObjectWrapper* colObj1Wrap,int partId1,int index1)
+					{
+						if (cp.getDistance()<=m_margin)
+							m_connected = true;
+						return 1.f;
+					}
+			   };
+
+
 void Physics::runSimulation(){
+	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
+
+			m_dynamicsWorld->stepSimulation(1/1000.f); 
+
+				MyContactResultCallback result;
+
+	for (int i = 1; i < objects.size()-1; i++){
+		for (int j = i+1; j < objects.size()-1; j++){
+			m_dynamicsWorld->contactPairTest(objects.at(i),objects.at(j),result);
+			if(result.m_connected == true){
+				//fitness = (-1)*(std::numeric_limits<float>::max());
+				printf("dohhhh");
+				fitness = -999999;
+				timeUsed = 10000;
+				i=objects.size();
+				break;
+			}
+		}
+
+	}
+
+
 	while(timeUsed<10000){ //10 s = 10000 ms
 
 		theNet->computeNetwork();
@@ -127,7 +165,7 @@ void Physics::clientMoveAndDisplay()
 
 	//fitness test
 	calcFitness();
-
+	/*
 	for(int i=0;i< (int) effectorNNindex.size();i=i+3){
 		setEffect(i/3,
 			subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
@@ -135,7 +173,7 @@ void Physics::clientMoveAndDisplay()
 			subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
 			);
 	}
-
+	*/
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
@@ -419,9 +457,10 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 //setup contraint/joint
 							 btHingeConstraint* hingeC;
 							 btGeneric6DofConstraint* gen6C;
-							 int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
+							int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
+							// int DOFx = dofX %170+10;	int DOFy = dofY%170+10;	int DOFz = dofZ %170+10;
 							 float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
-
+							// printf("%f %f %f\n", DOFxR,DOFyR,DOFzR);
 
 							 switch(type){
 							 case HINGE:
@@ -452,6 +491,10 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 							 int returnVal = currentJointIndex;
 							 currentJointIndex++;
+
+							 //virker måske
+							 Box2->getWorldTransform().setOrigin(Box1->getWorldTransform().getOrigin()+connection1-connection2);
+
 							 return returnVal;
 }
 

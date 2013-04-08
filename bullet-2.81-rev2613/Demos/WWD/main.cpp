@@ -7,7 +7,7 @@
 #include <ctime>
 
 const int populationSize = 100;
-const int nrOfGenerations = 10;
+const int nrOfGenerations = 5;
 
 int main(int argc,char** argv)
 {
@@ -16,11 +16,18 @@ int main(int argc,char** argv)
 
 	#ifdef  _DEBUG
 		test();
-
+		const int temp[] = { 3,847,1,1,1,50,268,5,50,50,4,45,45,45,3,2,1,1,526,10,0,1,100,100,0,2,0,0,0,0,62,2,0,125,1,2,2,0,0,30,1,0,62,2,0,125,1,2,2,0,0,1,1,1};
+		int size = sizeof( temp ) / sizeof ( *temp );
+		std::vector<int> ancestor (temp, temp+size);
+		Physics* WWDPhysics = new Physics(ancestor);
+		//init creature
+		readDNA(ancestor,WWDPhysics);
+		//default glut doesn't return from mainloop
+		return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 	#else
 		
 
-	#endif
+	
 
 
 
@@ -109,7 +116,10 @@ int main(int argc,char** argv)
 	}
 
 
-
+	for (int i = 0; i < creatures.at(0).dna.size(); i++)
+	{
+		printf("%d,", creatures.at(0).dna.at(i));
+	}
 
 	//Show end result if we want to...
 	Physics* WWDPhysics = new Physics(creatures.at(0).dna);
@@ -118,7 +128,7 @@ int main(int argc,char** argv)
 	//default glut doesn't return from mainloop
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 
-	
+	#endif
 	
 }
 
