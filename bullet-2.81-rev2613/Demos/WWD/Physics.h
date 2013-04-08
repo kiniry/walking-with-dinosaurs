@@ -140,7 +140,7 @@ class Physics : public PlatformDemoApplication
 	btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
 	bool isLegal();
 	void testPhysics();
-
+	void CalculateRotation( btQuaternion *q, btMatrix3x3  *a );
 	int setEffect(int jointIndex, int valueX,int valueY,int valueZ);
 };
 

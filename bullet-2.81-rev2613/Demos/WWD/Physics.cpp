@@ -41,7 +41,7 @@ static GLDebugDrawer gDebugDraw;
 bool Physics::isLegal(){
 		btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 
-			//m_dynamicsWorld->stepSimulation(1/1000.f); 
+			m_dynamicsWorld->stepSimulation(1/1000.f); 
 
 				MyContactResultCallback result;
 
@@ -189,7 +189,7 @@ void Physics::clientMoveAndDisplay()
 
 
 	//dynamic step
-	m_dynamicsWorld->stepSimulation(ms / 1000000.f);
+	m_dynamicsWorld->stepSimulation(ms / 100000000.f);
 	//optional but useful: debug drawing
 	m_dynamicsWorld->debugDrawWorld();
 
@@ -443,7 +443,20 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 //box2
 							 btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithMargin();
 							 btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
-							 btQuaternion rotation2 = getLocalRotation(preS, postS)+rotation1;
+							// btQuaternion rotation2 = getLocalRotation(preS, postS)+rotation1;
+							/* 
+							 btMatrix3x3 rot1 = btMatrix3x3(rotation1);
+							
+							 btMatrix3x3 rot2 = btMatrix3x3( getLocalRotation(preS, postS));
+							 
+								rot1=rot1*rot2;	
+								btQuaternion rotation2 = btQuaternion();
+								CalculateRotation(&rotation2, &rot1);
+							
+							*/
+								btQuaternion rotation2 = getLocalRotation(preS, postS);
+								rotation2*=rotation1;
+
 							 btVector3 center2 = center1+rotate(&connection1,&rotation1)-rotate(&connection2,&rotation2);
 
 
@@ -456,6 +469,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 							 //rotate and translate joint
 							 localBox2.setRotation(rotation2);
+							
 							 localBox2.setOrigin(connection2);
 
 
@@ -507,10 +521,46 @@ int Physics::createJoint(	int box1, int box2,	int type,
 //rotates vector3 by a Quaternion
 btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
 	btVector3 result = *vec;
-	btVector3 enheds = btVector3(1,1,1);
+
 	btMatrix3x3 rot = btMatrix3x3(*quant);
 
 	return result*rot;
+}
+
+//ikke vores
+void Physics::CalculateRotation( btQuaternion *q, btMatrix3x3  *m ) {
+	m->getRow(0);
+	m->getRow(1);
+	m->getRow(2);
+	const int a[3][3] = { (int)m->getRow(0).getX(),(int) m->getRow(0).getY(), (int)m->getRow(0).getZ(), (int)m->getRow(1).getX(),(int) m->getRow(1).getY(), (int)m->getRow(1).getZ(),(int) m->getRow(2).getX(), (int)m->getRow(2).getY(), (int)m->getRow(2).getZ() }; 
+  float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
+  if( trace > 0 ) {// I changed M_EPSILON to 0
+    float s = 0.5f / sqrtf(trace+ 1.0f);
+	q->setW(0.25f / s);
+    q->setX(( a[2][1] - a[1][2] ) * s);
+    q->setY( ( a[0][2] - a[2][0] ) * s);
+    q->setZ( ( a[1][0] - a[0][1] ) * s);
+  } else {
+    if ( a[0][0] > a[1][1] && a[0][0] > a[2][2] ) {
+      float s = 2.0f * sqrtf( 1.0f + a[0][0] - a[1][1] - a[2][2]);
+     q->setW((a[2][1] - a[1][2] ) / s);
+      q->setX( 0.25f * s);
+      q->setY(  (a[0][1] + a[1][0] ) / s);
+      q->setZ( (a[0][2] + a[2][0] ) / s);
+    } else if (a[1][1] > a[2][2]) {
+      float s = 2.0f * sqrtf( 1.0f + a[1][1] - a[0][0] - a[2][2]);
+      q->setW( (a[0][2] - a[2][0] ) / s);
+     q->setX((a[0][1] + a[1][0] ) / s);
+      q->setY(  0.25f * s);
+     q->setZ( (a[1][2] + a[2][1] ) / s);
+    } else {
+      float s = 2.0f * sqrtf( 1.0f + a[2][2] - a[0][0] - a[1][1] );
+     q->setW((a[1][0] - a[0][1] ) / s);
+     q->setX((a[0][2] + a[2][0] ) / s);
+     q->setY(  (a[1][2] + a[2][1] ) / s);
+      q->setZ( 0.25f * s);
+    }
+  }
 }
 
 btQuaternion Physics::getLocalRotation(int pre, int post){
@@ -518,22 +568,31 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 	btQuaternion rot;
 	if((pre==0 && post==4) || (pre==1 && post==0) || (pre==4 && post==5) || (pre==5 && post==1)){
 		//04 10 45 51
-		rot=btQuaternion(PI,0 ,0);
+		//rot=btQuaternion(PI,0 ,0);
+		rot=btQuaternion(PI/2.,0 ,0);
 	}else if((pre==4 && post==0) || (pre==0 && post==1) || (pre==5 && post==4) || (pre==1 && post==5)){
 		//01 15 40 54
-		rot=btQuaternion(-PI,0 ,0);
+		//rot=btQuaternion(-PI,0 ,0);
+		rot=btQuaternion(-PI/2.,0 ,0);
 	}else if((pre==0 && post==2) || (pre==2 && post==5) || (pre==3 && post==0) || (pre==5 && post==3)){
 		//02 25 30 53
-		rot=btQuaternion(0,PI,0);
+		//rot=btQuaternion(0,PI,0);
+
+		rot=btQuaternion(0,PI/2.,0);
 	}else if((pre==2 && post==0) || (pre==5 && post==2) || (pre==0 && post==3) || (pre==3 && post==5)){
 		//03 20 35 52
-		rot=btQuaternion(0,-PI,0);
+		//rot=btQuaternion(0,-PI,0);
+
+		rot=btQuaternion(0,-PI/2.,0);
 	}else if((pre==1 && post==3) || (pre==2 && post==1) || (pre==3 && post==4) || (pre==4 && post==2)){
 		//13 21 34 42
-		rot=btQuaternion(0, 0, PI);
+		//rot=btQuaternion(0, 0, PI);
+		rot=btQuaternion(0, 0, PI/2);
 	}else if((pre==3 && post==1) || (pre==1 && post==2) || (pre==4 && post==3) || (pre==2 && post==4)){
 		//12 24 31 43
-		rot=btQuaternion(0, 0, -PI);
+		//rot=btQuaternion(0, 0, -PI);
+
+		rot=btQuaternion(0, 0, -PI/2.);
 	}else if(pre+post==5){
 		//opposite
 		//05 14 23 32 41 50
@@ -542,16 +601,16 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 		//equals
 		if(pre<2){
 			//00 11
-			rot=btQuaternion(2*PI,0,0);
+			rot=btQuaternion(PI,0,0);
 		}else if(pre<4){
 			//22 33
-			rot=btQuaternion(0,2*PI,0);
+			rot=btQuaternion(0,PI,0);
 		}else if(pre==4){
 			//44
-			rot=btQuaternion(0,0,2*PI);
+			rot=btQuaternion(0,0,PI);
 		}else if (pre==5){
 			//55
-			rot=btQuaternion(0,2*PI,0);
+			rot=btQuaternion(0,PI,0);
 		}
 	}
 
@@ -661,15 +720,17 @@ void	Physics::exitPhysics(){
 }
 
 void Physics::testPhysics(){
-	
-	int box = createBox(2,2,2);
 	int box2 = createBox(3,2,1);
+
+
 	int box3 = createBox(2,1,1);
-	createJoint(box, box2, GENERIC6DOF,50, 50, 1, 50, 50, 5, 45,45,0);
-	createJoint(box, box3, GENERIC6DOF,50, 50, 5, 50, 50, 0, 45,45,0);
+	createJoint(box2, box3, GENERIC6DOF,50, 50, 5, 50, 50, 0, 45,45,0);
 	
 	int box4 = createBox(3,2,1);
-	createJoint(box2, box4, GENERIC6DOF,50, 50, 0, 50, 50,2, 45,45,0);
+	createJoint(box3, box4, GENERIC6DOF,50, 50, 5, 50, 50,0, 45,45,0);
+		
+	int box = createBox(2,2,2);
+	createJoint(box4, box, GENERIC6DOF,50, 50, 4, 50, 50, 4, 45,45,0);
 	
 	
 	createSensor(box2, pressure);
