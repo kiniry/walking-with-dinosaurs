@@ -138,6 +138,7 @@ class Physics : public PlatformDemoApplication
 	btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
 	btQuaternion getLocalRotation(int myS, int opS);
 	btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
+	bool isLegal();
 	void testPhysics();
 
 	int setEffect(int jointIndex, int valueX,int valueY,int valueZ);

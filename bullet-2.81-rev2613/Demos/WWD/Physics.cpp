@@ -38,11 +38,10 @@ static GLDebugDrawer gDebugDraw;
 					}
 			   };
 
+bool Physics::isLegal(){
+		btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 
-void Physics::runSimulation(){
-	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
-
-			m_dynamicsWorld->stepSimulation(1/1000.f); 
+			//m_dynamicsWorld->stepSimulation(1/1000.f); 
 
 				MyContactResultCallback result;
 
@@ -52,15 +51,22 @@ void Physics::runSimulation(){
 			if(result.m_connected == true){
 				//fitness = (-1)*(std::numeric_limits<float>::max());
 				printf("dohhhh");
-				fitness = -999999;
-				timeUsed = 10000;
-				i=objects.size();
-				break;
+
+				return false;
 			}
 		}
 
 	}
+	return true;
+}
 
+void Physics::runSimulation(){
+
+	if(!isLegal()){
+				fitness = -999999;
+				timeUsed = 10000;
+
+	}
 
 	while(timeUsed<10000){ //10 s = 10000 ms
 
@@ -422,11 +428,12 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 localBox1.setIdentity();
 							 localBox2.setIdentity();
 
-
+							 
 							 //box1
 							 btVector3 halfside1 = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithMargin();
-							 btVector3 center1 =	Box1->getCenterOfMassPosition();
-							 btQuaternion rotation1 = Box1->getCenterOfMassTransform().getRotation();
+							 btVector3 center1 =Box1->getWorldTransform().getOrigin();
+							 btQuaternion rotation1 =Box1->getWorldTransform().getRotation();
+
 							 btVector3 connection1 = getLocalJointPosition(preX,preY,preS,&halfside1);
 
 							 //translate joint
@@ -445,7 +452,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 trans2.setIdentity();
 							 trans2.setRotation(rotation2.inverse());
 							 trans2.setOrigin(center2);
-							 Box2->setCenterOfMassTransform(trans2);
+							 Box2->setWorldTransform(trans2);
 
 							 //rotate and translate joint
 							 localBox2.setRotation(rotation2);
@@ -492,8 +499,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 int returnVal = currentJointIndex;
 							 currentJointIndex++;
 
-							 //virker måske
-							 Box2->getWorldTransform().setOrigin(Box1->getWorldTransform().getOrigin()+connection1-connection2);
+							 
 
 							 return returnVal;
 }
@@ -569,20 +575,20 @@ btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSiz
 
 
 	switch(s){
-	case 0://bottom (y-)
+	case 0:
 		result = btVector3(h*halfSizes->x(),w*halfSizes->y(),-halfSizes->z());
 		break;
-	case 1://top (y+)
-		result = btVector3(-halfSizes->x(),w*halfSizes->x(),h*halfSizes->y());
+	case 1:
+		result = btVector3(-halfSizes->x(),w*halfSizes->y(),h*halfSizes->z());
 		break;
 	case 2://x+
-		result = btVector3(h*halfSizes->x(),-halfSizes->y(),w*halfSizes->y());
+		result = btVector3(h*halfSizes->x(),-halfSizes->y(),w*halfSizes->z());
 		break;
 	case 3://z+
-		result = btVector3(h*halfSizes->x(),halfSizes->y(),w*halfSizes->y());
+		result = btVector3(h*halfSizes->x(),halfSizes->y(),w*halfSizes->z());
 		break;
 	case 4://x-
-		result = btVector3(halfSizes->x(),w*halfSizes->x(),h*halfSizes->y());
+		result = btVector3(halfSizes->x(),w*halfSizes->y(),h*halfSizes->z());
 		break;
 	case 5://z-
 		result = btVector3(h*halfSizes->x(),w*halfSizes->y(),halfSizes->z());
@@ -652,6 +658,42 @@ void	Physics::exitPhysics(){
 	delete m_collisionConfiguration;
 
 
+}
+
+void Physics::testPhysics(){
+	
+	int box = createBox(2,2,2);
+	int box2 = createBox(3,2,1);
+	int box3 = createBox(2,1,1);
+	createJoint(box, box2, GENERIC6DOF,50, 50, 1, 50, 50, 5, 45,45,0);
+	createJoint(box, box3, GENERIC6DOF,50, 50, 5, 50, 50, 0, 45,45,0);
+	
+	int box4 = createBox(3,2,1);
+	createJoint(box2, box4, GENERIC6DOF,50, 50, 0, 50, 50,2, 45,45,0);
+	
+	
+	createSensor(box2, pressure);
+ 
+	//NN test
+	std::vector<NeuralNode*> inputs;
+	
+	for(int i=0;i< (int) sensors.size();i++){
+		inputs.push_back(new NeuralNode(&sensors.at(i)));
+	}
+
+	inputs.push_back(new NeuralNode(1));
+	inputs.push_back(new NeuralNode(-2));
+	testPoint = new float;
+	*testPoint = 5;
+	inc = 0;
+inputs.push_back(new NeuralNode(testPoint));
+	theNet = new NeuralNetwork(inputs);
+	theNet->insertNode(SUM,7,1,3,1);
+	theNet->insertNode(SIN,0,1);
+	theNet->changeLayer();
+	theNet->insertNode(PRODUCT,0,1,2,1);
+	theNet->stopBuilding();
+	
 }
 
 
