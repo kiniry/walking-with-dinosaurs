@@ -17,9 +17,6 @@
 #define Gsucces 0
 #define Gfail -1
 
-#define maxHeight 10
-#define maxWidth 10
-#define maxDepth 10
 #define maxBlocks 30
 
 #define toFloat(X) X/100.f

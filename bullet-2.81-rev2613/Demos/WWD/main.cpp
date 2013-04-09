@@ -23,11 +23,7 @@ int main(int argc,char** argv)
 		//init creature
 		//readDNA(ancestor,WWDPhysics);
 		WWDPhysics->testPhysics();
-		if(!WWDPhysics->isLegal()){
-			printf("fail!");
-		}else{
-			printf("jubii");
-		}
+
 		//default glut doesn't return from mainloop
 		return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 	#else
