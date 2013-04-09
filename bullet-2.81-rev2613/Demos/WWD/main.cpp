@@ -7,7 +7,7 @@
 #include <ctime>
 
 const int populationSize = 100;
-const int nrOfGenerations = 5;
+const int nrOfGenerations = 15;
 
 int main(int argc,char** argv)
 {
@@ -37,10 +37,10 @@ int main(int argc,char** argv)
 	 
 	const int temp[] = {
 	//Body
-		3,2,1,	//main box: h,w,d
+		295,195,95,	//main box: h,w,d
 		1,		//1 box attached
 		1,/*Joint type*/		50,50,5,/*preXYS*/		50,50,4,/*postXYS*/	45,45,45,/*DofXYZ*/ //Create joint
-		3,2,1,	//attached box: h,w,d
+		295,195,95,	//attached box: h,w,d
 			//NN-Effector0-layer 0
 			1,	2,10,0,1,100,100,	//2-in-node: f=interpolate, in0=0,in1=1,w0=100,w1=100
 			0,	2,0,0,0,0,100,		//2-in-node: f=sum,in0=0,in1=1,w0=0,w1=100 (just sends in1 through unchanged) - No more nodes

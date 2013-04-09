@@ -21,6 +21,10 @@
 #include "GLDebugDrawer.h"
 
 
+
+
+
+
 static GLDebugDrawer gDebugDraw;
 
 				struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallback
@@ -32,22 +36,24 @@ static GLDebugDrawer gDebugDraw;
 					}
 					virtual   btScalar   addSingleResult(btManifoldPoint& cp,   const btCollisionObjectWrapper* colObj0Wrap,int partId0,int index0,const btCollisionObjectWrapper* colObj1Wrap,int partId1,int index1)
 					{
-						if (cp.getDistance()<=m_margin)
+						//if (cp.getDistance()<=m_margin)
 							m_connected = true;
 						return 1.f;
 					}
 			   };
 
+
 bool Physics::isLegal(){
 		btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 
-			m_dynamicsWorld->stepSimulation(1/1000.f); 
 
-				MyContactResultCallback result;
+		MyContactResultCallback result;
+		result.m_connected=false;
 
 	for (int i = 1; i < objects.size()-1; i++){
 		for (int j = i+1; j < objects.size()-1; j++){
 			m_dynamicsWorld->contactPairTest(objects.at(i),objects.at(j),result);
+
 			if(result.m_connected == true){
 				//fitness = (-1)*(std::numeric_limits<float>::max());
 				printf("dohhhh");
@@ -59,6 +65,8 @@ bool Physics::isLegal(){
 	}
 	return true;
 }
+
+
 
 void Physics::runSimulation(){
 
@@ -94,7 +102,6 @@ void Physics::runSimulation(){
 			sensors.at(i)=0;
 
 		}
-
 
 		//collision detection
 		//one per btPersistentManifold for each collision 
@@ -163,24 +170,26 @@ void Physics::runSimulation(){
 void Physics::clientMoveAndDisplay()
 {
 	//NN test
-	theNet->computeNetwork();
-	for(int i=0;i< (int) subnets.size();i++){
-		subnets.at(i)->computeNetwork();
+	if(theNet!=NULL){
+
+		theNet->computeNetwork();
+		for(int i=0;i< (int) subnets.size();i++){
+			subnets.at(i)->computeNetwork();
+		}
+	
+
+		//fitness test
+		calcFitness();
+	
+		for(int i=0;i< (int) effectorNNindex.size();i=i+3){
+			setEffect(i/3,
+				subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
+				subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
+				subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
+				);
+		}
+	
 	}
-
-
-	//fitness test
-	calcFitness();
-	/*
-	for(int i=0;i< (int) effectorNNindex.size();i=i+3){
-		setEffect(i/3,
-			subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
-			subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
-			subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
-			);
-	}
-	*/
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
 	//simple dynamics world doesn't handle fixed-time-stepping
@@ -189,7 +198,7 @@ void Physics::clientMoveAndDisplay()
 
 
 	//dynamic step
-	m_dynamicsWorld->stepSimulation(ms / 100000000.f);
+	m_dynamicsWorld->stepSimulation(ms / 1000000.f);
 	//optional but useful: debug drawing
 	m_dynamicsWorld->debugDrawWorld();
 
@@ -204,9 +213,7 @@ void Physics::clientMoveAndDisplay()
 	//one per btPersistentManifold for each collision 
 	int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
 
-	for (int i=0;i<numManifolds;i++)
-	{
-
+	for (int i=0;i<numManifolds;i++){
 		btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
 		int box1 = (int)contactManifold->getBody0()->getUserPointer();
 		int box2 = (int)contactManifold->getBody1()->getUserPointer();
@@ -217,7 +224,7 @@ void Physics::clientMoveAndDisplay()
 		}
 		if(box2 >= 0){
 			sensors.at(box2)=1;
-
+			
 		}
 
 
@@ -330,6 +337,7 @@ void	Physics::initPhysics()
 
 	currentBoxIndex++;
 
+	theNet=NULL;
 }
 
 //creates a box with side lengths x,y,z
@@ -730,16 +738,15 @@ void	Physics::exitPhysics(){
 }
 
 void Physics::testPhysics(){
-	if(!isLegal()){
-		printf("fail!");
-	}else{
-		printf("jubii");
-	}
+
 
 	int box2 = createBox(95,195,95);
 
 
 	int box3 = createBox(195,95,95);
+
+
+
 	createJoint(box2, box3, GENERIC6DOF,50, 50, 5, 50, 50, 0, 45,45,0);
 	
 	int box4 = createBox(195,195,95);
@@ -748,9 +755,18 @@ void Physics::testPhysics(){
 	int box = createBox(195,195,195);
 	createJoint(box3, box, GENERIC6DOF,50, 50, 4, 50, 50, 4, 45,45,0);
 	
+
+	int box5 = createBox(95,295,95);
+	createJoint(box, box5, GENERIC6DOF,50, 50, 4, 50, 50, 4, 45,45,0);
 	
+	if(!isLegal()){
+		printf("fail!");
+	}else{
+		printf("legal");
+	}
+
 	createSensor(box2, pressure);
- 
+ /*
 	//NN test
 	std::vector<NeuralNode*> inputs;
 	
@@ -770,7 +786,7 @@ inputs.push_back(new NeuralNode(testPoint));
 	theNet->changeLayer();
 	theNet->insertNode(PRODUCT,0,1,2,1);
 	theNet->stopBuilding();
-	
+	*/
 }
 
 
