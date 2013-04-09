@@ -13,7 +13,7 @@ int readDNA(const std::vector<int> DNA, Physics *world){
 	try{	
 		DinoTreeNode* firstPart = new DinoTreeNode(index,false);
 		world->DinoStructure->addChild(firstPart);
-		int part = world->createBox(getDNA(index,DNA)%maxHeight+1, getDNA(index+1,DNA)%maxWidth+1, getDNA(index+2,DNA)%maxDepth+1);
+		int part = world->createBox(getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA));
 		blocks++;
 		index = index+3;
 		firstPart->setEnd(index+1);

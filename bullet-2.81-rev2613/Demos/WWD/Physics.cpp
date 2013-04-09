@@ -333,12 +333,18 @@ void	Physics::initPhysics()
 }
 
 //creates a box with side lengths x,y,z
-int Physics::createBox(int x, int y, int z){
-	
+int Physics::createBox(int x1, int y1, int z1){
+
 	// max 10 & min 0.05
-	x=(x%995+5)/10;
-	y=(y%995+5)/10;
-	z=(z%995+5)/10;
+	float x=(x1%995+5)/100.f;
+	float y=(y1%995+5)/100.f;
+	float z=(z1%995+5)/100.f;
+
+	btAssert(x>=0.05 && x<=10);
+	btAssert(y>=0.05 && y<=10);
+	btAssert(z>=0.05 && z<=10);
+
+
 	btBoxShape* boxShape = new btBoxShape(btVector3(x/2.f,y/2.f,z/2.f));
 	m_collisionShapes.push_back(boxShape);
 
@@ -724,22 +730,22 @@ void	Physics::exitPhysics(){
 }
 
 void Physics::testPhysics(){
-			if(!isLegal()){
-			printf("fail!");
-		}else{
-			printf("jubii");
-		}
+	if(!isLegal()){
+		printf("fail!");
+	}else{
+		printf("jubii");
+	}
 
-	int box2 = createBox(1,2,1);
+	int box2 = createBox(95,195,95);
 
 
-	int box3 = createBox(2,1,1);
+	int box3 = createBox(195,95,95);
 	createJoint(box2, box3, GENERIC6DOF,50, 50, 5, 50, 50, 0, 45,45,0);
 	
-	int box4 = createBox(2,2,1);
+	int box4 = createBox(195,195,95);
 	createJoint(box3, box4, GENERIC6DOF,50, 50, 5, 50, 50,0, 45,45,0);
 		
-	int box = createBox(2,2,2);
+	int box = createBox(195,195,195);
 	createJoint(box3, box, GENERIC6DOF,50, 50, 4, 50, 50, 4, 45,45,0);
 	
 	
