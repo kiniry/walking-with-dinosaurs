@@ -394,15 +394,27 @@ int Physics::createSensor(int boxIndex, int type){
 }
 
 int Physics::setEffect(int jointIndex, int valueX,int valueY,int valueZ){
+	//btBoxShape* hej =(btBoxShape*)((m_dynamicsWorld->getConstraint(jointIndex))->getRigidBodyB().getCollisionShape());
+	int userPointer = m_dynamicsWorld->getConstraint(jointIndex)->getUserConstraintId();
 	switch(m_dynamicsWorld->getConstraint(jointIndex)->getConstraintType()){
 	case HINGE_CONSTRAINT_TYPE:
+		if(valueX>userPointer){
+			valueX = userPointer;
+		}else if(valueX<-userPointer){
+			valueX = -userPointer;
+		}
 		((btHingeConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->enableAngularMotor(true,btScalar(MAXDWORD),btScalar(valueX));
 		return HINGE;
 		break;
 	case D6_CONSTRAINT_TYPE:
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0)->m_maxMotorForce=valueX;
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1)->m_maxMotorForce=valueY;
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(2)->m_maxMotorForce=valueZ;
+		int absolute = abs(valueX)+abs(valueY)+abs(valueZ);
+		float J=1;
+		if(absolute>userPointer){
+			J=userPointer/absolute;
+		}
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0)->m_maxMotorForce=valueX*J;
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1)->m_maxMotorForce=valueY*J;
+		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(2)->m_maxMotorForce=valueZ*J;
 		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0)->m_targetVelocity=MAXDWORD;
 		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1)->m_targetVelocity=MAXDWORD;
 		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(2)->m_targetVelocity=MAXDWORD;
@@ -509,6 +521,8 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 								 sensors.push_back(0);
 								 hingeC->setUserConstraintPtr((void*)(sensors.size()-1));
+								 //hingeC->setUserConstraintId((int)getCrossSection(postS,&halfside2));//TODO: create struct for userpointer and use float instead
+								 
 								 break;
 							 case GENERIC6DOF:
 								 gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
@@ -525,6 +539,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 sensors.push_back(0);	
 
 								 gen6C->setUserConstraintPtr((void*)(sensors.size()-3));
+								 //gen6C->setUserConstraintId((int)getCrossSection(postS,&halfside2));//TODO: create struct for userpointer and use float instead
 								 break;
 							 }
 
@@ -534,6 +549,24 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 
 
 							 return returnVal;
+}
+
+inline float Physics::getCrossSection(int s,btVector3* Halfsize){
+	switch(s){
+	case 0:
+	case 5:
+		return Halfsize->x()*2.f*Halfsize->y()*2.f;
+		break;
+	case 1:
+	case 4:
+		return Halfsize->z()*2.f*Halfsize->y()*2.f;
+		break;
+	case 2:
+	case 3:
+		return Halfsize->x()*2.f*Halfsize->z()*2.f;
+		break;
+	}
+	return 0;
 }
 
 //rotates vector3 by a Quaternion
@@ -740,16 +773,16 @@ void	Physics::exitPhysics(){
 void Physics::testPhysics(){
 
 
-	int box2 = createBox(95,195,95);
+	int box2 = createBox(95,95,95);
 
 
-	int box3 = createBox(195,95,95);
+	int box3 = createBox(195,395,95);
 
 
-
-	createJoint(box2, box3, GENERIC6DOF,50, 50, 5, 50, 50, 0, 45,45,0);
 	
-	int box4 = createBox(195,195,95);
+	createJoint(box2, box3, GENERIC6DOF,50, 50, 5, 50, 50, 3, 45,45,0);
+	
+	/*int box4 = createBox(195,195,95);
 	createJoint(box3, box4, GENERIC6DOF,50, 50, 5, 50, 50,0, 45,45,0);
 		
 	int box = createBox(195,195,195);
