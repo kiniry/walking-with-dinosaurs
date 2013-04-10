@@ -82,10 +82,17 @@ void Physics::solveGroundConflicts(){
 				//fitness = (-1)*(std::numeric_limits<float>::max());
 				printf("ground conflict");
 				btVector3 oldOrigin = objects.at(0)->getWorldTransform().getOrigin();
-				oldOrigin.setY(oldOrigin.y()-20);
+				oldOrigin.setY(oldOrigin.y()-1);
 				objects.at(0)->getWorldTransform().setOrigin(oldOrigin);
 				btDefaultMotionState* myMotionState = (btDefaultMotionState*)(((btRigidBody*)objects.at(0))->getMotionState());
 				myMotionState->setWorldTransform(objects.at(0)->getWorldTransform());
+				
+				btTransform ob0 = objects.at(0)->getWorldTransform();
+
+				btTransform ob1 = objects.at(1)->getWorldTransform();
+
+				btTransform ob2 = objects.at(2)->getWorldTransform();
+
 				conflicts=true;
 				break;
 			}
@@ -205,7 +212,8 @@ void Physics::clientMoveAndDisplay()
 {
 	float ms = getDeltaTimeMicroseconds();
 	timeUsed += ms;
-	simulationLoopStep(ms / 1000000.f);
+	//simulationLoopStep(ms / 1000000.f);
+	simulationLoopStep(ms / 10000000000.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
 	m_dynamicsWorld->debugDrawWorld();
@@ -266,7 +274,7 @@ void	Physics::initPhysics()
 	m_dynamicsWorld->setGravity(btVector3(0,-10,0));
 
 	//create ground body
-	btBoxShape* groundShape = new btBoxShape(btVector3(btScalar(1000.),btScalar(1.),btScalar(1000.)));
+	btBoxShape* groundShape = new btBoxShape(btVector3(btScalar(1000.),btScalar(10.),btScalar(1000.)));
 
 	m_collisionShapes.push_back(groundShape);
 
