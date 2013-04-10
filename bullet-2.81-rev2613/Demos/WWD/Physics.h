@@ -112,6 +112,10 @@ class Physics : public PlatformDemoApplication
 		exitPhysics();
 	}
 
+	struct UserPointerStruct{
+		int sensorIndex;
+		float CrossSectionalStrength;
+	};
 
 	virtual void clientMoveAndDisplay();
 

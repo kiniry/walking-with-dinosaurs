@@ -134,15 +134,15 @@ void Physics::runSimulation(){
 			float x,y,z; 
 
 			//pointer == -1 if its not a sensor
-			if(((int)(m_dynamicsWorld->getConstraint(i)->getUserConstraintPtr()))>=0)
+			if(((UserPointerStruct*)(m_dynamicsWorld->getConstraint(i)->getUserConstraintPtr()))->sensorIndex>=0)
 				switch((m_dynamicsWorld->getConstraint(i))->getConstraintType()){
 
 				case HINGE_CONSTRAINT_TYPE:
 					constraint = (btHingeConstraint*) m_dynamicsWorld->getConstraint(i);
-					sensors.at((int)(constraint->getUserConstraintPtr()));
+					sensors.at( ((UserPointerStruct*)(constraint->getUserConstraintPtr()))->sensorIndex );
 					x = constraint->getHingeAngle();
 
-					sensors.at((int)constraint->getUserConstraintPtr())=x;
+					sensors.at(((UserPointerStruct*)constraint->getUserConstraintPtr())->sensorIndex)=x;
 
 
 					break;
@@ -153,9 +153,9 @@ void Physics::runSimulation(){
 					y = constraint1->getRotationalLimitMotor(1)->m_currentPosition;
 					z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
 
-					sensors.at(((int)constraint1->getUserConstraintPtr()))=x;
-					sensors.at(((int)constraint1->getUserConstraintPtr())+1)=y;
-					sensors.at(((int)constraint1->getUserConstraintPtr())+2)=z;
+					sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex)=x;
+					sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex+1)=y;
+					sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex+2)=z;
 
 
 					break;
@@ -238,16 +238,16 @@ void Physics::clientMoveAndDisplay()
 		float x,y,z; 
 
 		//pointer == -1 if its not a sensor
-		if(((int)(m_dynamicsWorld->getConstraint(i)->getUserConstraintPtr()))>=0)
+		if(((UserPointerStruct*)(m_dynamicsWorld->getConstraint(i)->getUserConstraintPtr()))->sensorIndex>=0)
 			switch((m_dynamicsWorld->getConstraint(i))->getConstraintType()){
 
 			case HINGE_CONSTRAINT_TYPE:
 				constraint = (btHingeConstraint*) m_dynamicsWorld->getConstraint(i);
-				sensors.at((int)(constraint->getUserConstraintPtr()));
+				sensors.at(((UserPointerStruct*)(constraint->getUserConstraintPtr()))->sensorIndex);
 				x = constraint->getHingeAngle();
 
 
-				sensors.at((int)constraint->getUserConstraintPtr())=x;
+				sensors.at(((UserPointerStruct*)constraint->getUserConstraintPtr())->sensorIndex)=x;
 
 				break;
 			case D6_CONSTRAINT_TYPE:
@@ -258,9 +258,9 @@ void Physics::clientMoveAndDisplay()
 				z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
 
 
-				sensors.at(((int)constraint1->getUserConstraintPtr()))=x;
-				sensors.at(((int)constraint1->getUserConstraintPtr())+1)=y;
-				sensors.at(((int)constraint1->getUserConstraintPtr())+2)=z;
+				sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex)=x;
+				sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex+1)=y;
+				sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex+2)=z;
 
 				break;
 		}
@@ -395,7 +395,7 @@ int Physics::createSensor(int boxIndex, int type){
 
 int Physics::setEffect(int jointIndex, int valueX,int valueY,int valueZ){
 	//btBoxShape* hej =(btBoxShape*)((m_dynamicsWorld->getConstraint(jointIndex))->getRigidBodyB().getCollisionShape());
-	int userPointer = m_dynamicsWorld->getConstraint(jointIndex)->getUserConstraintId();
+	int userPointer = ((UserPointerStruct*)(m_dynamicsWorld->getConstraint(jointIndex)->getUserConstraintPtr()))->CrossSectionalStrength;
 	switch(m_dynamicsWorld->getConstraint(jointIndex)->getConstraintType()){
 	case HINGE_CONSTRAINT_TYPE:
 		if(valueX>userPointer){
@@ -512,7 +512,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							// int DOFx = dofX %170+10;	int DOFy = dofY%170+10;	int DOFz = dofZ %170+10;
 							 float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
 							// printf("%f %f %f\n", DOFxR,DOFyR,DOFzR);
-
+							 UserPointerStruct* theStruct = new UserPointerStruct();
 							 switch(type){
 							 case HINGE:
 								 hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
@@ -520,7 +520,10 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 m_dynamicsWorld->addConstraint(hingeC,true);
 
 								 sensors.push_back(0);
-								 hingeC->setUserConstraintPtr((void*)(sensors.size()-1));
+								 theStruct->sensorIndex=sensors.size()-1;
+								 theStruct->CrossSectionalStrength=getCrossSection(postS,&halfside2);
+								 hingeC->setUserConstraintPtr(theStruct);
+								 //hingeC->setUserConstraintPtr((void*)(sensors.size()-1));
 								 //hingeC->setUserConstraintId((int)getCrossSection(postS,&halfside2));//TODO: create struct for userpointer and use float instead
 								 
 								 break;
@@ -538,7 +541,10 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 sensors.push_back(0);
 								 sensors.push_back(0);	
 
-								 gen6C->setUserConstraintPtr((void*)(sensors.size()-3));
+								 theStruct->sensorIndex=sensors.size()-3;
+								 theStruct->CrossSectionalStrength=getCrossSection(postS,&halfside2);
+								 gen6C->setUserConstraintPtr(theStruct);
+								 //gen6C->setUserConstraintPtr((void*)(sensors.size()-3));
 								 //gen6C->setUserConstraintId((int)getCrossSection(postS,&halfside2));//TODO: create struct for userpointer and use float instead
 								 break;
 							 }
