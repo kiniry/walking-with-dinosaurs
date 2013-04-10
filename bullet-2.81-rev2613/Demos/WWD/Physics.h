@@ -146,7 +146,9 @@ class Physics : public PlatformDemoApplication
 	void testPhysics();
 	void CalculateRotation( btQuaternion *q, btMatrix3x3  *a );
 	inline float getCrossSection(int s,btVector3* Halfsize);
-	int setEffect(int jointIndex, int valueX,int valueY,int valueZ);
+	int setEffect(int jointIndex, float valueX,float valueY,float valueZ);
+	void simulationLoopStep(float stepSize);
+	void solveGroundConflicts();
 };
 
 #endif
