@@ -194,6 +194,10 @@ public:
 				
 	float	getCameraDistance();
 	void	setCameraDistance(float dist);	
+	void	getCameraTargetPosition(const btVector3& target){
+		m_cameraTargetPosition= target;
+	}
+
 	void	moveAndDisplay();
 
 	virtual void clientMoveAndDisplay() = 0;
