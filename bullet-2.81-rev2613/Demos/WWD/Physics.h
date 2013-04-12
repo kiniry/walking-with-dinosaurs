@@ -6,9 +6,8 @@
 *
 **/
 
+#pragma once
 
-#ifndef PHYSICS_H
-#define PHYSICS_H
 
 #ifdef _WINDOWS
 #include "Win32DemoApplication.h"
@@ -84,8 +83,13 @@ class btDefaultCollisionConfiguration;
 class Physics : public PlatformDemoApplication{
 	private:
 		std::vector<int> ancestor;
-
 		float fitness;
+		float heighstPoint;
+		float lowestPoint;
+		float height;
+
+
+
 	
 		int currentBoxIndex,currentJointIndex;
 		unsigned long timeUsed;
@@ -119,16 +123,22 @@ class Physics : public PlatformDemoApplication{
 		virtual void displayCallback();
 		virtual void clientResetScene();
 
-		btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
-		btQuaternion getLocalRotation(int myS, int opS);
-		btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
+		
+		
 		bool isLegal();
 
-		void CalculateRotation( btQuaternion *q, btMatrix3x3  *a );
-		inline float getCrossSection(int s,btVector3* Halfsize);
+		
 		int setEffect(int jointIndex, float valueX,float valueY,float valueZ);
 		void simulationLoopStep(float stepSize);
 
+
+		btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
+		btQuaternion getLocalRotation(int myS, int opS);
+		void CalculateRotation( btQuaternion *q, btMatrix3x3  *a );
+		btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
+		inline float getCrossSection(int s,btVector3* Halfsize);
+		float getBoxHalfHeight(btCollisionObject* object);
+		void calcSize();
 
 	public:
 
@@ -181,5 +191,4 @@ class Physics : public PlatformDemoApplication{
 		void solveGroundConflicts();
 };
 
-#endif
 

@@ -556,6 +556,8 @@ void	DemoApplication::shootBox(const btVector3& destination)
 		setShootBoxShape ();
 
 		btRigidBody* body = this->localCreateRigidBody(mass, startTransform,m_shootBoxShape);
+		body->setUserPointer((void*)-1);
+		
 		body->setLinearFactor(btVector3(1,1,1));
 		//body->setRestitution(1);
 

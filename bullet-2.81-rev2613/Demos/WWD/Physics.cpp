@@ -1,5 +1,42 @@
 #include "Physics.h"
 
+
+//only works for boxes rotated 0, 90, 180, 270, 360
+float Physics::getBoxHalfHeight(btCollisionObject* object){
+	btRigidBody* body = (btRigidBody*) object;
+	btBoxShape* box = (btBoxShape*) body->getCollisionShape();;
+	
+	btQuaternion rot = body->getWorldTransform().getRotation();
+	btVector3 sides = box->getHalfExtentsWithMargin();
+	
+	btVector3 retning = btVector3(0,1.,0);
+
+	retning = rotate(&retning, &rot);
+
+	return abs(sides.getX()*retning.getX()+sides.getY()*retning.getY()+sides.getZ()*retning.getZ());
+}
+
+void Physics::calcSize(){
+	btCollisionObjectArray objs = m_dynamicsWorld->getCollisionObjectArray();
+	heighstPoint = 0;
+	lowestPoint = 0;
+	height = 0;
+	for (int i = 1; i < objs.size(); i++){
+		float halfHeight = getBoxHalfHeight(objs.at(i));
+		
+		float y = objs.at(i)->getWorldTransform().getOrigin().getY();
+		
+		if(y-halfHeight > lowestPoint){
+			lowestPoint=y-halfHeight;
+		}else if(y+halfHeight > heighstPoint){
+			lowestPoint=y+halfHeight;
+		}
+	}
+	printf("%f %f\n", lowestPoint, heighstPoint);
+	height= heighstPoint-lowestPoint;
+
+}
+
 bool Physics::isLegal(){
 		btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 
@@ -170,6 +207,9 @@ void Physics::clientMoveAndDisplay()
 	timeUsed += ms;
 	simulationLoopStep(ms / 1000000.f); //normal speed
 	//simulationLoopStep(ms / 100000000.f); //slow-mode
+
+
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
 	m_dynamicsWorld->debugDrawWorld();
@@ -181,8 +221,6 @@ void Physics::clientMoveAndDisplay()
 	swapBuffers();
 
 }
-
-
 
 void Physics::displayCallback(void) {
 
@@ -199,8 +237,7 @@ void Physics::displayCallback(void) {
 }
 
 
-void	Physics::initPhysics()
-{
+void	Physics::initPhysics(){
 	timeUsed=0;
 	currentBoxIndex=0;
 	currentJointIndex=0;
@@ -481,21 +518,18 @@ btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
 
 //ikke vores
 void Physics::CalculateRotation( btQuaternion *q, btMatrix3x3  *m ) {
-	m->getRow(0);
-	m->getRow(1);
-	m->getRow(2);
 	const int a[3][3] = { (int)m->getRow(0).getX(),(int) m->getRow(0).getY(), (int)m->getRow(0).getZ(), (int)m->getRow(1).getX(),(int) m->getRow(1).getY(), (int)m->getRow(1).getZ(),(int) m->getRow(2).getX(), (int)m->getRow(2).getY(), (int)m->getRow(2).getZ() }; 
-  float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
-  if( trace > 0 ) {// I changed M_EPSILON to 0
-    float s = 0.5f / sqrtf(trace+ 1.0f);
-	q->setW(0.25f / s);
-    q->setX(( a[2][1] - a[1][2] ) * s);
-    q->setY( ( a[0][2] - a[2][0] ) * s);
-    q->setZ( ( a[1][0] - a[0][1] ) * s);
-  } else {
-    if ( a[0][0] > a[1][1] && a[0][0] > a[2][2] ) {
-      float s = 2.0f * sqrtf( 1.0f + a[0][0] - a[1][1] - a[2][2]);
-     q->setW((a[2][1] - a[1][2] ) / s);
+	float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
+	if( trace > 0 ) {// I changed M_EPSILON to 0
+		float s = 0.5f / sqrtf(trace+ 1.0f);
+		q->setW(0.25f / s);
+		q->setX(( a[2][1] - a[1][2] ) * s);
+		q->setY( ( a[0][2] - a[2][0] ) * s);
+		q->setZ( ( a[1][0] - a[0][1] ) * s);
+	} else {
+		if ( a[0][0] > a[1][1] && a[0][0] > a[2][2] ) {
+			float s = 2.0f * sqrtf( 1.0f + a[0][0] - a[1][1] - a[2][2]);
+			q->setW((a[2][1] - a[1][2] ) / s);
       q->setX( 0.25f * s);
       q->setY(  (a[0][1] + a[1][0] ) / s);
       q->setZ( (a[0][2] + a[2][0] ) / s);
@@ -641,7 +675,7 @@ void	Physics::exitPhysics(){
 
 	//remove the rigidbodies from the dynamics world and delete them
 	for (int i=m_dynamicsWorld->getNumCollisionObjects()-1; i>=0 ;i--){
-		btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray()[i];
+		btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray().at(i);
 		btRigidBody* body = btRigidBody::upcast(obj);
 		if (body && body->getMotionState())
 		{
@@ -674,15 +708,20 @@ void	Physics::exitPhysics(){
 void Physics::testPhysics(){
 
 
-	int box2 = createBox(95,895,495);
+	int box2 = createBox(994,995,495);
+
+
 
 
 	int box3 = createBox(195,495,95);
 
 
 	
-	createJoint(box2, box3, GENERIC6DOF,50, 50, 2, 50, 50, 3, 45,45,0);
+	createJoint(box2, box3, GENERIC6DOF,50, 50, 2, 50, 50, 5, 45,45,0);
 	
+	calcSize();
+	printf("height %f\n",height);
+
 	/*int box4 = createBox(195,195,95);
 	createJoint(box3, box4, GENERIC6DOF,50, 50, 5, 50, 50,0, 45,45,0);
 		
