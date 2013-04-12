@@ -333,37 +333,58 @@ int Physics::createSensor(int boxIndex, int type){
 }
 
 int Physics::setEffect(int jointIndex, float valueX,float valueY,float valueZ){
-	//btBoxShape* hej =(btBoxShape*)((m_dynamicsWorld->getConstraint(jointIndex))->getRigidBodyB().getCollisionShape());
 	float userPointer = ((UserPointerStruct*)(m_dynamicsWorld->getConstraint(jointIndex)->getUserConstraintPtr()))->CrossSectionalStrength;
+	
+	int theSign;
+	float absX;
+	float absY;
+	float absZ;
+	float absolute;
+	float J;
+
 	switch(m_dynamicsWorld->getConstraint(jointIndex)->getConstraintType()){
 	case HINGE_CONSTRAINT_TYPE:
-		if(valueX>userPointer){
+		theSign = sign(valueX);
+		if(valueX>userPointer || valueX<-userPointer){
 			valueX = userPointer;
-		}else if(valueX<-userPointer){
+		}/*else if(valueX<-userPointer){
 			valueX = -userPointer;
-		}
-		((btHingeConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->enableAngularMotor(true,btScalar(MAXDWORD),btScalar(valueX));
+		}*/
+		((btHingeConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->enableAngularMotor(true,theSign*btScalar(MAXDWORD),btScalar(abs(valueX)));
 		return HINGE;
 		break;
 	case D6_CONSTRAINT_TYPE:
-		float absolute = abs(valueX)+abs(valueY)+abs(valueZ);
-		float J=1;
+		absX = abs(valueX);
+		absY = abs(valueY);
+		absZ = abs(valueZ);
+		absolute = absX+absY+absZ;
+		J=1;
 		if(absolute>userPointer){
 			J=userPointer/absolute;
 		}
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0)->m_maxMotorForce=valueX*J;
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1)->m_maxMotorForce=valueY*J;
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(2)->m_maxMotorForce=valueZ*J;
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0)->m_targetVelocity=MAXDWORD;
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1)->m_targetVelocity=MAXDWORD;
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(2)->m_targetVelocity=MAXDWORD;
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0)->m_enableMotor=true;
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1)->m_enableMotor=true;
-		((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(2)->m_enableMotor=true;
+		btRotationalLimitMotor* m0 = ((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(0);
+		btRotationalLimitMotor* m1 = ((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(1);
+		btRotationalLimitMotor* m2 = ((btGeneric6DofConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->getRotationalLimitMotor(2);
+
+		//beware! m_maxMotorForce actually sets the min and max impulse to -m_maxMotorForce and +m_maxMotorForce respectively
+		//thus this must not be negative. the direction of the force can instead be set using the sign of m_targetVelocity
+		m0->m_maxMotorForce=absX*J;
+		m1->m_maxMotorForce=absY*J;
+		m2->m_maxMotorForce=absZ*J;
+		m0->m_targetVelocity=sign(valueX)*MAXDWORD;
+		m1->m_targetVelocity=sign(valueY)*MAXDWORD;
+		m2->m_targetVelocity=sign(valueZ)*MAXDWORD;
+		m0->m_enableMotor=true;
+		m1->m_enableMotor=true;
+		m2->m_enableMotor=true;
 		return GENERIC6DOF;
 		break;
 	}
 	return -1;
+}
+inline float Physics::sign(float input){
+	if(input<0){return -1;}
+	return 1;
 }
 
 int Physics::createJoint(	int box1, int box2,	int type,

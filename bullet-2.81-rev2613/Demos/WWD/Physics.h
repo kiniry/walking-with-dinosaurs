@@ -137,6 +137,7 @@ class Physics : public PlatformDemoApplication{
 		void CalculateRotation( btQuaternion *q, btMatrix3x3  *a );
 		btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
 		inline float getCrossSection(int s,btVector3* Halfsize);
+		inline float sign(float input);
 		float getBoxHalfHeight(btCollisionObject* object);
 		void calcSize();
 
