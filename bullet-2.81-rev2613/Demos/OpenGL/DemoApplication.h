@@ -197,6 +197,9 @@ public:
 	void	setCameraTargetPosition(const btVector3& target){
 		m_cameraTargetPosition= target;
 	}
+	void	setCameraPosition(const btVector3& pos){
+		m_cameraPosition= pos;
+	}
 
 	void	moveAndDisplay();
 

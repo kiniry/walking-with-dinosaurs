@@ -105,7 +105,10 @@ void Physics::solveGroundConflicts(){
 				break;
 			}
 		}
-		setCameraTargetPosition(objects.at(1)->getWorldTransform().getOrigin());
+		setCameraTargetPosition(objects.at(1)->getWorldTransform().getOrigin()); //drunk compiler
+		btVector3 cam = getCameraPosition();
+		cam.setY(getCameraTargetPosition().y());
+		setCameraPosition(cam);
 	}
 }
 
