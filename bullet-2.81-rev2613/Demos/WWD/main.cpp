@@ -23,7 +23,6 @@ int main(int argc,char** argv)
 		//init creature
 		//readDNA(ancestor,WWDPhysics);
 		WWDPhysics->testPhysics();
-
 		//default glut doesn't return from mainloop
 		WWDPhysics->solveGroundConflicts();
 		return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);

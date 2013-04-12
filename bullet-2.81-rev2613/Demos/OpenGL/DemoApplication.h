@@ -194,7 +194,7 @@ public:
 				
 	float	getCameraDistance();
 	void	setCameraDistance(float dist);	
-	void	getCameraTargetPosition(const btVector3& target){
+	void	setCameraTargetPosition(const btVector3& target){
 		m_cameraTargetPosition= target;
 	}
 

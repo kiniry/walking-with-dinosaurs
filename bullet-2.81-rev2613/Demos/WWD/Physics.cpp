@@ -69,18 +69,26 @@ bool Physics::isLegal(){
 void Physics::solveGroundConflicts(){
 	bool conflicts = true;
 	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
-
 	MyContactResultCallback result;
 		
 	while(conflicts){
 		result.m_connected=false;
 		conflicts=false;
-		for (int j = 1; j < objects.size()-1; j++){
+		
+		for (int j = 1; j < objects.size(); j++){
 			m_dynamicsWorld->contactPairTest(objects.at(0),objects.at(j),result);
 
 			if(result.m_connected == true){
+				
+				//objects.at(2)->getWorldTransform().setOrigin(objects.at(2)->getWorldTransform().getOrigin());
+				//btDefaultMotionState* myMotionState2 = (btDefaultMotionState*)(((btRigidBody*)objects.at(2))->getMotionState());
+				//myMotionState2->setWorldTransform(objects.at(2)->getWorldTransform());
+				
+
 				//fitness = (-1)*(std::numeric_limits<float>::max());
-				printf("ground conflict");
+				//printf("ground conflict\n");
+				//printf("box1 x:%f y:%f z:%f\n",objects.at(1)->getWorldTransform().getOrigin().x(),objects.at(1)->getWorldTransform().getOrigin().y(),objects.at(1)->getWorldTransform().getOrigin().z());
+				//printf("box2 x:%f y:%f z:%f\n",objects.at(2)->getWorldTransform().getOrigin().x(),objects.at(2)->getWorldTransform().getOrigin().y(),objects.at(2)->getWorldTransform().getOrigin().z());
 				btVector3 oldOrigin = objects.at(0)->getWorldTransform().getOrigin();
 				oldOrigin.setY(oldOrigin.y()-1);
 				objects.at(0)->getWorldTransform().setOrigin(oldOrigin);
@@ -97,6 +105,7 @@ void Physics::solveGroundConflicts(){
 				break;
 			}
 		}
+		setCameraTargetPosition(objects.at(1)->getWorldTransform().getOrigin());
 	}
 }
 
@@ -210,10 +219,11 @@ void Physics::runSimulation(){
 
 void Physics::clientMoveAndDisplay()
 {
+	//solveGroundConflicts();
 	float ms = getDeltaTimeMicroseconds();
 	timeUsed += ms;
-	//simulationLoopStep(ms / 1000000.f);
-	simulationLoopStep(ms / 10000000000.f);
+	simulationLoopStep(ms / 1000000.f); //normal speed
+	//simulationLoopStep(ms / 100000000.f); //slow-mode
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
 	m_dynamicsWorld->debugDrawWorld();
@@ -403,6 +413,10 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
 							 btRigidBody* Box2 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box2);
 
+							 //btCollisionObject* Box1 = m_dynamicsWorld->getCollisionObjectArray().at(box1);
+							 //btCollisionObject* Box2 = m_dynamicsWorld->getCollisionObjectArray().at(box2);
+
+
 							 //Define the local transform on the shapes regarding to the joint.
 							 btTransform localBox1, localBox2;
 							 localBox1.setIdentity();
@@ -445,7 +459,14 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 trans2.setIdentity();
 							 trans2.setRotation(rotation2.inverse());
 							 trans2.setOrigin(center2);
-							 Box2->setWorldTransform(trans2);
+							 Box2->setCenterOfMassTransform(trans2);
+							 //btDefaultMotionState* myMotionState = (btDefaultMotionState*)(((btRigidBody*)Box2)->getMotionState());
+							 //myMotionState->setWorldTransform(Box2->getWorldTransform());
+							 //printf("rotate1 x:%f y:%f z:%f\n",rotate(&connection1,&rotation1).x(),rotate(&connection1,&rotation1).y(),rotate(&connection1,&rotation1).z());
+							 //printf("cent2 x:%f y:%f z:%f\n",center2.x(),center2.y(),center2.z());
+							 //printf("trans2 x:%f y:%f z:%f\n",trans2.getOrigin().x(),trans2.getOrigin().y(),trans2.getOrigin().z());
+							 //printf("ibox2 x:%f y:%f z:%f\n",Box2->getWorldTransform().getOrigin().x(),Box2->getWorldTransform().getOrigin().y(),Box2->getWorldTransform().getOrigin().z());
+							 //m_dynamicsWorld->updateAabbs();
 
 							 //rotate and translate joint
 							 localBox2.setRotation(rotation2);
@@ -466,6 +487,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 switch(type){
 							 case HINGE:
 								 hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
+								 //hingeC = new btHingeConstraint(*((btRigidBody*) Box1),*((btRigidBody*)Box2),localBox1,localBox2);
 								 hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
 								 m_dynamicsWorld->addConstraint(hingeC,true);
 
@@ -479,6 +501,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 break;
 							 case GENERIC6DOF:
 								 gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
+								 //gen6C = new btGeneric6DofConstraint(*((btRigidBody*)Box1),*((btRigidBody*)Box2),localBox1,localBox2,true);
 								 gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist) 
 								 gen6C->setLimit(1,0,0);
 								 gen6C->setLimit(2,0,0);
