@@ -23,16 +23,14 @@ void Physics::calcSize(){
 	height = 0;
 	for (int i = 1; i < objs.size(); i++){
 		float halfHeight = getBoxHalfHeight(objs.at(i));
-		
 		float y = objs.at(i)->getWorldTransform().getOrigin().getY();
-		
-		if(y-halfHeight > lowestPoint){
+		if(y-halfHeight < lowestPoint){
 			lowestPoint=y-halfHeight;
-		}else if(y+halfHeight > heighstPoint){
-			lowestPoint=y+halfHeight;
+		}
+		if(y+halfHeight > heighstPoint){
+			heighstPoint=y+halfHeight;
 		}
 	}
-	printf("%f %f\n", lowestPoint, heighstPoint);
 	height= heighstPoint-lowestPoint;
 
 }
