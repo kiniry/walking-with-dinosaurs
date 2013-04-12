@@ -139,7 +139,7 @@ class Physics : public PlatformDemoApplication{
 		inline float getCrossSection(int s,btVector3* Halfsize);
 		inline float sign(float input);
 		float getBoxHalfHeight(btCollisionObject* object);
-		void calcSize();
+	
 
 	public:
 
@@ -188,7 +188,7 @@ class Physics : public PlatformDemoApplication{
 								int dofX, int dofY, int dofZ);
 		
 		void testPhysics();
-		
+		void calcSize();
 		void solveGroundConflicts();
 };
 

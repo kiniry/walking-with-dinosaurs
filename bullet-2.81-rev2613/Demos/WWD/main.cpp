@@ -7,7 +7,7 @@
 #include <ctime>
 
 const int populationSize = 100;
-const int nrOfGenerations = 5;
+const int nrOfGenerations = 30;
 
 int main(int argc,char** argv)
 {
@@ -16,14 +16,16 @@ int main(int argc,char** argv)
 
 	#ifdef  _DEBUG
 		test();
-		const int temp[] = { 3,847,1,1,1,50,268,5,50,50,4,45,45,45,3,2,1,1,526,10,0,1,100,100,0,2,0,0,0,0,62,2,0,125,1,2,2,0,0,30,1,0,62,2,0,125,1,2,2,0,0,1,1,1};
+		const int temp[] = { 851,1137,95,1,1,125,527,1,2,10,0,1,100,100,1840,100,1,0,1,0,1,0,1857,1,0,62,2,1455,125,1,2,2,0,10,0,518,100,100,1840,100,100,1840,381,1,0,0,73,0,30,10,0,1,100,100,1,2,2,0,10,0,1,100,100,1,2,2,0,10,0,518,100,100,1840,100,100,1840,100,1,0,0,73,0};
 		int size = sizeof( temp ) / sizeof ( *temp );
 		std::vector<int> ancestor (temp, temp+size);
 		Physics* WWDPhysics = new Physics(ancestor);
 		//init creature
-		//readDNA(ancestor,WWDPhysics);
-		WWDPhysics->testPhysics();
+		readDNA(ancestor,WWDPhysics);
+		//WWDPhysics->testPhysics();
 		//default glut doesn't return from mainloop
+
+		//WWDPhysics->calcSize();
 		WWDPhysics->solveGroundConflicts();
 		return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 	#else
@@ -128,6 +130,8 @@ int main(int argc,char** argv)
 	//init creature
 	readDNA(creatures.at(0).dna,WWDPhysics);
 	//default glut doesn't return from mainloop
+
+	WWDPhysics->calcSize();
 	WWDPhysics->solveGroundConflicts();
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 

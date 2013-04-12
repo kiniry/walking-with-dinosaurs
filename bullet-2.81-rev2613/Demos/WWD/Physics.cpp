@@ -59,6 +59,18 @@ bool Physics::isLegal(){
 }
 
 void Physics::solveGroundConflicts(){
+	if(height<0.024){
+		calcSize();
+	}
+
+	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
+
+	btVector3 origin = objects.at(0)->getWorldTransform().getOrigin();
+	origin.setY(lowestPoint-((btBoxShape*)objects.at(0)->getCollisionShape())->getHalfExtentsWithMargin().getY()-0.02);
+	objects.at(0)->getWorldTransform().setOrigin(origin);
+	btDefaultMotionState* myMotionState = (btDefaultMotionState*)(((btRigidBody*)objects.at(0))->getMotionState());
+	myMotionState->setWorldTransform(objects.at(0)->getWorldTransform());
+	/*
 	bool conflicts = true;
 	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 	MyContactResultCallback result;
@@ -88,6 +100,7 @@ void Physics::solveGroundConflicts(){
 		cam.setY(getCameraTargetPosition().y());
 		setCameraPosition(cam);
 	}
+	*/
 }
 
 
@@ -183,18 +196,18 @@ void Physics::runSimulation(){
 
 	if(!isLegal()){
 				fitness = -999999;
-				timeUsed = 10000;
 
-	}
+	}else{
+		calcSize();
+		solveGroundConflicts();
 
-	solveGroundConflicts();
-
-	while(timeUsed<10000){ //10 s = 10000 ms
+		while(timeUsed<10000){ //10 s = 10000 ms
 	
-		simulationLoopStep(1/1000.f);
+			simulationLoopStep(1/1000.f);
 
-		timeUsed++;
+			timeUsed++;
 
+		}
 	}
 }
 
@@ -727,12 +740,12 @@ void	Physics::exitPhysics(){
 void Physics::testPhysics(){
 
 
-	int box2 = createBox(994,995,495);
+	int box2 = createBox(994,994,495);
 
 
 
 
-	int box3 = createBox(195,495,95);
+	int box3 = createBox(195,495,595);
 
 
 	
@@ -786,7 +799,7 @@ inputs.push_back(new NeuralNode(testPoint));
 void Physics::calcFitness(){
 
 	btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
-	fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));
+	fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;
 
 }
 
