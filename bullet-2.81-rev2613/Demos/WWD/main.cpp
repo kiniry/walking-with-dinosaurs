@@ -7,7 +7,7 @@
 #include <ctime>
 
 const int populationSize = 100;
-const int nrOfGenerations = 15;
+const int nrOfGenerations = 5;
 
 int main(int argc,char** argv)
 {

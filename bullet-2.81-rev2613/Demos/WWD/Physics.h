@@ -26,6 +26,32 @@
 #include <limits>
 
 
+#include "GlutStuff.h"
+#include "btBulletDynamicsCommon.h"
+
+#include <stdio.h>
+#include "GLDebugDrawer.h"
+
+
+
+static GLDebugDrawer gDebugDraw;
+
+struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallback{
+	bool m_connected;
+	btScalar m_margin;
+	MyContactResultCallback() :m_connected(false),m_margin(0.05)
+	{
+	}
+	virtual   btScalar   addSingleResult(btManifoldPoint& cp,   const btCollisionObjectWrapper* colObj0Wrap,int partId0,int index0,const btCollisionObjectWrapper* colObj1Wrap,int partId1,int index1)
+	{
+		m_connected = true;
+		return 1.f;
+	}
+};
+
+
+
+
 //bullet units
 /**
 *	Bullet assumes units to be in meters and time in seconds.
@@ -54,101 +80,105 @@ class btConstraintSolver;
 struct btCollisionAlgorithmCreateFunc;
 class btDefaultCollisionConfiguration;
 
-///Physics is good starting point for learning the code base and porting.
-class Physics : public PlatformDemoApplication
-{
 
-	int inc;
-	float* testPoint;
-	std::vector<int> ancestor;
+class Physics : public PlatformDemoApplication{
+	private:
+		std::vector<int> ancestor;
 
-	float fitness;
+		float fitness;
 	
-	int currentBoxIndex,currentJointIndex;
-	unsigned long timeUsed;
-	//keep the collision shapes, for deletion/cleanup
-	btAlignedObjectArray<btCollisionShape*>	m_collisionShapes;
+		int currentBoxIndex,currentJointIndex;
+		unsigned long timeUsed;
 
-	btBroadphaseInterface*	m_broadphase;
+		//keep the collision shapes, for deletion/cleanup
+		btAlignedObjectArray<btCollisionShape*>	m_collisionShapes;
 
-	btCollisionDispatcher*	m_dispatcher;
+		btBroadphaseInterface*	m_broadphase;
 
-	btConstraintSolver*	m_solver;
+		btCollisionDispatcher*	m_dispatcher;
 
-	btDefaultCollisionConfiguration* m_collisionConfiguration;
+		btConstraintSolver*	m_solver;
+
+		btDefaultCollisionConfiguration* m_collisionConfiguration;
 	
-	void	initPhysics();
+		void	initPhysics();
 
-	void	exitPhysics();
+		void	exitPhysics();
+
+	
+
+	
+
+		struct UserPointerStruct{
+			int sensorIndex;
+			float CrossSectionalStrength;
+		};
+
+		virtual void clientMoveAndDisplay();
+
+		virtual void displayCallback();
+		virtual void clientResetScene();
+
+		btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
+		btQuaternion getLocalRotation(int myS, int opS);
+		btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
+		bool isLegal();
+
+		void CalculateRotation( btQuaternion *q, btMatrix3x3  *a );
+		inline float getCrossSection(int s,btVector3* Halfsize);
+		int setEffect(int jointIndex, float valueX,float valueY,float valueZ);
+		void simulationLoopStep(float stepSize);
+
 
 	public:
 
-	float getFitness(){
-		return fitness;
-	}
+		NeuralNetwork* theNet;
 
-	void calcFitness();
+		std::vector<NeuralNetwork*> subnets;
+		std::vector<float> sensors;
+		std::vector<int> effectorNNindex;
+		
+		
+		
+		DinoTreeNode* DinoStructure;
+		
+		
+		float getFitness(){
+			return fitness;
+		}
 
-	NeuralNetwork* theNet;
+		void calcFitness();
 
-	std::vector<NeuralNetwork*> subnets;
+		
 
-	DinoTreeNode* DinoStructure;
+		Physics(std::vector<int> Ancestor){
+			ancestor=Ancestor;
+			initPhysics();
+		}
+		Physics(){
+			initPhysics();
+		}
+		std::vector<int> getAncestor(){
+			return ancestor;
+		}
 
-	Physics(std::vector<int> Ancestor){
-		ancestor=Ancestor;
-		initPhysics();
-	}
-	Physics(){
-		initPhysics();
-	}
-	std::vector<int> getAncestor(){
-		return ancestor;
-	}
+		void runSimulation();
 
-	void runSimulation();
+		virtual ~Physics(){
+			exitPhysics();
+		}
 
-	virtual ~Physics(){
-		exitPhysics();
-	}
 
-	struct UserPointerStruct{
-		int sensorIndex;
-		float CrossSectionalStrength;
-	};
-
-	virtual void clientMoveAndDisplay();
-
-	virtual void displayCallback();
-	virtual void clientResetScene();
-
-	std::vector<float> sensors;
-	std::vector<int> effectorNNindex;
-
-	static DemoApplication* Create()
-	{
-		Physics* demo = new Physics;
-		demo->myinit();
-		demo->initPhysics();
-		return demo;
-	}
-
-	int createBox(int x,int y,int z);
-	int createSensor(int box, int type);
-	int createJoint(		int box1, int box2, int type,
-							int preX, int preY, int preS,
-							int postX, int postY, int postS,
-							int dofX, int dofY, int dofZ);
-	btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
-	btQuaternion getLocalRotation(int myS, int opS);
-	btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
-	bool isLegal();
-	void testPhysics();
-	void CalculateRotation( btQuaternion *q, btMatrix3x3  *a );
-	inline float getCrossSection(int s,btVector3* Halfsize);
-	int setEffect(int jointIndex, float valueX,float valueY,float valueZ);
-	void simulationLoopStep(float stepSize);
-	void solveGroundConflicts();
+		int createBox(int x,int y,int z);
+		int createSensor(int box, int type);
+		int createJoint(		int box1, int box2, int type,
+								int preX, int preY, int preS,
+								int postX, int postY, int postS,
+								int dofX, int dofY, int dofZ);
+		
+		void testPhysics();
+		
+		void solveGroundConflicts();
 };
 
 #endif

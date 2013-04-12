@@ -1,47 +1,4 @@
-
-///create 125 (5x5x5) dynamic object
-#define ARRAY_SIZE_X 5
-#define ARRAY_SIZE_Y 5
-#define ARRAY_SIZE_Z 5
-
-//maximum number of objects (and allow user to shoot additional boxes)
-#define MAX_PROXIES (ARRAY_SIZE_X*ARRAY_SIZE_Y*ARRAY_SIZE_Z + 1024)
-
-///scaling of the objects (0.1 = 20 centimeter boxes )
-#define SCALING 1.
-#define START_POS_X -5
-#define START_POS_Y -5
-#define START_POS_Z -3
-
 #include "Physics.h"
-#include "GlutStuff.h"
-#include "btBulletDynamicsCommon.h"
-
-#include <stdio.h>
-#include "GLDebugDrawer.h"
-
-
-
-
-
-
-static GLDebugDrawer gDebugDraw;
-
-				struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallback
-				{
-					bool m_connected;
-					btScalar m_margin;
-					MyContactResultCallback() :m_connected(false),m_margin(0.05)
-					{
-					}
-					virtual   btScalar   addSingleResult(btManifoldPoint& cp,   const btCollisionObjectWrapper* colObj0Wrap,int partId0,int index0,const btCollisionObjectWrapper* colObj1Wrap,int partId1,int index1)
-					{
-						//if (cp.getDistance()<=m_margin)
-							m_connected = true;
-						return 1.f;
-					}
-			   };
-
 
 bool Physics::isLegal(){
 		btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
@@ -80,26 +37,12 @@ void Physics::solveGroundConflicts(){
 
 			if(result.m_connected == true){
 				
-				//objects.at(2)->getWorldTransform().setOrigin(objects.at(2)->getWorldTransform().getOrigin());
-				//btDefaultMotionState* myMotionState2 = (btDefaultMotionState*)(((btRigidBody*)objects.at(2))->getMotionState());
-				//myMotionState2->setWorldTransform(objects.at(2)->getWorldTransform());
 				
-
-				//fitness = (-1)*(std::numeric_limits<float>::max());
-				//printf("ground conflict\n");
-				//printf("box1 x:%f y:%f z:%f\n",objects.at(1)->getWorldTransform().getOrigin().x(),objects.at(1)->getWorldTransform().getOrigin().y(),objects.at(1)->getWorldTransform().getOrigin().z());
-				//printf("box2 x:%f y:%f z:%f\n",objects.at(2)->getWorldTransform().getOrigin().x(),objects.at(2)->getWorldTransform().getOrigin().y(),objects.at(2)->getWorldTransform().getOrigin().z());
 				btVector3 oldOrigin = objects.at(0)->getWorldTransform().getOrigin();
 				oldOrigin.setY(oldOrigin.y()-1);
 				objects.at(0)->getWorldTransform().setOrigin(oldOrigin);
 				btDefaultMotionState* myMotionState = (btDefaultMotionState*)(((btRigidBody*)objects.at(0))->getMotionState());
 				myMotionState->setWorldTransform(objects.at(0)->getWorldTransform());
-				
-				btTransform ob0 = objects.at(0)->getWorldTransform();
-
-				btTransform ob1 = objects.at(1)->getWorldTransform();
-
-				btTransform ob2 = objects.at(2)->getWorldTransform();
 
 				conflicts=true;
 				break;
@@ -266,7 +209,7 @@ void	Physics::initPhysics()
 	setTexturing(true);
 	setShadows(true);
 
-	setCameraDistance(btScalar(SCALING*20.));
+	setCameraDistance(btScalar(20.));
 
 	///collision configuration contains default setup for memory, collision setup
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -323,10 +266,8 @@ int Physics::createBox(int x1, int y1, int z1){
 	startTransform.setIdentity();
 	btRigidBody* box;
 	btScalar mass = btScalar(x*y*z*DensityHuman);
-	if(currentBoxIndex == 1){
-		startTransform.setOrigin(btVector3(0,0,0));
+	startTransform.setOrigin(btVector3(0,0,0));
 
-	}
 
 	box= localCreateRigidBody(mass,startTransform,boxShape);
 
@@ -416,9 +357,6 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
 							 btRigidBody* Box2 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box2);
 
-							 //btCollisionObject* Box1 = m_dynamicsWorld->getCollisionObjectArray().at(box1);
-							 //btCollisionObject* Box2 = m_dynamicsWorld->getCollisionObjectArray().at(box2);
-
 
 							 //Define the local transform on the shapes regarding to the joint.
 							 btTransform localBox1, localBox2;
@@ -440,19 +378,10 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 //box2
 							 btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithMargin();
 							 btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
-							// btQuaternion rotation2 = getLocalRotation(preS, postS)+rotation1;
-							/* 
-							 btMatrix3x3 rot1 = btMatrix3x3(rotation1);
-							
-							 btMatrix3x3 rot2 = btMatrix3x3( getLocalRotation(preS, postS));
-							 
-								rot1=rot1*rot2;	
-								btQuaternion rotation2 = btQuaternion();
-								CalculateRotation(&rotation2, &rot1);
-							
-							*/
-								btQuaternion rotation2 = getLocalRotation(preS, postS);
-								rotation2*=rotation1;
+
+
+							btQuaternion rotation2 = getLocalRotation(preS, postS);
+							rotation2*=rotation1;
 
 							 btVector3 center2 = center1+rotate(&connection1,&rotation1)-rotate(&connection2,&rotation2);
 
@@ -463,13 +392,6 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 trans2.setRotation(rotation2.inverse());
 							 trans2.setOrigin(center2);
 							 Box2->setCenterOfMassTransform(trans2);
-							 //btDefaultMotionState* myMotionState = (btDefaultMotionState*)(((btRigidBody*)Box2)->getMotionState());
-							 //myMotionState->setWorldTransform(Box2->getWorldTransform());
-							 //printf("rotate1 x:%f y:%f z:%f\n",rotate(&connection1,&rotation1).x(),rotate(&connection1,&rotation1).y(),rotate(&connection1,&rotation1).z());
-							 //printf("cent2 x:%f y:%f z:%f\n",center2.x(),center2.y(),center2.z());
-							 //printf("trans2 x:%f y:%f z:%f\n",trans2.getOrigin().x(),trans2.getOrigin().y(),trans2.getOrigin().z());
-							 //printf("ibox2 x:%f y:%f z:%f\n",Box2->getWorldTransform().getOrigin().x(),Box2->getWorldTransform().getOrigin().y(),Box2->getWorldTransform().getOrigin().z());
-							 //m_dynamicsWorld->updateAabbs();
 
 							 //rotate and translate joint
 							 localBox2.setRotation(rotation2);
@@ -490,7 +412,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 switch(type){
 							 case HINGE:
 								 hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
-								 //hingeC = new btHingeConstraint(*((btRigidBody*) Box1),*((btRigidBody*)Box2),localBox1,localBox2);
+							
 								 hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
 								 m_dynamicsWorld->addConstraint(hingeC,true);
 
@@ -498,13 +420,11 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 theStruct->sensorIndex=sensors.size()-1;
 								 theStruct->CrossSectionalStrength=getCrossSection(postS,&halfside2);
 								 hingeC->setUserConstraintPtr(theStruct);
-								 //hingeC->setUserConstraintPtr((void*)(sensors.size()-1));
-								 //hingeC->setUserConstraintId((int)getCrossSection(postS,&halfside2));//TODO: create struct for userpointer and use float instead
+								
 								 
 								 break;
 							 case GENERIC6DOF:
 								 gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
-								 //gen6C = new btGeneric6DofConstraint(*((btRigidBody*)Box1),*((btRigidBody*)Box2),localBox1,localBox2,true);
 								 gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist) 
 								 gen6C->setLimit(1,0,0);
 								 gen6C->setLimit(2,0,0);
@@ -520,8 +440,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 theStruct->sensorIndex=sensors.size()-3;
 								 theStruct->CrossSectionalStrength=getCrossSection(postS,&halfside2);
 								 gen6C->setUserConstraintPtr(theStruct);
-								 //gen6C->setUserConstraintPtr((void*)(sensors.size()-3));
-								 //gen6C->setUserConstraintId((int)getCrossSection(postS,&halfside2));//TODO: create struct for userpointer and use float instead
+								
 								 break;
 							 }
 
@@ -755,7 +674,7 @@ void	Physics::exitPhysics(){
 void Physics::testPhysics(){
 
 
-	int box2 = createBox(95,895,95);
+	int box2 = createBox(95,895,495);
 
 
 	int box3 = createBox(195,495,95);
