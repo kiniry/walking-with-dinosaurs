@@ -1,30 +1,34 @@
 #include "Physics.h"
 
 
-//only works for boxes rotated 0, 90, 180, 270, 360
+
 float Physics::getBoxHalfHeight(btCollisionObject* object){
 	btRigidBody* body = (btRigidBody*) object;
 	btBoxShape* box = (btBoxShape*) body->getCollisionShape();;
 	
-	btQuaternion rot = body->getWorldTransform().getRotation();
+	btQuaternion rot = body->getWorldTransform().getRotation().inverse();
 	btVector3 sides = box->getHalfExtentsWithMargin();
+
 	
-	btVector3 retning = btVector3(0,1.,0);
-
-	retning = rotate(&retning, &rot);
-
-	return abs(sides.getX()*retning.getX()+sides.getY()*retning.getY()+sides.getZ()*retning.getZ());
-
-	//should work
-	/*
+	
 	btVector3 x = btVector3(sides.getX(),0,0);
 	btVector3 y = btVector3(0,sides.getY(),0);
 	btVector3 z = btVector3(0,0,sides.getZ());
 
 	return abs(rotate(&x, &rot).getY())+abs(rotate(&y, &rot).getY())+abs(rotate(&z, &rot).getY());
 
+
+	//backup: only works for boxes rotated 0, 90, 180, 270, 360
+	/*
+	btVector3 retning = btVector3(0,1.,0);
+
+	retning = rotate(&retning, &rot);
+
+	return abs(sides.getX()*retning.getX()+sides.getY()*retning.getY()+sides.getZ()*retning.getZ());
 	*/
-}
+	}
+
+
 
 void Physics::calcSize(){
 	btCollisionObjectArray objs = m_dynamicsWorld->getCollisionObjectArray();
@@ -806,7 +810,7 @@ void Physics::testPhysics(){
 	
 	createJoint(box2, box3, GENERIC6DOF,50, 50, 5, 50, 50, 1, 0,0,0);
 	
-		
+	/*	
 	int box4 = createBox(195,195,595);
 	createJoint(box3, box4, GENERIC6DOF,50, 50, 2, 50, 50,0, 0,0,0);
 
@@ -820,9 +824,9 @@ void Physics::testPhysics(){
 	createJoint(box, box5, GENERIC6DOF,50, 50,5, 50, 50, 0, 0,0,0);
 	
 	if(!isLegal()){
-		printf("fail!");
+		printf("fail!\n");
 	}else{
-		printf("legal");
+		printf("legal\n");
 	}
 
  /*	createSensor(box2, pressure);
