@@ -14,6 +14,16 @@ float Physics::getBoxHalfHeight(btCollisionObject* object){
 	retning = rotate(&retning, &rot);
 
 	return abs(sides.getX()*retning.getX()+sides.getY()*retning.getY()+sides.getZ()*retning.getZ());
+
+	//should work
+	/*
+	btVector3 x = btVector3(sides.getX(),0,0);
+	btVector3 y = btVector3(0,sides.getY(),0);
+	btVector3 z = btVector3(0,0,sides.getZ());
+
+	return abs(rotate(&x, &rot).getY())+abs(rotate(&y, &rot).getY())+abs(rotate(&z, &rot).getY());
+
+	*/
 }
 
 void Physics::calcSize(){
@@ -216,8 +226,9 @@ void Physics::clientMoveAndDisplay()
 	//solveGroundConflicts();
 	float ms = getDeltaTimeMicroseconds();
 	timeUsed += ms;
-	simulationLoopStep(ms / 1000000.f); //normal speed
-	//simulationLoopStep(ms / 100000000.f); //slow-mode
+
+	//simulationLoopStep(ms / 1000000.f); //normal speed
+	simulationLoopStep(ms / 1000000.f); //slow-mode
 
 
 
@@ -314,6 +325,7 @@ int Physics::createBox(int x1, int y1, int z1){
 	startTransform.setIdentity();
 	btRigidBody* box;
 	btScalar mass = btScalar(x*y*z*DensityHuman);
+	//btScalar mass = btScalar(0);
 	startTransform.setOrigin(btVector3(0,0,0));
 
 
@@ -442,6 +454,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 							 //translate joint
 							 localBox1.setOrigin(connection1);
+							 localBox1.setRotation(rotation1.inverse());
 
 
 							 //box2
@@ -452,18 +465,24 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							btQuaternion rotation2 = getLocalRotation(preS, postS);
 							rotation2*=rotation1;
 
-							 btVector3 center2 = center1+rotate(&connection1,&rotation1)-rotate(&connection2,&rotation2);
+							btVector3 center2 = center1+rotate(&connection1,&rotation1.inverse())-rotate(&connection2,&rotation2);
 
 
-							 //rotate and translate box
-							 btTransform trans2;
-							 trans2.setIdentity();
-							 trans2.setRotation(rotation2.inverse());
-							 trans2.setOrigin(center2);
-							 Box2->setCenterOfMassTransform(trans2);
+							//rotate and translate box
+							btTransform trans2;
+							trans2.setIdentity();
+							//trans2.setRotation(rotation2);
+							trans2.setRotation(rotation2.inverse());
+							trans2.setOrigin(center2);
+							Box2->setCenterOfMassTransform(trans2);
+							
+							 
+							btDefaultMotionState* myMotionState = (btDefaultMotionState*)((Box2)->getMotionState());
+							myMotionState->setWorldTransform(Box2->getWorldTransform());
+
 
 							 //rotate and translate joint
-							 localBox2.setRotation(rotation2);
+							localBox2.setRotation(rotation2);
 							
 							 localBox2.setOrigin(connection2);
 
@@ -478,6 +497,37 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
 							// printf("%f %f %f\n", DOFxR,DOFyR,DOFzR);
 							 UserPointerStruct* theStruct = new UserPointerStruct();
+
+							 //CSA
+							 float x,y;
+
+							 switch(preS){
+								case 0:
+									x=halfside1.getX();
+									y=halfside1.getY();
+									break;
+								case 5:
+									x=halfside1.getY();
+									y=halfside1.getX();
+									break;
+								case 1:
+									x=halfside1.getY();
+									y=halfside1.getZ();
+									break;
+								case 4:
+									x=halfside1.getZ();
+									y=halfside1.getY();
+									break;
+								case 2:
+									x=halfside1.getX();
+									y=halfside1.getZ();
+								case 3:
+									x=halfside1.getZ();
+									y=halfside1.getX();
+									break;
+								}
+							 	printf("areal %f\n",x*y*4.);
+
 							 switch(type){
 							 case HINGE:
 								 hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
@@ -500,7 +550,8 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
 								 gen6C->setLimit(4,-DOFyR/2,DOFyR/2);
 								 gen6C->setLimit(5,-DOFzR/2,DOFzR/2);
-								 m_dynamicsWorld->addConstraint(gen6C,true);
+								//if(box2!=3)
+								m_dynamicsWorld->addConstraint(gen6C,true);
 
 								 sensors.push_back(0);
 								 sensors.push_back(0);
@@ -538,6 +589,9 @@ inline float Physics::getCrossSection(int s,btVector3* Halfsize){
 	}
 	return 0;
 }
+
+
+
 
 //rotates vector3 by a Quaternion
 btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
@@ -620,7 +674,10 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 		if(pre<2){
 			//00 11
 			rot=btQuaternion(PI,0,0);
-		}else if(pre<4){
+		}else if(pre==2){
+			//22
+			rot=btQuaternion(0,PI,0);
+		}else if(pre==3){
 			//22 33
 			rot=btQuaternion(0,PI,0);
 		}else if(pre==4){
@@ -740,29 +797,27 @@ void	Physics::exitPhysics(){
 void Physics::testPhysics(){
 
 
-	int box2 = createBox(994,994,495);
 
+	int box2 = createBox(95,895,395);
 
+	int box3 = createBox(195,245,595);
 
-
-	int box3 = createBox(195,495,595);
-
-
-	
-	createJoint(box2, box3, GENERIC6DOF,50, 50, 2, 50, 50, 5, 45,45,0);
-	
-	calcSize();
-	printf("height %f\n",height);
-
-	/*int box4 = createBox(195,195,95);
-	createJoint(box3, box4, GENERIC6DOF,50, 50, 5, 50, 50,0, 45,45,0);
 		
-	int box = createBox(195,195,195);
-	createJoint(box3, box, GENERIC6DOF,50, 50, 4, 50, 50, 4, 45,45,0);
+	
+	createJoint(box2, box3, GENERIC6DOF,50, 50, 5, 50, 50, 1, 0,0,0);
+	
+		
+	int box4 = createBox(195,195,595);
+	createJoint(box3, box4, GENERIC6DOF,50, 50, 2, 50, 50,0, 0,0,0);
+
+	
+		
+	int box = createBox(85,385,185);
+	createJoint(box3, box, GENERIC6DOF,50, 50, 3, 50, 50, 3, 0,0,0);
 	
 
-	int box5 = createBox(95,295,95);
-	createJoint(box, box5, GENERIC6DOF,50, 50, 4, 50, 50, 4, 45,45,0);
+	int box5 = createBox(95,95,395);
+	createJoint(box, box5, GENERIC6DOF,50, 50,5, 50, 50, 0, 0,0,0);
 	
 	if(!isLegal()){
 		printf("fail!");
@@ -770,8 +825,8 @@ void Physics::testPhysics(){
 		printf("legal");
 	}
 
-	createSensor(box2, pressure);
- /*
+ /*	createSensor(box2, pressure);
+
 	//NN test
 	std::vector<NeuralNode*> inputs;
 	

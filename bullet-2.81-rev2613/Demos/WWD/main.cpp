@@ -21,8 +21,8 @@ int main(int argc,char** argv)
 		std::vector<int> ancestor (temp, temp+size);
 		Physics* WWDPhysics = new Physics(ancestor);
 		//init creature
-		readDNA(ancestor,WWDPhysics);
-		//WWDPhysics->testPhysics();
+		//readDNA(ancestor,WWDPhysics);
+		WWDPhysics->testPhysics();
 		//default glut doesn't return from mainloop
 
 		//WWDPhysics->calcSize();
