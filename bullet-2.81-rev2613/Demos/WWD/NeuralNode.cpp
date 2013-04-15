@@ -261,8 +261,12 @@ inline float NeuralNode::sigmoid(){
 	
 }*/
 
-//, differentiate, smooth, memory, oscillate-wave, and oscillate-saw
+//, differentiate, smooth, memory
 
+//oscillate-wave, and oscillate-saw
+inline float NeuralNode::wave(){
+	
+}
 
 void NeuralNode::setWeights(float w1, float w2, float w3){
 

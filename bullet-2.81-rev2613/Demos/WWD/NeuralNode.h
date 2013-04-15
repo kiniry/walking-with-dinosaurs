@@ -7,7 +7,7 @@
 
 //Definition of functions
 #define SENSOR -1
-enum{SUM,PRODUCT,DIVIDE,SUMTHRESHOLD,GREATERTHAN,SIGNOF,MIN,MAX,ABS,IF,INTERPOLATE,SIN,COS,ATAN,LOG,EXPT,SIGMOID, NR_OF_FUNCTIONS};
+enum{SUM,PRODUCT,DIVIDE,SUMTHRESHOLD,GREATERTHAN,SIGNOF,MIN,MAX,ABS,IF,INTERPOLATE,SIN,COS,ATAN,LOG,EXPT,SIGMOID,WAVE,NR_OF_FUNCTIONS};
 
 class NeuralNode
 {
@@ -50,5 +50,6 @@ private:
 	inline float myLog();
 	inline float myExpt();
 	inline float sigmoid();
+	inline float wave();
 };
 
