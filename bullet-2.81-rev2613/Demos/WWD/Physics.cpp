@@ -502,35 +502,8 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							// printf("%f %f %f\n", DOFxR,DOFyR,DOFzR);
 							 UserPointerStruct* theStruct = new UserPointerStruct();
 
-							 //CSA
-							 float x,y;
 
-							 switch(preS){
-								case 0:
-									x=halfside1.getX();
-									y=halfside1.getY();
-									break;
-								case 5:
-									x=halfside1.getY();
-									y=halfside1.getX();
-									break;
-								case 1:
-									x=halfside1.getY();
-									y=halfside1.getZ();
-									break;
-								case 4:
-									x=halfside1.getZ();
-									y=halfside1.getY();
-									break;
-								case 2:
-									x=halfside1.getX();
-									y=halfside1.getZ();
-								case 3:
-									x=halfside1.getZ();
-									y=halfside1.getX();
-									break;
-								}
-							 	printf("areal %f\n",x*y*4.);
+							 	
 
 							 switch(type){
 							 case HINGE:
@@ -541,7 +514,8 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 								 sensors.push_back(0);
 								 theStruct->sensorIndex=sensors.size()-1;
-								 theStruct->CrossSectionalStrength=getCrossSection(postS,&halfside2);
+								 //uses the gen6d which makes it possible that the max force is to small
+								 theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
 								 hingeC->setUserConstraintPtr(theStruct);
 								
 								 
@@ -562,7 +536,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 sensors.push_back(0);	
 
 								 theStruct->sensorIndex=sensors.size()-3;
-								 theStruct->CrossSectionalStrength=getCrossSection(postS,&halfside2);
+								 theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
 								 gen6C->setUserConstraintPtr(theStruct);
 								
 								 break;
@@ -576,26 +550,59 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 return returnVal;
 }
 
-inline float Physics::getCrossSection(int s,btVector3* Halfsize){
-	switch(s){
-	case 0:
-	case 5:
-		return Halfsize->x()*2.f*Halfsize->y()*2.f*csa;
-		break;
-	case 1:
-	case 4:
-		return Halfsize->z()*2.f*Halfsize->y()*2.f*csa;
-		break;
-	case 2:
-	case 3:
-		return Halfsize->x()*2.f*Halfsize->z()*2.f*csa;
-		break;
-	}
-	return 0;
+
+//calculates the contact area between the boxes and scals the max force accordingly
+//contact area is calculated as the minimum area where thes contac if the box is rotated around y axis
+float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int preY, int postS, btVector3* halfside2, int postX, int postY){
+
+
+							 //CSA
+							 float x,y;
+
+							 switch(preS){
+								case 0:
+								case 5:
+									x=halfside1->getY();
+									y=halfside1->getX();
+									break;
+								case 1:
+								case 4:
+									x=halfside1->getZ();
+									y=halfside1->getY();
+									break;
+								case 2:
+								case 3:
+									x=halfside1->getZ();
+									y=halfside1->getX();
+									break;
+								}
+
+
+
+							  //CSA
+							 float x2,y2;
+
+							 switch(postS){
+								case 0:
+								case 5:
+									x2=halfside2->getY();
+									y2=halfside2->getX();
+									break;
+								case 1:
+								case 4:
+									x2=halfside2->getZ();
+									y2=halfside2->getY();
+									break;
+								case 2:
+								case 3:
+									x2=halfside2->getZ();
+									y2=halfside2->getX();
+									break;
+								}
+							float forceOffsetPercent=1.- (max(abs(postY-50)+abs(preY-50),max(abs(preX-50)+abs(postX-50),max(abs(postX-50)+abs(preY-50),max(abs(preX-50)+abs(postY-50),max(abs(preX-50)+abs(preY-50),abs(postX-50)+abs(postY-50)))))))/100.;
+							float areal =min(x*x2,min(y*y2,min(x2*y,min(x*y2,min(x*y,x2*y2)))))*4;
+							return areal*forceOffsetPercent*csa;
 }
-
-
-
 
 //rotates vector3 by a Quaternion
 btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
@@ -808,7 +815,7 @@ void Physics::testPhysics(){
 
 		
 	
-	createJoint(box2, box3, GENERIC6DOF,50, 50, 5, 50, 50, 1, 0,0,0);
+	createJoint(box2, box3, GENERIC6DOF,0, 50, 5, 50, 50, 1, 0,0,0);
 	
 	/*	
 	int box4 = createBox(195,195,595);
