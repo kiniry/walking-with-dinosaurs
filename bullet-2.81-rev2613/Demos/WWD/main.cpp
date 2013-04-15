@@ -15,28 +15,28 @@ int main(int argc,char** argv)
 	srand(time(0));
 
 	#ifdef  _DEBUG
-#pragma omp parallel for
+/*#pragma omp parallel for
 		for(int i =0;i<8;i++){
 		int id=omp_get_thread_num();
 		printf(" hello(%d) ", id);
 		printf(" world(%d) \n",id);
 		}
+	*/
 	
-	/*
 		test();
-		const int temp[] = { 851,1137,95,1,1,125,527,1,2,10,0,1,100,100,1840,100,1,0,1,0,1,0,1857,1,0,62,2,1455,125,1,2,2,0,10,0,518,100,100,1840,100,100,1840,381,1,0,0,73,0,30,10,0,1,100,100,1,2,2,0,10,0,1,100,100,1,2,2,0,10,0,518,100,100,1840,100,100,1840,100,1,0,0,73,0};
+		const int temp[] = { 1896,95,1,1,1901,50,1,50,50,0,100,1,0,1,0,1578,0,30,1,0,62,2,0,125,95,1,2,10,0,1,100,100,0,2,0,0,0,714,100,1,0,1,0,1,0,30,1,0,62,2,0,125,1,2,0,0,1,50,23,2,2,0,125,1,2,0,1,2,1,0,1,1,200,0,2,1432,0,1,1,1};
 		int size = sizeof( temp ) / sizeof ( *temp );
 		std::vector<int> ancestor (temp, temp+size);
 		Physics* WWDPhysics = new Physics(ancestor);
 		//init creature
-		//readDNA(ancestor,WWDPhysics);
-		WWDPhysics->testPhysics();
+		readDNA(ancestor,WWDPhysics);
+		//WWDPhysics->testPhysics();
 		//default glut doesn't return from mainloop
 
 		//WWDPhysics->calcSize();
 		WWDPhysics->solveGroundConflicts();
 		return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
-		*/
+		
 	#else
 		
 

@@ -316,6 +316,9 @@ int Physics::createBox(int x1, int y1, int z1){
 	float x=(x1%995+5)/100.f;
 	float y=(y1%995+5)/100.f;
 	float z=(z1%995+5)/100.f;
+	//float x=(x1%950+50)/100.f;
+	//float y=(y1%950+50)/100.f;
+	//float z=(z1%950+50)/100.f;
 
 	btAssert(x>=0.05 && x<=10);
 	btAssert(y>=0.05 && y<=10);
