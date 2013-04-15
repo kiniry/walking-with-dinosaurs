@@ -28,6 +28,7 @@ NeuralNode::NeuralNode(int function, NeuralNode* input, float weight)
 	this->weight2=1;
 	this->weight3=1;
 	this->nrOfInputs=1;
+	this->stepsRun=0;
 }
 
 NeuralNode::NeuralNode(int function, NeuralNode* input1, NeuralNode* input2, float weight1, float weight2)
@@ -42,6 +43,7 @@ NeuralNode::NeuralNode(int function, NeuralNode* input1, NeuralNode* input2, flo
 	this->weight2=weight2;
 	this->weight3=1;
 	this->nrOfInputs=2;
+	this->stepsRun=0;
 }
 
 NeuralNode::NeuralNode(int function, NeuralNode* input1, NeuralNode* input2, NeuralNode* input3, float weight1, float weight2, float weight3)
@@ -54,6 +56,7 @@ NeuralNode::NeuralNode(int function, NeuralNode* input1, NeuralNode* input2, Neu
 	this->weight2=weight2;
 	this->weight3=weight3;
 	this->nrOfInputs=3;
+	this->stepsRun=0;
 }
 
 float NeuralNode::getOutput()
@@ -120,6 +123,12 @@ void NeuralNode::compute()
 			break;
 		case SIGMOID:
 			currentOutput=sigmoid();
+			break;
+		case WAVE:
+			currentOutput=wave();
+			break;
+		case SAW:
+			currentOutput=saw();
 			break;
 		default:
 			perror("Undefined neural function");
@@ -263,11 +272,19 @@ inline float NeuralNode::sigmoid(){
 
 //, differentiate, smooth, memory
 
-//oscillate-wave, and oscillate-saw
+//oscillate-wave: a Smooth wave function using a sort of "time" variable as input
 inline float NeuralNode::wave(){
-	
+	float defaultFuncInput = this->stepsRun*2*3.1415926/360;
+	stepsRun++;
+	return sin(defaultFuncInput);
 }
 
+//oscillate-saw: a jagged wave function... same as above
+inline float NeuralNode::saw(){
+	float defaultFuncInput = this->stepsRun*2*3.1415926/4;
+	stepsRun++;
+	return sin(defaultFuncInput);
+}
 void NeuralNode::setWeights(float w1, float w2, float w3){
 
 }
