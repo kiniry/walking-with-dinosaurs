@@ -136,7 +136,8 @@ class Physics : public PlatformDemoApplication{
 		btQuaternion getLocalRotation(int myS, int opS);
 		void CalculateRotation( btQuaternion *q, btMatrix3x3  *a );
 		btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
-		inline float getCrossSection(int s,btVector3* Halfsize);
+		inline float getCrossSectionHinge(int s,btVector3* Halfsize);
+		float getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int preY, int postS, btVector3* halfside2, int postX, int postY);
 		inline float sign(float input);
 		float getBoxHalfHeight(btCollisionObject* object);
 

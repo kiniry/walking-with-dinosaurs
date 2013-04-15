@@ -1,4 +1,4 @@
-
+#include "omp.h"
 #include "Physics.h"
 #include "Grammar.h"
 #include "Evolution.h"
@@ -15,6 +15,14 @@ int main(int argc,char** argv)
 	srand(time(0));
 
 	#ifdef  _DEBUG
+#pragma omp parallel for
+		for(int i =0;i<8;i++){
+		int id=omp_get_thread_num();
+		printf(" hello(%d) ", id);
+		printf(" world(%d) \n",id);
+		}
+	
+	/*
 		test();
 		const int temp[] = { 851,1137,95,1,1,125,527,1,2,10,0,1,100,100,1840,100,1,0,1,0,1,0,1857,1,0,62,2,1455,125,1,2,2,0,10,0,518,100,100,1840,100,100,1840,381,1,0,0,73,0,30,10,0,1,100,100,1,2,2,0,10,0,1,100,100,1,2,2,0,10,0,518,100,100,1840,100,100,1840,100,1,0,0,73,0};
 		int size = sizeof( temp ) / sizeof ( *temp );
@@ -28,6 +36,7 @@ int main(int argc,char** argv)
 		//WWDPhysics->calcSize();
 		WWDPhysics->solveGroundConflicts();
 		return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
+		*/
 	#else
 		
 
@@ -94,6 +103,7 @@ int main(int argc,char** argv)
 		}
 		
 		//run simulator
+		#pragma omp parallel for
 		for(int j=0;j< (int) worlds.size();j++){
 			worlds.at(j)->runSimulation(); //runs a physics simulation and save the fitness values
 		}
