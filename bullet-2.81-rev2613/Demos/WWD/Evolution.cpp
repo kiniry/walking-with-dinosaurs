@@ -25,7 +25,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 		creature creat;
 		creat.fitness=0;
-		
+
 		int random = rand()%100+1;
 
 		int mut = 40;
@@ -33,7 +33,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		//int cross2 = 30;
 		std::vector<int> dna = creatures.at(i%survivors).dna;
 		std::vector<int> dna2 = creatures.at(rand()%survivors).dna;
-		
+
 		if(random<=mut){
 
 			creat.dna=mutate(dna);
@@ -63,10 +63,9 @@ std::vector<int> mutate(const std::vector<int> dna){
 
 	std::vector<int> newCreature = dna;
 	for (int i = 0; i< (int) dna.size(); i++){
-		int random = rand()%dna.size();
-		if(random==0){
-
-			newCreature.at(i)=rand()%maxDNAValue;
+		int chanceToMutate = rand()%dna.size();
+		if(chanceToMutate==0){
+			newCreature.at(i)=randomDnaValue;
 		}
 
 
