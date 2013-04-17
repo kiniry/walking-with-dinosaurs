@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7AD91C8D-2683-F548-8E9E-7306DD8B7BDA}</ProjectGuid>
-    <RootNamespace>App_BasicDemo</RootNamespace>
+    <RootNamespace>WWD</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>WWD</ProjectName>
   </PropertyGroup>
