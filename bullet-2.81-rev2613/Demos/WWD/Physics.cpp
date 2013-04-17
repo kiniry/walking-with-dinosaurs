@@ -129,13 +129,13 @@ void Physics::simulationLoopStep(float stepSize){
 		//fitness test
 		calcFitness();
 
-		for(int i=0;i< (int) effectorNNindex.size();i=i+3){
+		/*for(int i=0;i< (int) effectorNNindex.size();i=i+3){
 			setEffect(i/3,
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
 				);
-		}
+		}*/
 
 		//fixed step... 1ms
 		m_dynamicsWorld->stepSimulation(stepSize); 
@@ -204,6 +204,19 @@ void Physics::simulationLoopStep(float stepSize){
 					break;
 			}
 		}
+
+		/*if(m_dynamicsWorld->getNumConstraints()>0){
+		for(int i=m_dynamicsWorld->getNumConstraints()-1;i>=0;i--){
+			btTypedConstraint* con = m_dynamicsWorld->getConstraint(i);
+			con->enableFeedback(true);
+			if(con->getAppliedImpulse()>m_dynamicsWorld->getConstraint(i)->getBreakingImpulseThreshold()){
+				m_dynamicsWorld->removeConstraint(m_dynamicsWorld->getConstraint(i));
+			}
+			else{
+				con->enableFeedback(false);
+			}
+		}
+		}*/
 }
 
 void Physics::runSimulation(){
@@ -316,9 +329,9 @@ int Physics::createBox(int x1, int y1, int z1){
 	float x=(x1%995+5)/100.f;
 	float y=(y1%995+5)/100.f;
 	float z=(z1%995+5)/100.f;
-	//float x=(x1%950+50)/100.f;
-	//float y=(y1%950+50)/100.f;
-	//float z=(z1%950+50)/100.f;
+	//float x=(x1%800+200)/100.f;
+	//float y=(y1%800+200)/100.f;
+	//float z=(z1%800+200)/100.f;
 
 	btAssert(x>=0.05 && x<=10);
 	btAssert(y>=0.05 && y<=10);
@@ -430,6 +443,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 postX=postX%101;
 							 postY=postY%101;
 							 postS=postS%6;
+							 type=type%2;
 
 							 //tjek input in debug mode
 							 btAssert(preX>=0 && preX<=100);							
@@ -504,7 +518,8 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
 							// printf("%f %f %f\n", DOFxR,DOFyR,DOFzR);
 							 UserPointerStruct* theStruct = new UserPointerStruct();
-
+							 btScalar mass1=1/Box1->getInvMass();
+							 btScalar mass2=1/Box2->getInvMass();
 
 							 	
 
@@ -513,13 +528,16 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
 							
 								 hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
-								 m_dynamicsWorld->addConstraint(hingeC,true);
-
+								 
 								 sensors.push_back(0);
 								 theStruct->sensorIndex=sensors.size()-1;
 								 //uses the gen6d which makes it possible that the max force is to small
 								 theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
 								 hingeC->setUserConstraintPtr(theStruct);
+
+								 hingeC->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
+								 
+								 m_dynamicsWorld->addConstraint(hingeC,true);
 								
 								 
 								 break;
@@ -531,16 +549,23 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
 								 gen6C->setLimit(4,-DOFyR/2,DOFyR/2);
 								 gen6C->setLimit(5,-DOFzR/2,DOFzR/2);
+								 //gen6C->getTranslationalLimitMotor()->m_restitution=0.0000000;
 								//if(box2!=3)
-								m_dynamicsWorld->addConstraint(gen6C,true);
-
+								 
 								 sensors.push_back(0);
 								 sensors.push_back(0);
-								 sensors.push_back(0);	
+								 sensors.push_back(0);
 
 								 theStruct->sensorIndex=sensors.size()-3;
 								 theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
 								 gen6C->setUserConstraintPtr(theStruct);
+
+								 gen6C->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
+								m_dynamicsWorld->addConstraint(gen6C,true);
+
+								 	
+
+								 
 								
 								 break;
 							 }
@@ -866,9 +891,10 @@ inputs.push_back(new NeuralNode(testPoint));
 
 
 void Physics::calcFitness(){
-
+	
 	btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
-	fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;
+	if(height<2){fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));}
+	else{fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;}
 
 }
 
