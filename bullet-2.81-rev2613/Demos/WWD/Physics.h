@@ -68,7 +68,7 @@ struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallbac
 
 //footprint size of the shoulder tendon is 25 x 11-22 mm http://www.shoulderdoc.co.uk/article.asp?article=672
 //mean load failure strength of the shoulder tendon is 273 N http://www.ncbi.nlm.nih.gov/pubmed/18182197
-#define tensilePercentage 0.0000005
+#define tensilePercentage 0.000000001
 #define tensileStrength 661818 * tensilePercentage
 
 #define PI 3.1415926

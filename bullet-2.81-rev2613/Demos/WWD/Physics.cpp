@@ -329,9 +329,6 @@ int Physics::createBox(int x1, int y1, int z1){
 	float x=(x1%995+5)/100.f;
 	float y=(y1%995+5)/100.f;
 	float z=(z1%995+5)/100.f;
-	//float x=(x1%800+200)/100.f;
-	//float y=(y1%800+200)/100.f;
-	//float z=(z1%800+200)/100.f;
 
 	btAssert(x>=0.05 && x<=10);
 	btAssert(y>=0.05 && y<=10);
@@ -437,21 +434,22 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							int postX, int postY, int postS,
 							int dofX, int dofY, int dofZ){
 
-							 preX=preX%101;
-							 preY=preY%101;
+							//only works if modulo produces negative numbers
+							 preX=preX%50;
+							 preY=preY%50;
 							 preS=preS%6;
-							 postX=postX%101;
-							 postY=postY%101;
+							 postX=postX%50;
+							 postY=postY%50;
 							 postS=postS%6;
 							 type=type%2;
 
 							 //tjek input in debug mode
-							 btAssert(preX>=0 && preX<=100);							
-							 btAssert(preY>=0 && preY<=100);
+							 btAssert(preX>-50 && preX<50);							
+							 btAssert(preY>-50 && preY<50);
 							 btAssert(preS>-1 && preS<6);
 
-							 btAssert(postX>=0 && postX<=100);							
-							 btAssert(postY>=0 && postY<=100);
+							 btAssert(postX>-50 && postX<50);							
+							 btAssert(postY>-50 && postY<50);
 							 btAssert(postS>-1 && postS<6);
 
 
@@ -606,7 +604,7 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 								}
 
 
-
+							
 							  //CSA
 							 float x2,y2;
 
@@ -627,8 +625,11 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 									y2=halfside2->getX();
 									break;
 								}
-							float forceOffsetPercent=1.- (max(abs(postY-50)+abs(preY-50),max(abs(preX-50)+abs(postX-50),max(abs(postX-50)+abs(preY-50),max(abs(preX-50)+abs(postY-50),max(abs(preX-50)+abs(preY-50),abs(postX-50)+abs(postY-50)))))))/100.;
+							 //beregnes forkert da den straffer alt væk fra centrum ikke bare dem der over skrider kanten
+							 //offset burde istedet beregnes i switchen ovenfor ala x=halfside->getX()*(0.5 - abs(preX)/100.)
+							float forceOffsetPercent=1.- (max(abs(postY)+abs(preY),max(abs(preX)+abs(postX),max(abs(postX)+abs(preY),max(abs(preX)+abs(postY),max(abs(preX)+abs(preY),abs(postX)+abs(postY)))))))/100.;
 							float areal =min(x*x2,min(y*y2,min(x2*y,min(x*y2,min(x*y,x2*y2)))))*4;
+							
 							return areal*forceOffsetPercent*csa;
 }
 
@@ -733,8 +734,8 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 //calculates the poistion of where the joint connects to the box in regards to the local box center
 btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSizes){
 	//tjek input in debug mode
-	btAssert(x>=0 && x<=100);							
-	btAssert(y>=0 && y<=100);
+	btAssert(x>=-50 && x<=50);							
+	btAssert(y>=-50 && y<=50);
 	btAssert(s>-1 && s<6);
 	btAssert(halfSizes);
 
@@ -743,8 +744,8 @@ btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSiz
 	btVector3 result;
 
 	//calculate offset from center of the side
-	double h=(x-50)/50.f;
-	double w=(y-50)/50.f;
+	double h=(x)/50.f;
+	double w=(y)/50.f;
 
 
 	switch(s){
@@ -843,7 +844,7 @@ void Physics::testPhysics(){
 
 		
 	
-	createJoint(box2, box3, GENERIC6DOF,0, 50, 5, 50, 50, 1, 0,0,0);
+	createJoint(box2, box3, GENERIC6DOF,49, 49, 5, 49, 49, 1, 0,0,0);
 	
 	/*	
 	int box4 = createBox(195,195,595);
