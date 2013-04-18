@@ -2,7 +2,6 @@
 #include <vector>
 class DinoTreeNode
 {
-
 public:
 	bool isNeural;
 	int DNAindex;
@@ -13,4 +12,3 @@ public:
 	DinoTreeNode(int startIndex, bool isNeural);
 	~DinoTreeNode(void);
 };
-

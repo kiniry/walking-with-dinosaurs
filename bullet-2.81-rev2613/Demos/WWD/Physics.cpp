@@ -1,34 +1,18 @@
 #include "Physics.h"
 
-
-
 float Physics::getBoxHalfHeight(btCollisionObject* object){
 	btRigidBody* body = (btRigidBody*) object;
 	btBoxShape* box = (btBoxShape*) body->getCollisionShape();;
-	
+
 	btQuaternion rot = body->getWorldTransform().getRotation().inverse();
 	btVector3 sides = box->getHalfExtentsWithMargin();
 
-	
-	
 	btVector3 x = btVector3(sides.getX(),0,0);
 	btVector3 y = btVector3(0,sides.getY(),0);
 	btVector3 z = btVector3(0,0,sides.getZ());
 
 	return abs(rotate(&x, &rot).getY())+abs(rotate(&y, &rot).getY())+abs(rotate(&z, &rot).getY());
-
-
-	//backup: only works for boxes rotated 0, 90, 180, 270, 360
-	/*
-	btVector3 retning = btVector3(0,1.,0);
-
-	retning = rotate(&retning, &rot);
-
-	return abs(sides.getX()*retning.getX()+sides.getY()*retning.getY()+sides.getZ()*retning.getZ());
-	*/
 	}
-
-
 
 void Physics::calcSize(){
 	btCollisionObjectArray objs = m_dynamicsWorld->getCollisionObjectArray();
@@ -46,12 +30,10 @@ void Physics::calcSize(){
 		}
 	}
 	height= heighstPoint-lowestPoint;
-
 }
 
 bool Physics::isLegal(){
 		btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
-
 
 		MyContactResultCallback result;
 		result.m_connected=false;
@@ -67,7 +49,6 @@ bool Physics::isLegal(){
 				return false;
 			}
 		}
-
 	}
 	return true;
 }
@@ -88,17 +69,15 @@ void Physics::solveGroundConflicts(){
 	bool conflicts = true;
 	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 	MyContactResultCallback result;
-		
+
 	while(conflicts){
 		result.m_connected=false;
 		conflicts=false;
-		
+
 		for (int j = 1; j < objects.size(); j++){
 			m_dynamicsWorld->contactPairTest(objects.at(0),objects.at(j),result);
 
 			if(result.m_connected == true){
-				
-				
 				btVector3 oldOrigin = objects.at(0)->getWorldTransform().getOrigin();
 				oldOrigin.setY(oldOrigin.y()-1);
 				objects.at(0)->getWorldTransform().setOrigin(oldOrigin);
@@ -116,7 +95,6 @@ void Physics::solveGroundConflicts(){
 	}
 	*/
 }
-
 
 void Physics::simulationLoopStep(float stepSize){
 	if(theNet!=NULL){
@@ -138,55 +116,45 @@ void Physics::simulationLoopStep(float stepSize){
 		}*/
 
 		//fixed step... 1ms
-		m_dynamicsWorld->stepSimulation(stepSize); 
-
+		m_dynamicsWorld->stepSimulation(stepSize);
 
 		for(int i=0; i < (int) sensors.size();i++){
 			sensors.at(i)=0;
-
 		}
 
 		//collision detection
-		//one per btPersistentManifold for each collision 
+		//one per btPersistentManifold for each collision
 		int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
 
 		for (int i=0;i<numManifolds;i++)
 		{
-
 			btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
 			int box1 = (int)contactManifold->getBody0()->getUserPointer();
 			int box2 = (int)contactManifold->getBody1()->getUserPointer();
 
 			if(box1 >= 0){
 				sensors.at(box1)=1;
-
 			}
 			if(box2 >= 0){
 				sensors.at(box2)=1;
-
 			}
-
-
 		}
-
 
 		//angel sensor
 		for(int i = 0; i < m_dynamicsWorld->getNumConstraints(); i++){
 			btHingeConstraint* constraint;
 			btGeneric6DofConstraint* constraint1;
-			float x,y,z; 
+			float x,y,z;
 
 			//pointer == -1 if its not a sensor
 			if(((int)(m_dynamicsWorld->getConstraint(i)->getUserConstraintPtr()))>=0)
 				switch((m_dynamicsWorld->getConstraint(i))->getConstraintType()){
-
 				case HINGE_CONSTRAINT_TYPE:
 					constraint = (btHingeConstraint*) m_dynamicsWorld->getConstraint(i);
 					sensors.at( ((UserPointerStruct*)(constraint->getUserConstraintPtr()))->sensorIndex );
 					x = constraint->getHingeAngle();
 
 					sensors.at(((UserPointerStruct*)constraint->getUserConstraintPtr())->sensorIndex)=x;
-
 
 					break;
 				case D6_CONSTRAINT_TYPE:
@@ -199,7 +167,6 @@ void Physics::simulationLoopStep(float stepSize){
 					sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex)=x;
 					sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex+1)=y;
 					sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex+2)=z;
-
 
 					break;
 			}
@@ -220,20 +187,16 @@ void Physics::simulationLoopStep(float stepSize){
 }
 
 void Physics::runSimulation(){
-
 	if(!isLegal()){
 				fitness = -999999;
-
 	}else{
 		calcSize();
 		solveGroundConflicts();
 
 		while(timeUsed<10000){ //10 s = 10000 ms
-	
 			simulationLoopStep(1/1000.f);
 
 			timeUsed++;
-
 		}
 	}
 }
@@ -247,23 +210,19 @@ void Physics::clientMoveAndDisplay()
 	//simulationLoopStep(ms / 1000000.f); //normal speed
 	simulationLoopStep(ms / 1000000.f); //slow-mode
 
-
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	m_dynamicsWorld->debugDrawWorld();
 
-	renderme(); 
+	renderme();
 
 	glFlush();
 
 	swapBuffers();
-
 }
 
 void Physics::displayCallback(void) {
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	renderme();
 
@@ -275,12 +234,10 @@ void Physics::displayCallback(void) {
 	swapBuffers();
 }
 
-
 void	Physics::initPhysics(){
 	timeUsed=0;
 	currentBoxIndex=0;
 	currentJointIndex=0;
-
 
 	setTexturing(true);
 	setShadows(true);
@@ -289,7 +246,6 @@ void	Physics::initPhysics(){
 
 	///collision configuration contains default setup for memory, collision setup
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
-
 
 	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
 	m_dispatcher = new	btCollisionDispatcher(m_collisionConfiguration);
@@ -324,7 +280,6 @@ void	Physics::initPhysics(){
 
 //creates a box with side lengths x,y,z
 int Physics::createBox(int x1, int y1, int z1){
-
 	// max 10 & min 0.05
 	float x=(x1%995+5)/100.f;
 	float y=(y1%995+5)/100.f;
@@ -337,7 +292,6 @@ int Physics::createBox(int x1, int y1, int z1){
 	btAssert(y>=0.05 && y<=10);
 	btAssert(z>=0.05 && z<=10);
 
-
 	btBoxShape* boxShape = new btBoxShape(btVector3(x/2.f,y/2.f,z/2.f));
 	m_collisionShapes.push_back(boxShape);
 
@@ -348,9 +302,7 @@ int Physics::createBox(int x1, int y1, int z1){
 	//btScalar mass = btScalar(0);
 	startTransform.setOrigin(btVector3(0,0,0));
 
-
 	box= localCreateRigidBody(mass,startTransform,boxShape);
-
 
 	box->setUserPointer((void*)-1);
 
@@ -359,19 +311,17 @@ int Physics::createBox(int x1, int y1, int z1){
 	return returnVal;
 }
 
-
 int Physics::createSensor(int boxIndex, int type){
 	btRigidBody* box = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(boxIndex);
 
 	switch (type){
 	case pressure:
-		box->setCollisionFlags(box->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);			
+		box->setCollisionFlags(box->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 		sensors.push_back(0);
 		box->setUserPointer((void*)(sensors.size()-1));
 		break;
 	case light:
 		break;
-
 	}
 
 	return 0;
@@ -379,7 +329,7 @@ int Physics::createSensor(int boxIndex, int type){
 
 int Physics::setEffect(int jointIndex, float valueX,float valueY,float valueZ){
 	float userPointer = ((UserPointerStruct*)(m_dynamicsWorld->getConstraint(jointIndex)->getUserConstraintPtr()))->CrossSectionalStrength;
-	
+
 	int theSign;
 	float absX;
 	float absY;
@@ -436,7 +386,6 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							int preX, int preY, int preS,
 							int postX, int postY, int postS,
 							int dofX, int dofY, int dofZ){
-
 							 preX=preX%101;
 							 preY=preY%101;
 							 preS=preS%6;
@@ -446,26 +395,23 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 type=type%2;
 
 							 //tjek input in debug mode
-							 btAssert(preX>=0 && preX<=100);							
+							 btAssert(preX>=0 && preX<=100);
 							 btAssert(preY>=0 && preY<=100);
 							 btAssert(preS>-1 && preS<6);
 
-							 btAssert(postX>=0 && postX<=100);							
+							 btAssert(postX>=0 && postX<=100);
 							 btAssert(postY>=0 && postY<=100);
 							 btAssert(postS>-1 && postS<6);
-
 
 							 //Get box pointers
 							 btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
 							 btRigidBody* Box2 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box2);
-
 
 							 //Define the local transform on the shapes regarding to the joint.
 							 btTransform localBox1, localBox2;
 							 localBox1.setIdentity();
 							 localBox2.setIdentity();
 
-							 
 							 //box1
 							 btVector3 halfside1 = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithMargin();
 							 btVector3 center1 =Box1->getWorldTransform().getOrigin();
@@ -477,17 +423,14 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 localBox1.setOrigin(connection1);
 							 localBox1.setRotation(rotation1.inverse());
 
-
 							 //box2
 							 btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithMargin();
 							 btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
-
 
 							btQuaternion rotation2 = getLocalRotation(preS, postS);
 							rotation2*=rotation1;
 
 							btVector3 center2 = center1+rotate(&connection1,&rotation1.inverse())-rotate(&connection2,&rotation2);
-
 
 							//rotate and translate box
 							btTransform trans2;
@@ -496,19 +439,14 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							trans2.setRotation(rotation2.inverse());
 							trans2.setOrigin(center2);
 							Box2->setCenterOfMassTransform(trans2);
-							
-							 
+
 							btDefaultMotionState* myMotionState = (btDefaultMotionState*)((Box2)->getMotionState());
 							myMotionState->setWorldTransform(Box2->getWorldTransform());
 
-
 							 //rotate and translate joint
 							localBox2.setRotation(rotation2);
-							
+
 							 localBox2.setOrigin(connection2);
-
-
-
 
 							 //setup contraint/joint
 							 btHingeConstraint* hingeC;
@@ -521,14 +459,12 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 btScalar mass1=1/Box1->getInvMass();
 							 btScalar mass2=1/Box2->getInvMass();
 
-							 	
-
 							 switch(type){
 							 case HINGE:
 								 hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
-							
+
 								 hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
-								 
+
 								 sensors.push_back(0);
 								 theStruct->sensorIndex=sensors.size()-1;
 								 //uses the gen6d which makes it possible that the max force is to small
@@ -536,14 +472,13 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 hingeC->setUserConstraintPtr(theStruct);
 
 								 hingeC->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
-								 
+
 								 m_dynamicsWorld->addConstraint(hingeC,true);
-								
-								 
+
 								 break;
 							 case GENERIC6DOF:
 								 gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
-								 gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist) 
+								 gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist)
 								 gen6C->setLimit(1,0,0);
 								 gen6C->setLimit(2,0,0);
 								 gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
@@ -551,7 +486,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 gen6C->setLimit(5,-DOFzR/2,DOFzR/2);
 								 //gen6C->getTranslationalLimitMotor()->m_restitution=0.0000000;
 								//if(box2!=3)
-								 
+
 								 sensors.push_back(0);
 								 sensors.push_back(0);
 								 sensors.push_back(0);
@@ -563,27 +498,18 @@ int Physics::createJoint(	int box1, int box2,	int type,
 								 gen6C->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
 								m_dynamicsWorld->addConstraint(gen6C,true);
 
-								 	
-
-								 
-								
 								 break;
 							 }
 
 							 int returnVal = currentJointIndex;
 							 currentJointIndex++;
 
-							 
-
 							 return returnVal;
 }
-
 
 //calculates the contact area between the boxes and scals the max force accordingly
 //contact area is calculated as the minimum area where thes contac if the box is rotated around y axis
 float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int preY, int postS, btVector3* halfside2, int postX, int postY){
-
-
 							 //CSA
 							 float x,y;
 
@@ -604,8 +530,6 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 									y=halfside1->getX();
 									break;
 								}
-
-
 
 							  //CSA
 							 float x2,y2;
@@ -643,7 +567,7 @@ btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
 
 //ikke vores
 void Physics::CalculateRotation( btQuaternion *q, btMatrix3x3  *m ) {
-	const int a[3][3] = { (int)m->getRow(0).getX(),(int) m->getRow(0).getY(), (int)m->getRow(0).getZ(), (int)m->getRow(1).getX(),(int) m->getRow(1).getY(), (int)m->getRow(1).getZ(),(int) m->getRow(2).getX(), (int)m->getRow(2).getY(), (int)m->getRow(2).getZ() }; 
+	const int a[3][3] = { (int)m->getRow(0).getX(),(int) m->getRow(0).getY(), (int)m->getRow(0).getZ(), (int)m->getRow(1).getX(),(int) m->getRow(1).getY(), (int)m->getRow(1).getZ(),(int) m->getRow(2).getX(), (int)m->getRow(2).getY(), (int)m->getRow(2).getZ() };
 	float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
 	if( trace > 0 ) {// I changed M_EPSILON to 0
 		float s = 0.5f / sqrtf(trace+ 1.0f);
@@ -675,7 +599,6 @@ void Physics::CalculateRotation( btQuaternion *q, btMatrix3x3  *m ) {
 }
 
 btQuaternion Physics::getLocalRotation(int pre, int post){
-
 	btQuaternion rot;
 	if((pre==0 && post==4) || (pre==1 && post==0) || (pre==4 && post==5) || (pre==5 && post==1)){
 		//04 10 45 51
@@ -733,19 +656,16 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 //calculates the poistion of where the joint connects to the box in regards to the local box center
 btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSizes){
 	//tjek input in debug mode
-	btAssert(x>=0 && x<=100);							
+	btAssert(x>=0 && x<=100);
 	btAssert(y>=0 && y<=100);
 	btAssert(s>-1 && s<6);
 	btAssert(halfSizes);
-
-
 
 	btVector3 result;
 
 	//calculate offset from center of the side
 	double h=(x-50)/50.f;
 	double w=(y-50)/50.f;
-
 
 	switch(s){
 	case 0:
@@ -774,15 +694,12 @@ btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSiz
 	return result;
 }
 
-
 void	Physics::clientResetScene(){
 	exitPhysics();
 	initPhysics();
 }
 
-
 void	Physics::exitPhysics(){
-
 	//cleanup in the reverse order of creation/initialization
 
 	//delete NNs
@@ -792,7 +709,6 @@ void	Physics::exitPhysics(){
 	}
 	theNet->killFirstLayer();
 	delete theNet;
-
 
 	//delete contraints
 	while(m_dynamicsWorld->getNumConstraints()>0){
@@ -829,35 +745,25 @@ void	Physics::exitPhysics(){
 	delete m_dispatcher;
 
 	delete m_collisionConfiguration;
-
-
 }
 
 void Physics::testPhysics(){
-
-
-
 	int box2 = createBox(95,895,395);
 
 	int box3 = createBox(195,245,595);
 
-		
-	
 	createJoint(box2, box3, GENERIC6DOF,0, 50, 5, 50, 50, 1, 0,0,0);
-	
-	/*	
+
+	/*
 	int box4 = createBox(195,195,595);
 	createJoint(box3, box4, GENERIC6DOF,50, 50, 2, 50, 50,0, 0,0,0);
 
-	
-		
 	int box = createBox(85,385,185);
 	createJoint(box3, box, GENERIC6DOF,50, 50, 3, 50, 50, 3, 0,0,0);
-	
 
 	int box5 = createBox(95,95,395);
 	createJoint(box, box5, GENERIC6DOF,50, 50,5, 50, 50, 0, 0,0,0);
-	
+
 	if(!isLegal()){
 		printf("fail!\n");
 	}else{
@@ -868,7 +774,7 @@ void Physics::testPhysics(){
 
 	//NN test
 	std::vector<NeuralNode*> inputs;
-	
+
 	for(int i=0;i< (int) sensors.size();i++){
 		inputs.push_back(new NeuralNode(&sensors.at(i)));
 	}
@@ -888,13 +794,8 @@ inputs.push_back(new NeuralNode(testPoint));
 	*/
 }
 
-
-
 void Physics::calcFitness(){
-	
 	btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
 	if(height<2){fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));}
 	else{fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;}
-
 }
-

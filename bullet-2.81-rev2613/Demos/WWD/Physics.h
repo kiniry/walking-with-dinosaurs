@@ -8,7 +8,6 @@
 
 #pragma once
 
-
 #ifdef _WINDOWS
 #include "Win32DemoApplication.h"
 #define PlatformDemoApplication Win32DemoApplication
@@ -24,14 +23,11 @@
 #include <vector>
 #include <limits>
 
-
 #include "GlutStuff.h"
 #include "btBulletDynamicsCommon.h"
 
 #include <stdio.h>
 #include "GLDebugDrawer.h"
-
-
 
 static GLDebugDrawer gDebugDraw;
 
@@ -48,19 +44,16 @@ struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallbac
 	}
 };
 
-
-
-
 //bullet units
 /**
 *	Bullet assumes units to be in meters and time in seconds.
-*	Moving objects are assumed to be in the range of 0.05 units, about the size of a pebble, to 10, the size of a truck. 
+*	Moving objects are assumed to be in the range of 0.05 units, about the size of a pebble, to 10, the size of a truck.
 *	The simulation steps in fraction of seconds (1/60 sec or 60 hertz), and gravity in meters per square second (9.8 m/s^2).
 */
 
 //real world units
 //average density of the human body 1062 kg/m3 acording to http://www.dtic.mil/dtic/tr/fulltext/u2/639241.pdf
-#define DensityHuman 1062 
+#define DensityHuman 1062
 
 //average strength human cross-sectional area 6.3 kg/cm2 http://link.springer.com/article/10.1007%2FBF00696087
 #define musclePercentage 0.30 //the ca percentage of muscle mass in a joint
@@ -73,7 +66,6 @@ struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallbac
 
 #define PI 3.1415926
 
-
 enum{pressure, angle, light};
 
 enum{HINGE,GENERIC6DOF};
@@ -85,7 +77,6 @@ class btConstraintSolver;
 struct btCollisionAlgorithmCreateFunc;
 class btDefaultCollisionConfiguration;
 
-
 class Physics : public PlatformDemoApplication{
 	private:
 		std::vector<int> ancestor;
@@ -94,9 +85,6 @@ class Physics : public PlatformDemoApplication{
 		float lowestPoint;
 		float height;
 
-
-
-	
 		int currentBoxIndex,currentJointIndex;
 		unsigned long timeUsed;
 
@@ -110,14 +98,10 @@ class Physics : public PlatformDemoApplication{
 		btConstraintSolver*	m_solver;
 
 		btDefaultCollisionConfiguration* m_collisionConfiguration;
-	
+
 		void	initPhysics();
 
 		void	exitPhysics();
-
-	
-
-	
 
 		struct UserPointerStruct{
 			int sensorIndex;
@@ -129,14 +113,10 @@ class Physics : public PlatformDemoApplication{
 		virtual void displayCallback();
 		virtual void clientResetScene();
 
-		
-		
 		bool isLegal();
 
-		
 		int setEffect(int jointIndex, float valueX,float valueY,float valueZ);
 		void simulationLoopStep(float stepSize);
-
 
 		btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
 		btQuaternion getLocalRotation(int myS, int opS);
@@ -147,7 +127,6 @@ class Physics : public PlatformDemoApplication{
 		inline float sign(float input);
 		float getBoxHalfHeight(btCollisionObject* object);
 
-
 	public:
 
 		NeuralNetwork* theNet;
@@ -155,19 +134,14 @@ class Physics : public PlatformDemoApplication{
 		std::vector<NeuralNetwork*> subnets;
 		std::vector<float> sensors;
 		std::vector<int> effectorNNindex;
-		
-		
-		
+
 		DinoTreeNode* DinoStructure;
-		
-		
+
 		float getFitness(){
 			return fitness;
 		}
 
 		void calcFitness();
-
-		
 
 		Physics(std::vector<int> Ancestor){
 			ancestor=Ancestor;
@@ -186,17 +160,14 @@ class Physics : public PlatformDemoApplication{
 			exitPhysics();
 		}
 
-
 		int createBox(int x,int y,int z);
 		int createSensor(int box, int type);
 		int createJoint(		int box1, int box2, int type,
 								int preX, int preY, int preS,
 								int postX, int postY, int postS,
 								int dofX, int dofY, int dofZ);
-		
+
 		void testPhysics();
 		void calcSize();
 		void solveGroundConflicts();
 };
-
-

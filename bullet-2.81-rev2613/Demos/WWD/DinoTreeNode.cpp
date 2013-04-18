@@ -1,6 +1,5 @@
 #include "DinoTreeNode.h"
 
-
 DinoTreeNode::DinoTreeNode(int startIndex, bool isNeural)
 {
 	this->DNAindex=startIndex;

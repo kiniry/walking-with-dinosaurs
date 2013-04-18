@@ -1,6 +1,5 @@
 #include "NeuralNetwork.h"
 
-
 NeuralNetwork::NeuralNetwork(std::vector<NeuralNode*> inputs)
 {
 	if(inputs.size()<=0){
@@ -15,7 +14,6 @@ NeuralNetwork::NeuralNetwork(std::vector<NeuralNode*> inputs)
 	layers.push_back(aLayer);
 	layerIndex=1;
 }
-
 
 NeuralNetwork::~NeuralNetwork(void)
 {
@@ -47,7 +45,7 @@ void NeuralNetwork::insertNode(int f, int i1, float w1)
 
 void NeuralNetwork::insertNode(int f, int i1, int i2, float w1, float w2)
 {
-//1: get input nodes from previous layer and create node from it	
+//1: get input nodes from previous layer and create node from it
 	int size = layers.at(layerIndex-1).size();
 	NeuralNode* inputNode1 = layers.at(layerIndex-1).at(i1%size);
 	NeuralNode* inputNode2 = layers.at(layerIndex-1).at(i2%size);
@@ -58,7 +56,7 @@ void NeuralNetwork::insertNode(int f, int i1, int i2, float w1, float w2)
 
 void NeuralNetwork::insertNode(int f, int i1, int i2, int i3, float w1, float w2, float w3)
 {
-//1: get input nodes from previous layer and create node from it	
+//1: get input nodes from previous layer and create node from it
 	int size = layers.at(layerIndex-1).size();
 	NeuralNode* inputNode1 = layers.at(layerIndex-1).at(i1%size);
 	NeuralNode* inputNode2 = layers.at(layerIndex-1).at(i2%size);
@@ -70,7 +68,6 @@ void NeuralNetwork::insertNode(int f, int i1, int i2, int i3, float w1, float w2
 
 void NeuralNetwork::changeLayer()
 {
-	
 	//previousLayerOutputs.clear();
 	if(!(layerIndex==lastLayerIndex)){
 		/*std::vector<NeuralNode*> flipVariable;
@@ -86,7 +83,6 @@ void NeuralNetwork::changeLayer()
 		}*/
 
 		//TODO set currentlayer...
-
 
 		layerIndex++;
 		if(init){
@@ -119,7 +115,7 @@ void NeuralNetwork::computeLayer()
 		//printf("atENUM %d \n",layers.at(layerIndex).at(i)->function);
 		layers.at(layerIndex).at(i)->compute();
 	}
-	
+
 	if(layerIndex==lastLayerIndex){outputUndefined=false;}
 
 	changeLayer();
@@ -148,7 +144,7 @@ float NeuralNetwork::getOutput(int index){
 		return 0;
 	}*/
 	if(outputUndefined){return 0;}
-	
+
 	return layers.at(lastLayerIndex).at(index%layers.at(lastLayerIndex).size())->getOutput();
 }
 

@@ -3,15 +3,12 @@
 #include <math.h>
 #include <limits>
 
-
-
 //Definition of functions
 #define SENSOR -1
 enum{SUM,PRODUCT,DIVIDE,SUMTHRESHOLD,GREATERTHAN,SIGNOF,MIN,MAX,ABS,IF,INTERPOLATE,SIN,COS,ATAN,LOG,EXPT,SIGMOID,WAVE,SAW,NR_OF_FUNCTIONS};
 
 class NeuralNode
 {
-	
 	int nrOfInputs;
 	float currentOutput;
 	float* sensorInput;
@@ -54,4 +51,3 @@ private:
 	inline float wave();
 	inline float saw();
 };
-

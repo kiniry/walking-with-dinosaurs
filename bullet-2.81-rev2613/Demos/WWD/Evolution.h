@@ -1,9 +1,9 @@
 /**
-*	this files handels removing the creatures with lowest fitness score and adding new creatures based on the surving creatures. 
+*	this files handels removing the creatures with lowest fitness score and adding new creatures based on the surving creatures.
 *	this means the resulting batch of creatures will be a combination of surviors and children of the survivors
-*	
+*
 *	the correctness of the new dna belonging to the children are not check in this file.
-*	
+*
 **/
 
 #ifndef EVOLV_H
@@ -15,7 +15,6 @@
 //results in a range  of values from
 #define maxDNAValue 2000
 #define randomDnaValue rand()%maxDNAValue
-
 
 struct creature{
 	std::vector<int> dna;
@@ -34,7 +33,5 @@ std::vector<int> crossOver1(std::vector<int> dna1, std::vector<int> dna2);
 std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2);
 
 const int survivalRatio = 20;
-
-
 
 #endif

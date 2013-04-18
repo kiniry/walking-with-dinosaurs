@@ -4,13 +4,12 @@
 *Here be Dinos!!!
 */
 int readDNA(const std::vector<int> DNA, Physics *world){
-
 	int index = 0;
 	int blocks = 0;
 	std::vector<DinoTreeNode*>* tempNeural = new std::vector<DinoTreeNode*>;
 	world->DinoStructure = new DinoTreeNode(index,false);
 
-	try{	
+	try{
 		DinoTreeNode* firstPart = new DinoTreeNode(index,false);
 		world->DinoStructure->addChild(firstPart);
 		int part = world->createBox(getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA));
@@ -50,7 +49,6 @@ int readDNA(const std::vector<int> DNA, Physics *world){
 		subnet->stopBuilding();
 	}
 	delete tempNeural;
-
 
 	world->DinoStructure->setEnd(index);
 
@@ -163,10 +161,8 @@ int B(int index, const std::vector<int> DNA, Physics *world, int *blocks, int pa
 		part5->setEnd(index);
 		break;
 
-
 	default:
 		throw Gfail;
-
 	}
 
 	return index;
@@ -189,7 +185,6 @@ int J(int index, const std::vector<int> DNA, Physics *world, int *blocks, int pa
 }
 
 int NN(int index,const std::vector<int> DNA){
-
 	switch(getDNA(index,DNA)%3){
 	case 0: //this is the last node.
 		index= NI(index+1,DNA);
@@ -207,7 +202,6 @@ int NN(int index,const std::vector<int> DNA){
 }
 
 int NN(int index, const std::vector<int> DNA, NeuralNetwork* net,DinoTreeNode* partTree){
-
 	DinoTreeNode* aNode = new DinoTreeNode(index,true);
 	partTree->addChild(aNode);
 
@@ -229,7 +223,6 @@ int NN(int index, const std::vector<int> DNA, NeuralNetwork* net,DinoTreeNode* p
 		break;
 	}
 	return index;
-
 }
 
 int NI(int index,const std::vector<int> DNA){
@@ -271,6 +264,3 @@ int NI(int index, const std::vector<int> DNA, NeuralNetwork* net){
 	}
 	return index;
 }
-
-
-

@@ -11,7 +11,7 @@ class NeuralNetwork
 	std::vector<NeuralNode*> previousLayerOutputs;
 	*/
 	std::vector<std::vector<NeuralNode*>> layers;
-	
+
 	bool init,outputUndefined;
 
 	int layerIndex;
@@ -24,7 +24,7 @@ public:
 	NeuralNetwork(std::vector<NeuralNode*> inputs); //should not be public?
 	std::vector<NeuralNode*> getLastLayer();
 	~NeuralNetwork(void);
-	
+
 	void insertNode(float value);
 	void insertNode(int f, int i1, float w1);
 	void insertNode(int f, int i1, int i2, float w1, float w2);
@@ -37,4 +37,3 @@ public:
 
 	float getOutput(int index);
 };
-

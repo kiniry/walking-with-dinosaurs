@@ -39,11 +39,6 @@ int main(int argc,char** argv)
 
 #else
 
-
-
-
-
-
 	std::vector<Physics*> worlds;
 
 	const int temp[] = {
@@ -73,7 +68,6 @@ int main(int argc,char** argv)
 
 	std::vector<creature> creatures;
 
-
 	//Creates one ancestor and the rest is mutation of the ancestor
 	creatures.push_back(creature());
 	creatures.at(0).dna=ancestor;
@@ -83,7 +77,6 @@ int main(int argc,char** argv)
 		creatures.at(i).dna=mutate(ancestor);
 		creatures.at(i).fitness=0;
 	}
-
 
 	for(int i=0;i<nrOfGenerations;i++){
 		#pragma omp parallel
@@ -98,7 +91,6 @@ int main(int argc,char** argv)
 				readDNA(creatures.at(j).dna,WWDPhysics);
 
 				worlds.push_back(WWDPhysics);
-
 			}
 
 			//run simulator
@@ -106,7 +98,6 @@ int main(int argc,char** argv)
 			for(int j=0;j< (int) worlds.size();j++){
 				worlds.at(j)->runSimulation(); //runs a physics simulation and save the fitness values
 			}
-
 
 			#pragma omp for
 			for(int j= worlds.size()-1; j>=0; j--){
@@ -136,7 +127,6 @@ int main(int argc,char** argv)
 		}
 	}
 
-
 	for (int i = 0; i < creatures.at(0).dna.size(); i++)
 	{
 		printf("%d,", creatures.at(0).dna.at(i));
@@ -153,6 +143,4 @@ int main(int argc,char** argv)
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 
 #endif
-
 }
-

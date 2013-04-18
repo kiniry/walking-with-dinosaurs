@@ -1,6 +1,5 @@
 #include "NeuralNode.h"
 
-
 /**
 *Not really a node, but a convenience method of defining a constant value input.
 */
@@ -34,7 +33,7 @@ NeuralNode::NeuralNode(int function, NeuralNode* input, float weight)
 NeuralNode::NeuralNode(int function, NeuralNode* input1, NeuralNode* input2, float weight1, float weight2)
 {
 	//printf("ENUM PROD %d, func: %d \n",PRODUCT,function);
-	
+
 	this->function=function%NR_OF_FUNCTIONS;
 	this->input1=input1;
 	this->input2=input2;
@@ -141,10 +140,10 @@ inline float NeuralNode::sum(){
 	if(input2 == NULL){input2=new NeuralNode((float)0);}
 	/*printf("in1:%f in2:%f sum %f \n",input1->currentOutput,input2->currentOutput,
 			input1->currentOutput * weight1
-			+ 
+			+
 			input2->currentOutput * weight2);*/
 	return	input1->currentOutput * weight1
-			+ 
+			+
 			input2->currentOutput * weight2;
 }
 
@@ -152,17 +151,17 @@ inline float NeuralNode::product(){
 	if(input2 == NULL){input2=new NeuralNode((float)1);}
 	/*printf("in1:%f in2:%f product %f \n",input1->currentOutput,input2->currentOutput,
 			input1->currentOutput * weight1
-			* 
+			*
 			input2->currentOutput * weight2);*/
 	return	input1->currentOutput * weight1
-			* 
+			*
 			input2->currentOutput * weight2;
 }
 
 inline float NeuralNode::divide(){
 	if(input2 == NULL){input2=new NeuralNode((float)1);}
-	return	input1->currentOutput * weight1 
-			/ 
+	return	input1->currentOutput * weight1
+			/
 			input2->currentOutput * weight2;
 }
 
@@ -237,7 +236,7 @@ inline float NeuralNode::mySin(){
 	//printf("in1:%f sin %f \n",input1->currentOutput, sin(input1->currentOutput*weight1));
 	return sin(input1->currentOutput*weight1);
 }
-	
+
 inline float NeuralNode::myCos(){
 	return cos(input1->currentOutput*weight1);
 }
@@ -260,14 +259,13 @@ inline float NeuralNode::myExpt(){
 
 inline float NeuralNode::sigmoid(){
 	float x = input1->currentOutput*weight1;
-	return 1/(1+exp(-x)); 
+	return 1/(1+exp(-x));
 }
 
 /**
 *Integration of the hyperbolic tangent, from weighted inputs 1 to 2
 */
 /*inline float NeuralNode::integrate(){
-	
 }*/
 
 //, differentiate, smooth, memory
@@ -286,7 +284,6 @@ inline float NeuralNode::saw(){
 	return sin(defaultFuncInput);
 }
 void NeuralNode::setWeights(float w1, float w2, float w3){
-
 }
 
 NeuralNode::~NeuralNode(void)

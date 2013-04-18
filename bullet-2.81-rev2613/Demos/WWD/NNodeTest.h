@@ -2,7 +2,7 @@
 #include "NeuralNode.h"
 #include "assert2.h"
 
-#include <stdlib.h> 
+#include <stdlib.h>
 
 namespace NNode
 {
