@@ -14,7 +14,7 @@
 
 //results in a range  of values from
 #define maxDNAValue 2000
-#define randomDnaValue rand()%maxDNAValue-(maxDNAValue/2)
+#define randomDnaValue rand()%maxDNAValue
 
 
 struct creature{
