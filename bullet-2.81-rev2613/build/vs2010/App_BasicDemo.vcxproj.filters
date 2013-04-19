@@ -7,6 +7,9 @@
     <Filter Include="Test">
       <UniqueIdentifier>{29611852-97bf-4c30-a226-498bc4045778}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{e0c8dc29-5b92-4885-af16-cdbf1b580f39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\bullet.rc" />
@@ -39,6 +42,9 @@
     <ClInclude Include="..\..\Demos\WWD\DinoTreeNode.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\main.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp">
@@ -67,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Demos\WWD\DinoTreeNode.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\WWD\GUI.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
