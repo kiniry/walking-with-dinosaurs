@@ -386,174 +386,205 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							int preX, int preY, int preS,
 							int postX, int postY, int postS,
 							int dofX, int dofY, int dofZ){
-							 preX=preX%101;
-							 preY=preY%101;
-							 preS=preS%6;
-							 postX=postX%101;
-							 postY=postY%101;
-							 postS=postS%6;
-							 type=type%2;
+								preX=preX%99+1;
+								preY=preY%99+1;
+								preS=preS%6;
+								postX=postX%99+1;
+								postY=postY%99+1;
+								postS=postS%6;
+								type=type%2;
 
-							 //tjek input in debug mode
-							 btAssert(preX>=0 && preX<=100);
-							 btAssert(preY>=0 && preY<=100);
-							 btAssert(preS>-1 && preS<6);
+								//tjek input in debug mode
+								btAssert(preX>0 && preX<100);
+								btAssert(preY>0 && preY<100);
+								btAssert(preS>-1 && preS<6);
 
-							 btAssert(postX>=0 && postX<=100);
-							 btAssert(postY>=0 && postY<=100);
-							 btAssert(postS>-1 && postS<6);
+								btAssert(postX>0 && postX<100);
+								btAssert(postY>0 && postY<100);
+								btAssert(postS>-1 && postS<6);
 
-							 //Get box pointers
-							 btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
-							 btRigidBody* Box2 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box2);
+								//Get box pointers
+								btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
+								btRigidBody* Box2 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box2);
 
-							 //Define the local transform on the shapes regarding to the joint.
-							 btTransform localBox1, localBox2;
-							 localBox1.setIdentity();
-							 localBox2.setIdentity();
+								//Define the local transform on the shapes regarding to the joint.
+								btTransform localBox1, localBox2;
+								localBox1.setIdentity();
+								localBox2.setIdentity();
 
-							 //box1
-							 btVector3 halfside1 = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithMargin();
-							 btVector3 center1 =Box1->getWorldTransform().getOrigin();
-							 btQuaternion rotation1 =Box1->getWorldTransform().getRotation();
+								//box1
+								btVector3 halfside1 = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithMargin();
+								btVector3 center1 =Box1->getWorldTransform().getOrigin();
+								btQuaternion rotation1 =Box1->getWorldTransform().getRotation();
 
-							 btVector3 connection1 = getLocalJointPosition(preX,preY,preS,&halfside1);
+								btVector3 connection1 = getLocalJointPosition(preX,preY,preS,&halfside1);
 
-							 //translate joint
-							 localBox1.setOrigin(connection1);
-							 localBox1.setRotation(rotation1.inverse());
+								//translate joint
+								localBox1.setOrigin(connection1);
+								localBox1.setRotation(rotation1.inverse());
 
-							 //box2
-							 btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithMargin();
-							 btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
+								//box2
+								btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithMargin();
+								btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
 
-							btQuaternion rotation2 = getLocalRotation(preS, postS);
-							rotation2*=rotation1;
+								btQuaternion rotation2 = getLocalRotation(preS, postS);
+								rotation2*=rotation1;
 
-							btVector3 center2 = center1+rotate(&connection1,&rotation1.inverse())-rotate(&connection2,&rotation2);
+								btVector3 center2 = center1+rotate(&connection1,&rotation1.inverse())-rotate(&connection2,&rotation2);
 
-							//rotate and translate box
-							btTransform trans2;
-							trans2.setIdentity();
-							//trans2.setRotation(rotation2);
-							trans2.setRotation(rotation2.inverse());
-							trans2.setOrigin(center2);
-							Box2->setCenterOfMassTransform(trans2);
+								//rotate and translate box
+								btTransform trans2;
+								trans2.setIdentity();
+								//trans2.setRotation(rotation2);
+								trans2.setRotation(rotation2.inverse());
+								trans2.setOrigin(center2);
+								Box2->setCenterOfMassTransform(trans2);
 
-							btDefaultMotionState* myMotionState = (btDefaultMotionState*)((Box2)->getMotionState());
-							myMotionState->setWorldTransform(Box2->getWorldTransform());
+								btDefaultMotionState* myMotionState = (btDefaultMotionState*)((Box2)->getMotionState());
+								myMotionState->setWorldTransform(Box2->getWorldTransform());
 
-							 //rotate and translate joint
-							localBox2.setRotation(rotation2);
+								//rotate and translate joint
+								localBox2.setRotation(rotation2);
 
-							 localBox2.setOrigin(connection2);
+								localBox2.setOrigin(connection2);
 
-							 //setup contraint/joint
-							 btHingeConstraint* hingeC;
-							 btGeneric6DofConstraint* gen6C;
-							int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
-							// int DOFx = dofX %170+10;	int DOFy = dofY%170+10;	int DOFz = dofZ %170+10;
-							 float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
-							// printf("%f %f %f\n", DOFxR,DOFyR,DOFzR);
-							 UserPointerStruct* theStruct = new UserPointerStruct();
-							 btScalar mass1=1/Box1->getInvMass();
-							 btScalar mass2=1/Box2->getInvMass();
+								//setup contraint/joint
+								btHingeConstraint* hingeC;
+								btGeneric6DofConstraint* gen6C;
+								int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
+								// int DOFx = dofX %170+10;	int DOFy = dofY%170+10;	int DOFz = dofZ %170+10;
+								float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
+								// printf("%f %f %f\n", DOFxR,DOFyR,DOFzR);
+								UserPointerStruct* theStruct = new UserPointerStruct();
+								btScalar mass1=1/Box1->getInvMass();
+								btScalar mass2=1/Box2->getInvMass();
 
-							 switch(type){
-							 case HINGE:
-								 hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
+								switch(type){
+								case HINGE:
+									hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
 
-								 hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
+									hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
 
-								 sensors.push_back(0);
-								 theStruct->sensorIndex=sensors.size()-1;
-								 //uses the gen6d which makes it possible that the max force is to small
-								 theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
-								 hingeC->setUserConstraintPtr(theStruct);
+									sensors.push_back(0);
+									theStruct->sensorIndex=sensors.size()-1;
+									//uses the gen6d which makes it possible that the max force is to small
+									theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
+									hingeC->setUserConstraintPtr(theStruct);
 
-								 hingeC->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
+									hingeC->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
 
-								 m_dynamicsWorld->addConstraint(hingeC,true);
+									m_dynamicsWorld->addConstraint(hingeC,true);
 
-								 break;
-							 case GENERIC6DOF:
-								 gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
-								 gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist)
-								 gen6C->setLimit(1,0,0);
-								 gen6C->setLimit(2,0,0);
-								 gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
-								 gen6C->setLimit(4,-DOFyR/2,DOFyR/2);
-								 gen6C->setLimit(5,-DOFzR/2,DOFzR/2);
-								 //gen6C->getTranslationalLimitMotor()->m_restitution=0.0000000;
-								//if(box2!=3)
+									break;
+								case GENERIC6DOF:
+									gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
+									gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist)
+									gen6C->setLimit(1,0,0);
+									gen6C->setLimit(2,0,0);
+									gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
+									gen6C->setLimit(4,-DOFyR/2,DOFyR/2);
+									gen6C->setLimit(5,-DOFzR/2,DOFzR/2);
+									//gen6C->getTranslationalLimitMotor()->m_restitution=0.0000000;
+									//if(box2!=3)
 
-								 sensors.push_back(0);
-								 sensors.push_back(0);
-								 sensors.push_back(0);
+									sensors.push_back(0);
+									sensors.push_back(0);
+									sensors.push_back(0);
 
-								 theStruct->sensorIndex=sensors.size()-3;
-								 theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
-								 gen6C->setUserConstraintPtr(theStruct);
+									theStruct->sensorIndex=sensors.size()-3;
+									theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
+									gen6C->setUserConstraintPtr(theStruct);
 
-								 gen6C->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
-								m_dynamicsWorld->addConstraint(gen6C,true);
+									gen6C->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
+									m_dynamicsWorld->addConstraint(gen6C,true);
 
-								 break;
-							 }
+									break;
+								}
 
-							 int returnVal = currentJointIndex;
-							 currentJointIndex++;
+								int returnVal = currentJointIndex;
+								currentJointIndex++;
 
-							 return returnVal;
+								return returnVal;
 }
 
 //calculates the contact area between the boxes and scals the max force accordingly
 //contact area is calculated as the minimum area where thes contac if the box is rotated around y axis
 float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int preY, int postS, btVector3* halfside2, int postX, int postY){
-							 //CSA
-							 float x,y;
+	//CSA
+	float x,y, spaceLeftX, spaceLeftY;
 
-							 switch(preS){
-								case 0:
-								case 5:
-									x=halfside1->getY();
-									y=halfside1->getX();
-									break;
-								case 1:
-								case 4:
-									x=halfside1->getZ();
-									y=halfside1->getY();
-									break;
-								case 2:
-								case 3:
-									x=halfside1->getZ();
-									y=halfside1->getX();
-									break;
-								}
+	switch(preS){
+	case 0:
+	case 5:
+		x=halfside1->getY();
+		y=halfside1->getX();
+		spaceLeftX=x-(x/50.*((float)abs(preY-50)));
+		spaceLeftY=y-(y/50.*((float)abs(preX-50)));
+		printf("space left1 %f\n", spaceLeftY);
+		printf("space left2 %f\n", spaceLeftX);
+		break;
+	case 1:
+	case 4:
+		x=halfside1->getZ();
+		y=halfside1->getY();
+		spaceLeftX=x-(x/50.*((float)abs(preX-50)));
+		spaceLeftY=y-(y/50.*((float)abs(preY-50)));
+		printf("space left1 %f\n", spaceLeftY);
+		printf("space left2 %f\n", spaceLeftX);
+		break;
+	case 2:
+	case 3:
+		x=halfside1->getZ();
+		y=halfside1->getX();
+		spaceLeftX=x-(x/50.*((float)abs(preY-50)));
+		spaceLeftY=y-(y/50.*((float)abs(preX-50)));
+		printf("space left1 %f\n", spaceLeftY);
+		printf("space left2 %f\n", spaceLeftX);
+		break;
+	}
 
-							  //CSA
-							 float x2,y2;
+	//CSA
+	float x2,y2, spaceLeftX2, spaceLeftY2;
 
-							 switch(postS){
-								case 0:
-								case 5:
-									x2=halfside2->getY();
-									y2=halfside2->getX();
-									break;
-								case 1:
-								case 4:
-									x2=halfside2->getZ();
-									y2=halfside2->getY();
-									break;
-								case 2:
-								case 3:
-									x2=halfside2->getZ();
-									y2=halfside2->getX();
-									break;
-								}
-							float forceOffsetPercent=1.- (max(abs(postY-50)+abs(preY-50),max(abs(preX-50)+abs(postX-50),max(abs(postX-50)+abs(preY-50),max(abs(preX-50)+abs(postY-50),max(abs(preX-50)+abs(preY-50),abs(postX-50)+abs(postY-50)))))))/100.;
-							float areal =min(x*x2,min(y*y2,min(x2*y,min(x*y2,min(x*y,x2*y2)))))*4;
-							return areal*forceOffsetPercent*csa;
+	switch(postS){
+	case 0:
+	case 5:
+		x2=halfside2->getY();
+		y2=halfside2->getX();
+		spaceLeftX2=x2-(x2/50.*((float)abs(postY-50)));
+		spaceLeftY2=y2-(y2/50.*((float)abs(postX-50)));
+		printf("space left1 %f\n", spaceLeftY2);
+		printf("space left2 %f\n", spaceLeftX2);
+		break;
+	case 1:
+	case 4:
+		x2=halfside2->getZ();
+		y2=halfside2->getY();
+		spaceLeftX2=x2-(x2/50.*((float)abs(postX-50)));
+		spaceLeftY2=y2-(y2/50.*((float)abs(postY-50)));
+		printf("space left1 %f\n", spaceLeftY2);
+		printf("space left2 %f\n", spaceLeftX2);
+		break;
+	case 2:
+	case 3:
+		x2=halfside2->getZ();
+		y2=halfside2->getX();
+		spaceLeftX2=x2-(x2/50.*((float)abs(postY-50)));
+		spaceLeftY2=y2-(y2/50.*((float)abs(postX-50)));
+		printf("space left1 %f\n", spaceLeftY2);
+		printf("space left2 %f\n", spaceLeftX2);
+		break;
+	}
+
+
+
+
+
+	//float forceOffsetPercent=1.- (max(abs(postY-50)+abs(preY-50),max(abs(preX-50)+abs(postX-50),max(abs(postX-50)+abs(preY-50),max(abs(preX-50)+abs(postY-50),max(abs(preX-50)+abs(preY-50),abs(postX-50)+abs(postY-50)))))))/100.;
+	//float areal =min(x*x2,min(y*y2,min(x2*y,min(x*y2,min(x*y,x2*y2)))))*4;
+	float areal =min(spaceLeftX*spaceLeftX2,min(spaceLeftY*spaceLeftY2,min(spaceLeftX2*spaceLeftY,min(spaceLeftX*spaceLeftY2,min(spaceLeftX*spaceLeftY,spaceLeftX2*spaceLeftY2)))))*4;
+	printf("areal %f\n", areal);
+	return areal*csa;
 }
 
 //rotates vector3 by a Quaternion
