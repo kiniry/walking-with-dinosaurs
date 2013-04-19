@@ -51,10 +51,10 @@ int main(int argc,char** argv)
 	std::vector<int> ancestor (temp, temp+size);
 	Physics* WWDPhysics = new Physics(ancestor);
 	//init creature
-	readDNA(ancestor,WWDPhysics);
+	readDNA(&ancestor,WWDPhysics);
 	//WWDPhysics->testPhysics();
 	//default glut doesn't return from mainloop
-	//WWDPhysics->calcSize();
+
 	WWDPhysics->solveGroundConflicts();
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 
@@ -109,7 +109,7 @@ int main(int argc,char** argv)
 				Physics* WWDPhysics = new Physics(creatures.at(j).dna);
 
 				//init creature
-				readDNA(creatures.at(j).dna,WWDPhysics);
+				readDNA(&creatures.at(j).dna,WWDPhysics);
 
 				worlds.push_back(WWDPhysics);
 			}
@@ -156,7 +156,7 @@ int main(int argc,char** argv)
 	//Show end result if we want to...
 	Physics* WWDPhysics = new Physics(creatures.at(0).dna);
 	//init creature
-	readDNA(creatures.at(0).dna,WWDPhysics);
+	readDNA(&creatures.at(0).dna,WWDPhysics);
 	//default glut doesn't return from mainloop
 
 	WWDPhysics->calcSize();
