@@ -2,6 +2,7 @@
 #include <algorithm>
 
 std::vector<creature> evolve(std::vector<creature> creatures){
+	float fitnessSum = 0;
 	std::vector<creature> result;
 
 	std::sort(creatures.begin(), creatures.end(), compareCreatures);
@@ -24,9 +25,9 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 		int random = rand()%100+1;
 
-		int mut = 40;
-		int cross1 = 30;
-		//int cross2 = 30;
+		int mut = 20;
+		int cross1 = 40;
+		//int cross2 = 40;
 		std::vector<int> dna = creatures.at(i%survivors).dna;
 		std::vector<int> dna2 = creatures.at(rand()%survivors).dna;
 
@@ -37,11 +38,23 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		}else{
 			creat.dna= crossOver2(dna,dna2);
 		}
-
+		
 		result.push_back(creat);
 	}
 
 	return result;
+}
+
+creature getWorthyCreature(float fitnessSum, std::vector<creature> creatures){
+	int Sum = (int)(fitnessSum*10000.f);
+	int random = rand()%Sum;
+	int val = 0;
+	int i=0;
+	for(i;i<creatures.size();i++){
+		val+=creatures.at(i).fitness*10000;
+		if(val>random){break;}
+	}
+	return creatures.at(i);
 }
 
 std::vector<int> mutate(const std::vector<int> dna){
