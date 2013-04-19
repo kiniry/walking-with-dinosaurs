@@ -175,10 +175,13 @@
     <Link>
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glut32.lib;..\..\lib\OpenGLSupport_vs2010_debug.lib;..\..\lib\BulletDynamics_vs2010_debug.lib;..\..\lib\BulletCollision_vs2010_debug.lib;..\..\lib\LinearMath_vs2010_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\Glut;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
       <TargetMachine>MachineX86</TargetMachine>
+      <NoEntryPoint>
+      </NoEntryPoint>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -222,6 +225,7 @@
     <ClInclude Include="..\..\Demos\WWD\DinoTreeNode.h" />
     <ClInclude Include="..\..\Demos\WWD\Evolution.h" />
     <ClInclude Include="..\..\Demos\WWD\Grammar.h" />
+    <ClInclude Include="..\..\Demos\WWD\main.h" />
     <ClInclude Include="..\..\Demos\WWD\NeuralNetwork.h" />
     <ClInclude Include="..\..\Demos\WWD\NeuralNode.h" />
     <ClInclude Include="..\..\Demos\WWD\NNodeTest.h" />
@@ -232,6 +236,7 @@
     <ClCompile Include="..\..\Demos\WWD\DinoTreeNode.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Evolution.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Grammar.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\GUI.cpp" />
     <ClCompile Include="..\..\Demos\WWD\main.cpp" />
     <ClCompile Include="..\..\Demos\WWD\NeuralNetwork.cpp" />
     <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp" />
