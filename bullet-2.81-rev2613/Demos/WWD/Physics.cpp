@@ -33,47 +33,22 @@ void Physics::calcSize(){
 }
 
 bool Physics::isLegal(){
-	m_dynamicsWorld->setGravity(btVector3(0,0,0));
-	for(int i =0;i<10000;i++){
-	m_dynamicsWorld->stepSimulation(1/1000);
-	}
 		btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 
 		MyContactResultCallback result;
 		result.m_connected=false;
-		
-	for(int i=0;i<m_dynamicsWorld->getNumCollisionObjects();i++){
-		btVector3 lin = objects.at(i)->getInterpolationLinearVelocity();
-		printf("nr %d: x-%f y-%f z-%f\n",i,lin.x(),lin.y(),lin.z());
-		btVector3 ang = objects.at(i)->getInterpolationAngularVelocity();
-		printf("nr %d: x-%f y-%f z-%f\n",i,ang.x(),ang.y(),ang.z());
 
-		
-
-		if(	lin.x()>0.1||lin.x()<-0.1||
-			lin.y()>0.1||lin.y()<-0.1||
-			lin.z()>0.1||lin.z()<-0.1||
-			ang.x()>0.1||ang.x()<-0.1||
-			ang.y()>0.1||ang.y()<-0.1||
-			ang.z()>0.1||ang.z()<-0.1){
-				printf("DEATH!");
-				return false;
-			}
-	}
-
-	for (int i = 1; i < objects.size()-1; i++){
-		for (int j = i+1; j < objects.size()-1; j++){
+	for (int i = 1; i < objects.size(); i++){
+		for (int j = i+1; j < objects.size(); j++){
 			m_dynamicsWorld->contactPairTest(objects.at(i),objects.at(j),result);
 
 			if(result.m_connected == true){
-				//fitness = (-1)*(std::numeric_limits<float>::max());
 				printf("dohhhh");
 
 				return false;
 			}
 		}
 	}
-	m_dynamicsWorld->setGravity(btVector3(0,-10,0));
 	return true;
 }
 
