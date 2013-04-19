@@ -9,7 +9,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR pszCmdLine, int iCmdS
 
 
 
-	// console
+	// console borrowed from http://justcheckingonall.wordpress.com/2008/08/29/console-window-win32-app/
 	AllocConsole();
 
     HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);

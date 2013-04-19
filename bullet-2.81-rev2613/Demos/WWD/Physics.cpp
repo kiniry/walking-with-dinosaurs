@@ -610,67 +610,26 @@ btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
 	return result*rot;
 }
 
-//ikke vores
-void Physics::CalculateRotation( btQuaternion *q, btMatrix3x3  *m ) {
-	const int a[3][3] = { (int)m->getRow(0).getX(),(int) m->getRow(0).getY(), (int)m->getRow(0).getZ(), (int)m->getRow(1).getX(),(int) m->getRow(1).getY(), (int)m->getRow(1).getZ(),(int) m->getRow(2).getX(), (int)m->getRow(2).getY(), (int)m->getRow(2).getZ() };
-	float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
-	if( trace > 0 ) {// I changed M_EPSILON to 0
-		float s = 0.5f / sqrtf(trace+ 1.0f);
-		q->setW(0.25f / s);
-		q->setX(( a[2][1] - a[1][2] ) * s);
-		q->setY( ( a[0][2] - a[2][0] ) * s);
-		q->setZ( ( a[1][0] - a[0][1] ) * s);
-	} else {
-		if ( a[0][0] > a[1][1] && a[0][0] > a[2][2] ) {
-			float s = 2.0f * sqrtf( 1.0f + a[0][0] - a[1][1] - a[2][2]);
-			q->setW((a[2][1] - a[1][2] ) / s);
-      q->setX( 0.25f * s);
-      q->setY(  (a[0][1] + a[1][0] ) / s);
-      q->setZ( (a[0][2] + a[2][0] ) / s);
-    } else if (a[1][1] > a[2][2]) {
-      float s = 2.0f * sqrtf( 1.0f + a[1][1] - a[0][0] - a[2][2]);
-      q->setW( (a[0][2] - a[2][0] ) / s);
-     q->setX((a[0][1] + a[1][0] ) / s);
-      q->setY(  0.25f * s);
-     q->setZ( (a[1][2] + a[2][1] ) / s);
-    } else {
-      float s = 2.0f * sqrtf( 1.0f + a[2][2] - a[0][0] - a[1][1] );
-     q->setW((a[1][0] - a[0][1] ) / s);
-     q->setX((a[0][2] + a[2][0] ) / s);
-     q->setY(  (a[1][2] + a[2][1] ) / s);
-      q->setZ( 0.25f * s);
-    }
-  }
-}
 
 btQuaternion Physics::getLocalRotation(int pre, int post){
 	btQuaternion rot;
 	if((pre==0 && post==4) || (pre==1 && post==0) || (pre==4 && post==5) || (pre==5 && post==1)){
 		//04 10 45 51
-		//rot=btQuaternion(PI,0 ,0);
 		rot=btQuaternion(PI/2.,0 ,0);
 	}else if((pre==4 && post==0) || (pre==0 && post==1) || (pre==5 && post==4) || (pre==1 && post==5)){
 		//01 15 40 54
-		//rot=btQuaternion(-PI,0 ,0);
 		rot=btQuaternion(-PI/2.,0 ,0);
 	}else if((pre==0 && post==2) || (pre==2 && post==5) || (pre==3 && post==0) || (pre==5 && post==3)){
 		//02 25 30 53
-		//rot=btQuaternion(0,PI,0);
-
 		rot=btQuaternion(0,PI/2.,0);
 	}else if((pre==2 && post==0) || (pre==5 && post==2) || (pre==0 && post==3) || (pre==3 && post==5)){
 		//03 20 35 52
-		//rot=btQuaternion(0,-PI,0);
-
 		rot=btQuaternion(0,-PI/2.,0);
 	}else if((pre==1 && post==3) || (pre==2 && post==1) || (pre==3 && post==4) || (pre==4 && post==2)){
 		//13 21 34 42
-		//rot=btQuaternion(0, 0, PI);
 		rot=btQuaternion(0, 0, PI/2);
 	}else if((pre==3 && post==1) || (pre==1 && post==2) || (pre==4 && post==3) || (pre==2 && post==4)){
 		//12 24 31 43
-		//rot=btQuaternion(0, 0, -PI);
-
 		rot=btQuaternion(0, 0, -PI/2.);
 	}else if(pre+post==5){
 		//opposite
@@ -700,7 +659,6 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 }
 //calculates the poistion of where the joint connects to the box in regards to the local box center
 btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSizes){
-	//tjek input in debug mode
 	btAssert(x>=0 && x<=100);
 	btAssert(y>=0 && y<=100);
 	btAssert(s>-1 && s<6);
