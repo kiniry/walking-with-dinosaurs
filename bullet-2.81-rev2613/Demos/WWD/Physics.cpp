@@ -534,8 +534,8 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 		y=halfside1->getX();
 		spaceLeftX=x-(x/50.*((float)abs(preY-50)));
 		spaceLeftY=y-(y/50.*((float)abs(preX-50)));
-		printf("space left1 %f\n", spaceLeftY);
-		printf("space left2 %f\n", spaceLeftX);
+		//printf("space left1 %f\n", spaceLeftY);
+		//printf("space left2 %f\n", spaceLeftX);
 		break;
 	case 1:
 	case 4:
@@ -543,8 +543,8 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 		y=halfside1->getY();
 		spaceLeftX=x-(x/50.*((float)abs(preX-50)));
 		spaceLeftY=y-(y/50.*((float)abs(preY-50)));
-		printf("space left1 %f\n", spaceLeftY);
-		printf("space left2 %f\n", spaceLeftX);
+		//printf("space left1 %f\n", spaceLeftY);
+		//printf("space left2 %f\n", spaceLeftX);
 		break;
 	case 2:
 	case 3:
@@ -552,8 +552,8 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 		y=halfside1->getX();
 		spaceLeftX=x-(x/50.*((float)abs(preY-50)));
 		spaceLeftY=y-(y/50.*((float)abs(preX-50)));
-		printf("space left1 %f\n", spaceLeftY);
-		printf("space left2 %f\n", spaceLeftX);
+		//printf("space left1 %f\n", spaceLeftY);
+		//printf("space left2 %f\n", spaceLeftX);
 		break;
 	}
 
@@ -567,8 +567,8 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 		y2=halfside2->getX();
 		spaceLeftX2=x2-(x2/50.*((float)abs(postY-50)));
 		spaceLeftY2=y2-(y2/50.*((float)abs(postX-50)));
-		printf("space left1 %f\n", spaceLeftY2);
-		printf("space left2 %f\n", spaceLeftX2);
+		//printf("space left1 %f\n", spaceLeftY2);
+		//printf("space left2 %f\n", spaceLeftX2);
 		break;
 	case 1:
 	case 4:
@@ -576,8 +576,8 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 		y2=halfside2->getY();
 		spaceLeftX2=x2-(x2/50.*((float)abs(postX-50)));
 		spaceLeftY2=y2-(y2/50.*((float)abs(postY-50)));
-		printf("space left1 %f\n", spaceLeftY2);
-		printf("space left2 %f\n", spaceLeftX2);
+		//printf("space left1 %f\n", spaceLeftY2);
+		//printf("space left2 %f\n", spaceLeftX2);
 		break;
 	case 2:
 	case 3:
@@ -585,8 +585,8 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 		y2=halfside2->getX();
 		spaceLeftX2=x2-(x2/50.*((float)abs(postY-50)));
 		spaceLeftY2=y2-(y2/50.*((float)abs(postX-50)));
-		printf("space left1 %f\n", spaceLeftY2);
-		printf("space left2 %f\n", spaceLeftX2);
+		//printf("space left1 %f\n", spaceLeftY2);
+		//printf("space left2 %f\n", spaceLeftX2);
 		break;
 	}
 
@@ -597,7 +597,7 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 	//float forceOffsetPercent=1.- (max(abs(postY-50)+abs(preY-50),max(abs(preX-50)+abs(postX-50),max(abs(postX-50)+abs(preY-50),max(abs(preX-50)+abs(postY-50),max(abs(preX-50)+abs(preY-50),abs(postX-50)+abs(postY-50)))))))/100.;
 	//float areal =min(x*x2,min(y*y2,min(x2*y,min(x*y2,min(x*y,x2*y2)))))*4;
 	float areal =min(spaceLeftX*spaceLeftX2,min(spaceLeftY*spaceLeftY2,min(spaceLeftX2*spaceLeftY,min(spaceLeftX*spaceLeftY2,min(spaceLeftX*spaceLeftY,spaceLeftX2*spaceLeftY2)))))*4;
-	printf("areal %f\n", areal);
+	//printf("areal %f\n", areal);
 	return areal*csa;
 }
 
@@ -799,6 +799,6 @@ inputs.push_back(new NeuralNode(testPoint));
 
 void Physics::calcFitness(){
 	btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
-	if(height<2){fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));}
+	if(height<4){fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));}
 	else{fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;}
 }
