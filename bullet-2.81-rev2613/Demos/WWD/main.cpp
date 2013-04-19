@@ -9,9 +9,6 @@
 const int populationSize = 100;
 const int nrOfGenerations = 30;
 
-
-
-
 int main(int argc,char** argv)
 {
 	//seeds random generator

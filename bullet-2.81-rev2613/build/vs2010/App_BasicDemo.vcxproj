@@ -105,12 +105,15 @@
     <Link>
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glut32.lib;..\..\lib\OpenGLSupport_vs2010.lib;..\..\lib\BulletDynamics_vs2010.lib;..\..\lib\BulletCollision_vs2010.lib;..\..\lib\LinearMath_vs2010.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\Glut;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
       <TargetMachine>MachineX86</TargetMachine>
+      <NoEntryPoint>
+      </NoEntryPoint>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

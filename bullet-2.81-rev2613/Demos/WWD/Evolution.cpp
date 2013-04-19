@@ -1,5 +1,5 @@
 #include "Evolution.h"
-#include <algorithm>
+
 
 std::vector<creature> evolve(std::vector<creature> creatures){
 	float fitnessSum = 0;
@@ -9,7 +9,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 	int survivors = (int) ((creatures.size()/100.f)*((float)survivalRatio)+0.5);
 
-	printf("suvivors %d\n", survivors);
+	printf("survivors %d\n", survivors);
 
 	if(survivors == 0 && creatures.size() != 0){
 		survivors =1;
@@ -38,7 +38,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		}else{
 			creat.dna= crossOver2(dna,dna2);
 		}
-		
+
 		result.push_back(creat);
 	}
 

@@ -7,8 +7,6 @@
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR pszCmdLine, int iCmdShow)
 {
 
-
-
 	// console borrowed from http://justcheckingonall.wordpress.com/2008/08/29/console-window-win32-app/
 	AllocConsole();
 
@@ -24,10 +22,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR pszCmdLine, int iCmdS
     setvbuf(hf_in, NULL, _IONBF, 128);
     *stdin = *hf_in;
 
-
-
 	MessageBox(NULL, "Narf!", "Pinky says...", MB_OK | MB_ICONEXCLAMATION);
-	
 
 	//dummy input
 	char *myargv [1];

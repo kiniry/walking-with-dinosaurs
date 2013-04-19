@@ -11,9 +11,10 @@
 
 #include <cstdlib>
 #include <vector>
+#include <algorithm>
 
 //results in a range  of values from
-#define maxDNAValue 2000
+#define maxDNAValue 10000
 #define randomDnaValue rand()%maxDNAValue
 
 struct creature{

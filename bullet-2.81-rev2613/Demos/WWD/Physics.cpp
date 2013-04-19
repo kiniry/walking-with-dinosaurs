@@ -99,7 +99,6 @@ void Physics::solveGroundConflicts(){
 }
 
 void Physics::simulationLoopStep(float stepSize){
-	
 	if(theNet!=NULL){
 			theNet->computeNetwork();
 			for(int i=0;i< (int) subnets.size();i++){
@@ -195,7 +194,6 @@ void Physics::runSimulation(){
 	if(!isLegal()){
 				fitness = -999999;
 	}else{
-
 		while(timeUsed<10000){ //10 s = 10000 ms
 			simulationLoopStep(1/1000.f);
 
@@ -290,9 +288,6 @@ int Physics::createBox(int x1, int y1, int z1){
 	float x=(x1%995+5)/100.f;
 	float y=(y1%995+5)/100.f;
 	float z=(z1%995+5)/100.f;
-	//float x=(x1%800+200)/100.f;
-	//float y=(y1%800+200)/100.f;
-	//float z=(z1%800+200)/100.f;
 
 	btAssert(x>=0.05 && x<=10);
 	btAssert(y>=0.05 && y<=10);
@@ -393,12 +388,11 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							int postX, int postY, int postS,
 							int dofX, int dofY, int dofZ){
 
-							 
-							if(preX==0){preX=50;}	
-							if(preY==0){preY=50;}
-							if(postX==0){postX=50;}
-							if(postY==0){postY=50;}
-								
+								//default value
+								if(preX==0){preX=50;}
+								if(preY==0){preY=50;}
+								if(postX==0){postX=50;}
+								if(postY==0){postY=50;}
 
 								preX=preX%99+1;
 								preY=preY%99+1;
@@ -590,10 +584,6 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 		break;
 	}
 
-
-
-
-
 	//float forceOffsetPercent=1.- (max(abs(postY-50)+abs(preY-50),max(abs(preX-50)+abs(postX-50),max(abs(postX-50)+abs(preY-50),max(abs(preX-50)+abs(postY-50),max(abs(preX-50)+abs(preY-50),abs(postX-50)+abs(postY-50)))))))/100.;
 	//float areal =min(x*x2,min(y*y2,min(x2*y,min(x*y2,min(x*y,x2*y2)))))*4;
 	float areal =min(spaceLeftX*spaceLeftX2,min(spaceLeftY*spaceLeftY2,min(spaceLeftX2*spaceLeftY,min(spaceLeftX*spaceLeftY2,min(spaceLeftX*spaceLeftY,spaceLeftX2*spaceLeftY2)))))*4;
@@ -609,7 +599,6 @@ btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
 
 	return result*rot;
 }
-
 
 btQuaternion Physics::getLocalRotation(int pre, int post){
 	btQuaternion rot;
