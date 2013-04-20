@@ -12,9 +12,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\bullet.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\Demos\WWD\NeuralNetwork.h">
       <Filter>source</Filter>
     </ClInclude>
@@ -44,6 +41,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Demos\WWD\main.h">
       <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\resource.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -77,5 +77,15 @@
     <ClCompile Include="..\..\Demos\WWD\GUI.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\Demos\WWD\WWD.rc">
+      <Filter>GUI</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Demos\WWD\icon1.ico">
+      <Filter>GUI</Filter>
+    </None>
   </ItemGroup>
 </Project>

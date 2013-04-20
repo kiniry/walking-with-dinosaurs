@@ -99,13 +99,14 @@ void Physics::solveGroundConflicts(){
 }
 
 void Physics::simulationLoopStep(float stepSize){
+	
 	if(theNet!=NULL){
 			theNet->computeNetwork();
 			for(int i=0;i< (int) subnets.size();i++){
 				subnets.at(i)->computeNetwork();
 			}
 		}
-
+ 
 		//fitness test
 		calcFitness();
 
@@ -117,7 +118,7 @@ void Physics::simulationLoopStep(float stepSize){
 				);
 		}
 
-		//fixed step... 1ms
+	 	//fixed step... 1ms
 		m_dynamicsWorld->stepSimulation(stepSize);
 
 		for(int i=0; i < (int) sensors.size();i++){

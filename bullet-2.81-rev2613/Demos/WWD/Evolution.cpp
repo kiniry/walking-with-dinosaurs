@@ -9,7 +9,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 	int survivors = (int) ((creatures.size()/100.f)*((float)survivalRatio)+0.5);
 
-	printf("survivors %d\n", survivors);
+	printf("\nsurvivors %d\n", survivors);
 
 	if(survivors == 0 && creatures.size() != 0){
 		survivors =1;

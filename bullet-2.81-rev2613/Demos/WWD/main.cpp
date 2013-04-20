@@ -1,13 +1,4 @@
-#include "omp.h"
-#include "Physics.h"
-#include "Grammar.h"
-#include "Evolution.h"
-#include "GlutStuff.h"
-#include "test.h"
-#include <ctime>
-
-const int populationSize = 100;
-const int nrOfGenerations = 30;
+#include "main.h"
 
 int main(int argc,char** argv)
 {
@@ -15,13 +6,19 @@ int main(int argc,char** argv)
 	srand(time(0));
 
 #ifdef  _DEBUG
-	/*#pragma omp parallel for
-	for(int i =0;i<8;i++){
-	int id=omp_get_thread_num();
-	printf(" hello(%d) ", id);
-	printf(" world(%d) \n",id);
-	}
-	*/
+
+	//return debug(argc,argv);
+	return WWD(argc,argv);
+#else
+
+	return WWD(argc,argv);
+
+#endif
+}
+
+
+
+int debug(int argc,char** argv){
 
 	test();
 	const int temp[] = {1387,38,23,2,1924};
@@ -57,10 +54,12 @@ int main(int argc,char** argv)
 
 	WWDPhysics->solveGroundConflicts();
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
+}
 
-#else
 
-	std::vector<Physics*> worlds;
+int WWD(int argc,char** argv){
+
+   	std::vector<Physics*> worlds;
 
 	const int temp[] = {
 		//Body
@@ -100,10 +99,10 @@ int main(int argc,char** argv)
 	}
 
 	for(int i=0;i<nrOfGenerations;i++){
-		#pragma omp parallel
+		//#pragma omp parallel
 		{
 			//initialise
-			#pragma omp single
+			//#pragma omp single
 			for(int j =0; j<populationSize; j++){
 				//init world
 				Physics* WWDPhysics = new Physics(creatures.at(j).dna);
@@ -115,18 +114,19 @@ int main(int argc,char** argv)
 			}
 
 			//run simulator
-			#pragma omp for schedule(dynamic)
-			for(int j=0;j< (int) worlds.size();j++){
-				worlds.at(j)->runSimulation(); //runs a physics simulation and save the fitness values
+			//#pragma omp for schedule(dynamic)
+			for(int i=0;i< (int) worlds.size();i++){
+				worlds.at(i)->runSimulation(); //runs a physics simulation and save the fitness values
 			}
 
-			#pragma omp for
+			//#pragma omp for
 			for(int j= worlds.size()-1; j>=0; j--){
 				creatures.at(j).fitness = worlds.at(j)->getFitness();
-				delete worlds.at(j);
+				
 			}
-			#pragma omp for
+			//#pragma omp single nowait
 			for(int j= worlds.size()-1; j>=0; j--){
+				delete worlds.at(j);
 				worlds.pop_back();
 			}
 			//print all unsorted
@@ -135,15 +135,15 @@ int main(int argc,char** argv)
 			}*/
 
 			//mutate
-			#pragma omp single
+			//#pragma omp single
 			creatures=evolve(creatures);
 			//print survivors sorted
 
-			#pragma omp for ordered
+			//#pragma omp for ordered
 			for(int j=0;j< (int) (creatures.size()/5.f);j++){
 				printf("nr %d %f\n",j,creatures.at(j).fitness);
 			}
-			#pragma omp single
+			//#pragma omp single
 			printf("round %d \n",i);
 		}
 	}
@@ -163,5 +163,4 @@ int main(int argc,char** argv)
 	WWDPhysics->solveGroundConflicts();
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 
-#endif
 }
