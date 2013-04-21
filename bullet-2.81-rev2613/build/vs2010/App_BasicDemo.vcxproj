@@ -118,31 +118,31 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='GUI_Release|x64'">..\..\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Console_Release|x64'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='GUI_Release|x64'">obj\$(PlatformArchitecture)-bit\$(Configuration)\$(ProjectName)</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Console_Release|x64'">obj\$(PlatformArchitecture)\$(Configuration)\$(ProjectName)</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Console_Release|x64'">obj\$(PlatformArchitecture)-bit\$(Configuration)\$(ProjectName)</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='GUI_Release|x64'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)-bit_$(Configuration)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Console_Release|x64'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)_$(Configuration)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Console_Release|x64'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)-bit_$(Configuration)</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='GUI_Release|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Console_Release|x64'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|Win32'">..\..\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Console_Debug|Win32'">..\..\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|Win32'">obj\$(PlatformArchitecture)\$(Configuration)\$(ProjectName)</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Console_Debug|Win32'">obj\$(PlatformArchitecture)\$(Configuration)\$(ProjectName)</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|Win32'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)_$(Configuration)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Console_Debug|Win32'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)_$(Configuration)</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|Win32'">obj\$(PlatformArchitecture)-bit\$(Configuration)\$(ProjectName)</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Console_Debug|Win32'">obj\$(PlatformArchitecture)-bit\$(Configuration)\$(ProjectName)</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|Win32'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)-bit_$(Configuration)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Console_Debug|Win32'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)-bit_$(Configuration)</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Console_Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|x64'">..\..\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Console_Debug|x64'">..\..\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|x64'">obj\$(PlatformArchitecture)\$(Configuration)\$(ProjectName)</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Console_Debug|x64'">obj\$(PlatformArchitecture)\$(Configuration)\$(ProjectName)</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|x64'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)_$(Configuration)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Console_Debug|x64'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)_$(Configuration)</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|x64'">obj\$(PlatformArchitecture)-bit\$(Configuration)\$(ProjectName)</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Console_Debug|x64'">obj\$(PlatformArchitecture)-bit\$(Configuration)\$(ProjectName)</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|x64'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)-bit_$(Configuration)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Console_Debug|x64'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)-bit_$(Configuration)</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Console_Debug|x64'">true</LinkIncremental>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Console_Release|Win32'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)_$(Configuration)</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='GUI_Release|Win32'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)_$(Configuration)</TargetName>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='GUI_Release|Win32'">obj\$(PlatformArchitecture)\$(Configuration)\$(ProjectName)</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Console_Release|Win32'">obj\$(PlatformArchitecture)\$(Configuration)\$(ProjectName)</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Console_Release|Win32'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)-bit_$(Configuration)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='GUI_Release|Win32'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)-bit_$(Configuration)</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='GUI_Release|Win32'">obj\$(PlatformArchitecture)-bit\$(Configuration)\$(ProjectName)</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Console_Release|Win32'">obj\$(PlatformArchitecture)-bit\$(Configuration)\$(ProjectName)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='GUI_Release|Win32'">
     <ClCompile>
