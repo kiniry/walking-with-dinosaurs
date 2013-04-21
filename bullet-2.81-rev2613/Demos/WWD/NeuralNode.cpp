@@ -272,14 +272,14 @@ inline float NeuralNode::sigmoid(){
 
 //oscillate-wave: a Smooth wave function using a sort of "time" variable as input
 inline float NeuralNode::wave(){
-	float defaultFuncInput = this->stepsRun*2*3.1415926/360;
+	float defaultFuncInput = this->stepsRun*2.*3.1415926/360.;
 	stepsRun++;
 	return sin(defaultFuncInput);
 }
 
 //oscillate-saw: a jagged wave function... same as above
 inline float NeuralNode::saw(){
-	float defaultFuncInput = this->stepsRun*2*3.1415926/4;
+	float defaultFuncInput = this->stepsRun*2.*3.1415926/4.;
 	stepsRun++;
 	return sin(defaultFuncInput);
 }

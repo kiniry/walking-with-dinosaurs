@@ -7,10 +7,15 @@
 #include "GlutStuff.h"
 #include "test.h"
 #include <ctime>
+#include <Windows.h>
+#include <process.h>
 
-const int populationSize = 100;
-const int nrOfGenerations = 10;
+const int populationSize = 10;
+const int nrOfGenerations = 5;
 
+
+
+unsigned int __stdcall run(void* data);
 
 int main(int argc,char** argv);
 

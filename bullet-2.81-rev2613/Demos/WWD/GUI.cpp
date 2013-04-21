@@ -155,7 +155,7 @@ int WINAPI WinMain2(HINSTANCE hInst, HINSTANCE hPrev, LPSTR pszCmdLine, int iCmd
 	//dummy input
 	char *myargv [1];
 	int myargc =1;
-	myargv[0] = strdup ("something");
+	myargv[0] = _strdup ("something");
 
 	//old main
 	main(myargc, myargv);

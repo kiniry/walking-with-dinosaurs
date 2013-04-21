@@ -50,8 +50,8 @@ creature getWorthyCreature(float fitnessSum, std::vector<creature> creatures){
 	int random = rand()%Sum;
 	int val = 0;
 	int i=0;
-	for(i;i<creatures.size();i++){
-		val+=creatures.at(i).fitness*10000;
+	for(i;i<(int)creatures.size();i++){
+		val+=(int)(creatures.at(i).fitness*10000);
 		if(val>random){break;}
 	}
 	return creatures.at(i);
