@@ -7,7 +7,6 @@
 **/
 
 #pragma once
-
 #ifdef _WINDOWS
 #include "Win32DemoApplication.h"
 #define PlatformDemoApplication Win32DemoApplication
@@ -107,10 +106,10 @@ class Physics : public PlatformDemoApplication{
 			float CrossSectionalStrength;
 		};
 
-		virtual void clientMoveAndDisplay();
+		
 
 		virtual void displayCallback();
-		virtual void clientResetScene();
+
 
 		bool isLegal();
 
@@ -126,7 +125,8 @@ class Physics : public PlatformDemoApplication{
 		float getBoxHalfHeight(btCollisionObject* object);
 
 	public:
-
+				virtual void clientResetScene();
+		 virtual void clientMoveAndDisplay();
 		NeuralNetwork* theNet;
 
 		std::vector<NeuralNetwork*> subnets;

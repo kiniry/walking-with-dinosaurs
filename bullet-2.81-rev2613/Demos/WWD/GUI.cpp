@@ -7,11 +7,28 @@
 
 const char g_szClassName[] = "myWindowClass";
 
+
+#define IDC_MAIN 999
+
+
 //samme som action listener
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc2(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch(msg)
 	{
+
+	case WM_CREATE:	{
+		HINSTANCE hInstance = GetModuleHandle(NULL);
+			  HWND hwnd2 = CreateWindowEx(
+		NULL,
+		"BUTTON",
+		"Walking With Dinosaurs",
+		WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_AUTOCHECKBOX,
+		50, 50, 240, 120,
+		hwnd, (HMENU)IDC_MAIN, hInstance, NULL);
+					}
+	break;
+
 	case WM_CLOSE:
 		//called when close windows pressed (x)
 
@@ -31,7 +48,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			HINSTANCE hInstance = GetModuleHandle(NULL);
 
 			GetModuleFileName(hInstance, FileName, MAX_PATH);
-			MessageBox(hwnd, FileName, "This program is:", MB_OK | MB_ICONINFORMATION);
+			//MessageBox(hwnd, FileName, "This program is:", MB_OK | MB_ICONINFORMATION);
 
 		}
 		break;
@@ -49,6 +66,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		//menu
 		switch(LOWORD(wParam)){
 
+		case IDC_MAIN:
+			  MessageBox(NULL, "Narf!", "Pinky says...", MB_OK | MB_ICONEXCLAMATION);
+		break;
+		
 		case ID_FILE_NEW40002:
 			  MessageBox(NULL, "Narf!", "Pinky says...", MB_OK | MB_ICONEXCLAMATION);
 		break;
@@ -66,7 +87,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow){
+int WINAPI WinMain1(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow){
 
 	//det icon med lavest defineret id i resource.h er .exe icon
 
@@ -77,7 +98,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 	//definere en vindues classe og dens parametre/udsende
 	wc.cbSize		 = sizeof(WNDCLASSEX);
 	wc.style		 = 0;
-	wc.lpfnWndProc	 = WndProc;
+	wc.lpfnWndProc	 = WndProc2;
 	wc.cbClsExtra	 = 0;
 	wc.cbWndExtra	 = 0;
 	wc.hInstance	 = hInstance;

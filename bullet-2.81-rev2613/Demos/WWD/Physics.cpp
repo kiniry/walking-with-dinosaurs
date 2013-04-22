@@ -1,5 +1,6 @@
 #include "Physics.h"
 
+
 float Physics::getBoxHalfHeight(btCollisionObject* object){
 	btRigidBody* body = (btRigidBody*) object;
 	btBoxShape* box = (btBoxShape*) body->getCollisionShape();;
@@ -217,7 +218,9 @@ void Physics::clientMoveAndDisplay()
 
 	glFlush();
 
+#ifdef _CONSOLE
 	swapBuffers();
+#endif
 }
 
 void Physics::displayCallback(void) {
@@ -789,3 +792,6 @@ void Physics::calcFitness(){
 	if(height<4){fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));}
 	else{fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;}
 }
+
+
+

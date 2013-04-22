@@ -98,6 +98,9 @@
     <ClCompile Include="..\..\Demos\WWD\MTree.cpp">
       <Filter>source\M Tree</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Demos\WWD\GUI2.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\Demos\WWD\WWD.rc">

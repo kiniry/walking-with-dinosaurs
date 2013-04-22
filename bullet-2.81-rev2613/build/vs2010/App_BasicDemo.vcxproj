@@ -469,6 +469,7 @@
     <ClCompile Include="..\..\Demos\WWD\Evolution.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Grammar.cpp" />
     <ClCompile Include="..\..\Demos\WWD\GUI.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\GUI2.cpp" />
     <ClCompile Include="..\..\Demos\WWD\main.cpp" />
     <ClCompile Include="..\..\Demos\WWD\MTree.cpp" />
     <ClCompile Include="..\..\Demos\WWD\NeuralNetwork.cpp" />
