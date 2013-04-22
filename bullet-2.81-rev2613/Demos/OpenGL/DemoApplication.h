@@ -256,7 +256,8 @@ public:
 	{
 		m_idle = idle;
 	}
-
+	
+	unsigned long totaltime;
 
 };
 

@@ -86,7 +86,6 @@ class Physics : public PlatformDemoApplication{
 		float height;
 
 		int currentBoxIndex,currentJointIndex;
-		unsigned long timeUsed;
 
 		//keep the collision shapes, for deletion/cleanup
 		btAlignedObjectArray<btCollisionShape*>	m_collisionShapes;

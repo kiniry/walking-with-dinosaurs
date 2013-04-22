@@ -10,7 +10,7 @@ int main(int argc,char** argv)
 
 
 #ifdef  _DEBUG
-	   return WWD(argc,argv);
+	   //return WWD(argc,argv);
 	return debug(argc,argv);
 
 #else
@@ -68,7 +68,6 @@ int debug(int argc,char** argv){
 	readDNA(&ancestor,WWDPhysics);
 	//WWDPhysics->testPhysics();
 	//default glut doesn't return from mainloop
-
 	WWDPhysics->solveGroundConflicts();
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 }
@@ -147,14 +146,14 @@ int WWD(int argc,char** argv){
 -				worlds.at(i)->runSimulation(); //runs a physics simulation and save the fitness values
 			} */
 			//threads
-			for(int i =0; i<numCores; i++){
-				handles[i] = (HANDLE)_beginthreadex(0, 0, &run,(void*) i, 0, 0);
+			for(int j =0; j<numCores; j++){
+				handles[j] = (HANDLE)_beginthreadex(0, 0, &run,(void*) j, 0, 0);
 			}
 
 			WaitForMultipleObjects(numCores, handles, true,INFINITE);
 
-			for(int i =0; i<numCores; i++){
-				CloseHandle(handles[i]);
+			for(int j =0; j<numCores; j++){
+				CloseHandle(handles[j]);
 			}
 
 
@@ -199,6 +198,7 @@ int WWD(int argc,char** argv){
 
 	WWDPhysics->calcSize();
 	WWDPhysics->solveGroundConflicts();
+	getchar();
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 
 }

@@ -99,7 +99,7 @@ void Physics::solveGroundConflicts(){
 }
 
 void Physics::simulationLoopStep(float stepSize){
-	
+	totaltime += stepSize*1000;
 	if(theNet!=NULL){
 			theNet->computeNetwork();
 			for(int i=0;i< (int) subnets.size();i++){
@@ -195,10 +195,8 @@ void Physics::runSimulation(){
 	if(!isLegal()){
 				fitness = -999999;
 	}else{
-		while(timeUsed<10000){ //10 s = 10000 ms
+		while(totaltime<10000){ //10 s = 10000 ms
 			simulationLoopStep(1/1000.f);
-
-			timeUsed++;
 		}
 	}
 }
@@ -207,7 +205,6 @@ void Physics::clientMoveAndDisplay()
 {
 	//solveGroundConflicts();
 	float ms = getDeltaTimeMicroseconds();
-	timeUsed += ms;
 
 	simulationLoopStep(ms / 1000000.f); //normal speed
 	//simulationLoopStep(ms / 100000000.f); //slow-mode
@@ -237,7 +234,7 @@ void Physics::displayCallback(void) {
 }
 
 void	Physics::initPhysics(){
-	timeUsed=0;
+	totaltime=0;
 	currentBoxIndex=0;
 	currentJointIndex=0;
 
