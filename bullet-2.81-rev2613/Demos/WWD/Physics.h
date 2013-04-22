@@ -133,7 +133,6 @@ class Physics : public PlatformDemoApplication{
 		std::vector<float> sensors;
 		std::vector<int> effectorNNindex;
 
-		DinoTreeNode* DinoStructure;
 
 		float getFitness(){
 			return fitness;

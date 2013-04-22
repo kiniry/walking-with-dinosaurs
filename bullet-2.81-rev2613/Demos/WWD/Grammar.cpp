@@ -7,16 +7,13 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 	int index = 0;
 	int blocks = 0;
 	std::vector<DinoTreeNode*>* tempNeural = new std::vector<DinoTreeNode*>;
-	world->DinoStructure = new DinoTreeNode(index,false);
+
 
 	try{
-		DinoTreeNode* firstPart = new DinoTreeNode(index,false);
-		world->DinoStructure->addChild(firstPart);
 		int part = world->createBox(getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA));
 		blocks++;
 		index = index+3;
-		firstPart->setEnd(index+1);
-		index=B(index, DNA, world, &blocks, part, tempNeural,firstPart);
+		index=B(index, DNA, world, &blocks, part, tempNeural);
 	}catch (int e){
 		return e;
 	}
@@ -29,7 +26,6 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 	}
 
 	DinoTreeNode* NeuralPart = new DinoTreeNode(index,true);
-	world->DinoStructure->addChild(NeuralPart);
 
 	world->theNet=new NeuralNetwork(inputs);
 	//NN - create nodes
@@ -50,21 +46,16 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 	}
 	delete tempNeural;
 
-	world->DinoStructure->setEnd(index);
+	
 
 	return Gsucces;
 }
 
-int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<DinoTreeNode*>* tempNeural, DinoTreeNode* partTree){
+int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<DinoTreeNode*>* tempNeural){
 	if(*blocks >= maxBlocks){
 		throw Gfail;
 	}
 
-	DinoTreeNode* part1;
-	DinoTreeNode* part2;
-	DinoTreeNode* part3;
-	DinoTreeNode* part4;
-	DinoTreeNode* part5;
 
 	switch (getDNA(index,DNA)%6){
 	case 0:
@@ -72,93 +63,38 @@ int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, s
 		break;
 	case 1:
 		index++; //the information how many boxes are attached - belongs with the previous box
+		index = J(index, DNA, world, blocks, part, tempNeural);
 
-		part1 = new DinoTreeNode(index,false);
-		partTree->addChild(part1);
-		index = J(index, DNA, world, blocks, part, tempNeural, part1);
-		part1->setEnd(index);
 		break;
 	case 2:
 		index++; //the information how many boxes are attached - belongs with the previous box
 
-		part1 = new DinoTreeNode(index,false);
-		partTree->addChild(part1);
-		index = J(index, DNA, world, blocks, part, tempNeural,part1);
-		part1->setEnd(index);
-
-		part2 = new DinoTreeNode(index,false);
-		partTree->addChild(part2);
-		index = J(index, DNA, world, blocks, part, tempNeural,part2);
-		part2->setEnd(index);
+		index = J(index, DNA, world, blocks, part, tempNeural);
+		index = J(index, DNA, world, blocks, part, tempNeural);
 		break;
 	case 3:
 		index++; //the information how many boxes are attached - belongs with the previous box
 
-		part1 = new DinoTreeNode(index,false);
-		partTree->addChild(part1);
-		index = J(index, DNA, world, blocks, part, tempNeural,part1);
-		part1->setEnd(index);
-
-		part2 = new DinoTreeNode(index,false);
-		partTree->addChild(part2);
-		index = J(index, DNA, world, blocks, part, tempNeural,part2);
-		part2->setEnd(index);
-
-		part3 = new DinoTreeNode(index,false);
-		partTree->addChild(part3);
-		index = J(index, DNA, world, blocks, part, tempNeural,part3);
-		part3->setEnd(index);
+		index = J(index, DNA, world, blocks, part, tempNeural);
+		index = J(index, DNA, world, blocks, part, tempNeural);
+		index = J(index, DNA, world, blocks, part, tempNeural);
 		break;
 	case 4:
 		index++; //the information how many boxes are attached - belongs with the previous box
 
-		part1 = new DinoTreeNode(index,false);
-		partTree->addChild(part1);
-		index = J(index, DNA, world, blocks, part, tempNeural,part1);
-		part1->setEnd(index);
-
-		part2 = new DinoTreeNode(index,false);
-		partTree->addChild(part2);
-		index = J(index, DNA, world, blocks, part, tempNeural,part2);
-		part2->setEnd(index);
-
-		part3 = new DinoTreeNode(index,false);
-		partTree->addChild(part3);
-		index = J(index, DNA, world, blocks, part, tempNeural,part3);
-		part3->setEnd(index);
-
-		part4 = new DinoTreeNode(index,false);
-		partTree->addChild(part4);
-		index = J(index, DNA, world, blocks, part, tempNeural,part4);
-		part4->setEnd(index);
+		index = J(index, DNA, world, blocks, part, tempNeural);
+		index = J(index, DNA, world, blocks, part, tempNeural);
+		index = J(index, DNA, world, blocks, part, tempNeural);
+		index = J(index, DNA, world, blocks, part, tempNeural);
 		break;
 	case 5:
 		index++; //the information how many boxes are attached - belongs with the previous box
 
-		part1 = new DinoTreeNode(index,false);
-		partTree->addChild(part1);
-		index = J(index, DNA, world, blocks, part, tempNeural,part1);
-		part1->setEnd(index);
-
-		part2 = new DinoTreeNode(index,false);
-		partTree->addChild(part2);
-		index = J(index, DNA, world, blocks, part, tempNeural,part2);
-		part2->setEnd(index);
-
-		part3 = new DinoTreeNode(index,false);
-		partTree->addChild(part3);
-		index = J(index, DNA, world, blocks, part, tempNeural,part3);
-		part3->setEnd(index);
-
-		part4 = new DinoTreeNode(index,false);
-		partTree->addChild(part4);
-		index = J(index, DNA, world, blocks, part, tempNeural,part4);
-		part4->setEnd(index);
-
-		part5 = new DinoTreeNode(index,false);
-		partTree->addChild(part5);
-		index = J(index, DNA, world, blocks, part, tempNeural,part5);
-		part5->setEnd(index);
+		index = J(index, DNA, world, blocks, part, tempNeural);
+		index = J(index, DNA, world, blocks, part, tempNeural);
+		index = J(index, DNA, world, blocks, part, tempNeural);
+		index = J(index, DNA, world, blocks, part, tempNeural);
+		index = J(index, DNA, world, blocks, part, tempNeural);
 		break;
 
 	default:
@@ -167,7 +103,7 @@ int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, s
 	return index;
 }
 
-int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<DinoTreeNode*>* tempNeural,DinoTreeNode* partTree){
+int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<DinoTreeNode*>* tempNeural){
 	int part2 = world->createBox(getDNA(index+10,DNA), getDNA(index+11,DNA), getDNA(index+12,DNA));
 	int j_index = world->createJoint(part1, part2, getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA), getDNA(index+9,DNA));
 	index+=13;
@@ -179,7 +115,7 @@ int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, 
 	world->effectorNNindex.push_back(getDNA(index+2,DNA));
 	index+=3;
 
-	index = B(index, DNA, world, blocks, part2, tempNeural,partTree);
+	index = B(index, DNA, world, blocks, part2, tempNeural);
 	return index;
 }
 

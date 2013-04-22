@@ -30,8 +30,8 @@ inline int getDNA(int x, std::vector<int> *dna){
 		return dna->at(x);
 };
 
-int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<DinoTreeNode*>* tempNeural,DinoTreeNode* partTree);
-int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<DinoTreeNode*>* tempNeural,DinoTreeNode* partTree);
+int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<DinoTreeNode*>* tempNeural);
+int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<DinoTreeNode*>* tempNeural);
 
 int readDNA(std::vector<int> *DNA, Physics *world);
 
