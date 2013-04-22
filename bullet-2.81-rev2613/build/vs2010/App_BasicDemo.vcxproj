@@ -452,12 +452,14 @@
     <ClInclude Include="..\..\Demos\WWD\Evolution.h" />
     <ClInclude Include="..\..\Demos\WWD\Grammar.h" />
     <ClInclude Include="..\..\Demos\WWD\main.h" />
+    <ClInclude Include="..\..\Demos\WWD\MTree.h" />
     <ClInclude Include="..\..\Demos\WWD\MTreeNode.h" />
     <ClInclude Include="..\..\Demos\WWD\NeuralNetwork.h" />
     <ClInclude Include="..\..\Demos\WWD\NeuralNode.h" />
     <ClInclude Include="..\..\Demos\WWD\NNLayerNode.h" />
     <ClInclude Include="..\..\Demos\WWD\NNNode.h" />
     <ClInclude Include="..\..\Demos\WWD\NNodeTest.h" />
+    <ClInclude Include="..\..\Demos\WWD\partNode.h" />
     <ClInclude Include="..\..\Demos\WWD\Physics.h" />
     <ClInclude Include="..\..\Demos\WWD\resource.h" />
     <ClInclude Include="..\..\Demos\WWD\test.h" />

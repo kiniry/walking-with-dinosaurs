@@ -57,6 +57,12 @@
     <ClInclude Include="..\..\Demos\WWD\NNNode.h">
       <Filter>source\M Tree</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\partNode.h">
+      <Filter>source\M Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\MTree.h">
+      <Filter>source\M Tree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp">

@@ -10,10 +10,12 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 
 
 	try{
+		//TODO!: treeBox0 begin here 
 		int part = world->createBox(getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA));
 		blocks++;
 		index = index+3;
 		index=B(index, DNA, world, &blocks, part, tempNeural);
+		//TODO!: treeBox0 ends here
 	}catch (int e){
 		return e;
 	}
@@ -104,16 +106,19 @@ int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, s
 }
 
 int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<int>* tempNeural){
-	int part2 = world->createBox(getDNA(index+10,DNA), getDNA(index+11,DNA), getDNA(index+12,DNA));
-	int j_index = world->createJoint(part1, part2, getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA), getDNA(index+9,DNA));
-	index+=13;
-	tempNeural->push_back(index);
 	index = NN(index,DNA);
-
 	world->effectorNNindex.push_back(getDNA(index,DNA));
 	world->effectorNNindex.push_back(getDNA(index+1,DNA));
 	world->effectorNNindex.push_back(getDNA(index+2,DNA));
 	index+=3;
+	
+	int part2 = world->createBox(getDNA(index+10,DNA), getDNA(index+11,DNA), getDNA(index+12,DNA));
+	//partTreeBox begins here from index+10
+	int j_index = world->createJoint(part1, part2, getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA), getDNA(index+9,DNA));
+	index+=13;
+	tempNeural->push_back(index);
+	
+	//partTreeBox ends here
 
 	index = B(index, DNA, world, blocks, part2, tempNeural);
 	return index;

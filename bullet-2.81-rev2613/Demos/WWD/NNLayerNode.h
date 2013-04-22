@@ -39,7 +39,7 @@ public:
 				break;
 			}
 		}
-		while(random%3 == 1);
+		while(random%3 != 0);
 		
 		return std::vector<int>();
 	}
