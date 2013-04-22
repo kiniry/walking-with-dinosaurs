@@ -18,7 +18,7 @@
 
 #include "LinearMath/btAlignedObjectArray.h"
 #include "NeuralNetwork.h"
-#include "DinoTreeNode.h"
+#include "MTree.h"
 #include <math.h>
 #include <vector>
 #include <limits>
@@ -133,6 +133,7 @@ class Physics : public PlatformDemoApplication{
 		std::vector<float> sensors;
 		std::vector<int> effectorNNindex;
 
+		MTree* theTree;
 
 		float getFitness(){
 			return fitness;

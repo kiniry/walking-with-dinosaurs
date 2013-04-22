@@ -2,11 +2,16 @@
 #include "MTreeNode.h"
 #include "NNLayerNode.h"
 
-class partNode : MTreeNode{
+class partNode : public MTreeNode{
 public: 
+	partNode(int start) :  MTreeNode(start){
+		startIndex = start;
+		children = new std::vector<MTreeNode*>();
+	}
+
 	std::vector<int> mutate(){
 		std::vector<int> result = std::vector<int>();
-		NNLayerNode randomGenerator = NNLayerNode();
+		NNLayerNode randomGenerator = NNLayerNode(0);
 
 		result.push_back(rand()%maxDNAVal);//size.x
 		result.push_back(rand()%maxDNAVal);//size.y

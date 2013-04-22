@@ -1,8 +1,13 @@
 #pragma once
 #include "MTreeNode.h"
 
-class NNLayerNode : MTreeNode{
+class NNLayerNode : public MTreeNode{
 public: 
+	NNLayerNode(int start) : MTreeNode(start){
+		startIndex = start;
+		children = new std::vector<MTreeNode*>();
+	}
+
 	std::vector<int> mutate(){
 		std::vector<int> result = std::vector<int>();
 		int random;

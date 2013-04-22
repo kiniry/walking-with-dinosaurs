@@ -30,15 +30,15 @@ inline int getDNA(int x, std::vector<int> *dna){
 		return dna->at(x);
 };
 
-int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural);
-int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<int>* tempNeural);
+int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural, partNode* body);
+int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<int>* tempNeural, partNode* body);
 
 int readDNA(std::vector<int> *DNA, Physics *world);
 
-int NN(int index, std::vector<int> *DNA);
+int NN(int index, std::vector<int> *DNA,partNode* body,NNLayerNode* layer);
 int NI(int index, std::vector<int> *DNA);
 
-int NN(int index, std::vector<int> *DNA, NeuralNetwork* net);
+int NN(int index, std::vector<int> *DNA, NeuralNetwork* net, Physics *world, NNLayerNode* layer, bool notSubnet);
 int NI(int index, std::vector<int> *DNA, NeuralNetwork* net);
 
 #endif
