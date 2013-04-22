@@ -20,7 +20,10 @@ void	GlutDemoApplication::updateModifierKeys()
 	if (glutGetModifiers() & GLUT_ACTIVE_SHIFT)
 		m_modifierKeys |= BT_ACTIVE_SHIFT;
 }
+	 
 
+
+#ifdef _CONSOLE
 void GlutDemoApplication::specialKeyboard(int key, int x, int y)	
 {
 	(void)x;
@@ -74,8 +77,31 @@ void GlutDemoApplication::specialKeyboard(int key, int x, int y)
 
 	glutPostRedisplay();
 
-}
+}	
+#else
+void GlutDemoApplication::specialKeyboard(int key, int x, int y)	
+{
+	(void)x;
+	(void)y;
 
+	switch (key) 
+	{
+	case VK_LEFT : stepLeft(); break;
+	case VK_RIGHT : stepRight(); break;
+	case VK_UP : stepFront(); break;
+	case VK_DOWN : stepBack(); break;
+
+//	case GLUT_KEY_PAGE_UP : zoomIn(); break;
+//	case GLUT_KEY_PAGE_DOWN : zoomOut(); break;
+//	case GLUT_KEY_HOME : toggleIdle(); break;
+
+	default:
+		//        std::cout << "unused (special) key : " << key << std::endl;
+		break;
+	}
+
+}
+#endif
 void GlutDemoApplication::swapBuffers()
 {
 	glutSwapBuffers();

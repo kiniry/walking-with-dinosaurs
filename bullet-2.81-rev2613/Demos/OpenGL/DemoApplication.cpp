@@ -292,14 +292,14 @@ void DemoApplication::zoomOut()
 
 
 
-void DemoApplication::reshape(int w, int h) 
+void DemoApplication::reshape(int x, int y, int w, int h) 
 {
 	GLDebugResetFont(w,h);
 
 	m_glutScreenWidth = w;
 	m_glutScreenHeight = h;
 
-	glViewport(0, 0, w, h);
+	glViewport(x, y, w, h);
 	updateCamera();
 }
 

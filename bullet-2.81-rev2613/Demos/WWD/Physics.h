@@ -108,7 +108,7 @@ class Physics : public PlatformDemoApplication{
 
 		
 
-		virtual void displayCallback();
+
 
 
 		bool isLegal();
@@ -125,6 +125,7 @@ class Physics : public PlatformDemoApplication{
 		float getBoxHalfHeight(btCollisionObject* object);
 
 	public:
+				virtual void displayCallback();
 				virtual void clientResetScene();
 		 virtual void clientMoveAndDisplay();
 		NeuralNetwork* theNet;

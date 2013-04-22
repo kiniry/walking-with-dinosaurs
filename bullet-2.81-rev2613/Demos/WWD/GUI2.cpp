@@ -44,12 +44,13 @@ static int quitRequest = 0;
 Physics* WWDPhysics = new Physics();
 
 // WinMain
-
+  HWND blank;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 				   LPSTR lpCmdLine, int iCmdShow)
 {
 	WNDCLASS wc;
 	HWND hWnd;
+	HWND hWnd2;
 	HDC hDC;
 	HGLRC hRC;
 	MSG msg;
@@ -57,8 +58,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	float theta = 0.0f;
 	
 
-	
-	
 
 	// register window class
 	wc.style = CS_OWNDC;
@@ -70,19 +69,36 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	wc.hCursor = LoadCursor( NULL, IDC_ARROW );
 	wc.hbrBackground = (HBRUSH)GetStockObject( BLACK_BRUSH );
 	wc.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
-	wc.lpszClassName = "BulletPhysics";
+	wc.lpszClassName = "main";
 	RegisterClass( &wc );
 	
 	// create main window
 	hWnd = CreateWindow( 
-		"BulletPhysics", "Bullet Physics Sample. http://bulletphysics.org", 
+		"main", "Bullet Physics Sample. http://bulletphysics.org", 
 		WS_CAPTION | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
-//		0, 0, 640, 480,
 		0, 0, 1024, 768,
 		NULL, NULL, hInstance, NULL );
-	
-	// enable OpenGL for the window
-	EnableOpenGL( hWnd, &hDC, &hRC );
+		// create main window
+
+		// register window class
+	wc.style = CS_OWNDC;
+	wc.lpfnWndProc = WndProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon( NULL, IDI_APPLICATION );
+	wc.hCursor = LoadCursor( NULL, IDC_ARROW );
+	wc.hbrBackground = (HBRUSH)GetStockObject( BLACK_BRUSH );
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = "blank";
+	RegisterClass( &wc );
+
+	  		int height =1024-16;
+			int width= 768-5;
+	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,150,0,width-150,height-100, hWnd, (HMENU)105, NULL, NULL);
+
+
+	EnableOpenGL( blank, &hDC, &hRC );
 	
 /*	
 	GLDebugDrawer debugDraw;
@@ -106,7 +122,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	WWDPhysics->solveGroundConflicts();
 
 
-	WWDPhysics->reshape(sWidth,sHeight);
+	WWDPhysics->reshape(0,0,sWidth,sHeight);
 
 	// program main loop
 	while ( !quit )
@@ -127,7 +143,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				DispatchMessage( &msg );
 			}
 			
-//			gDemoApplication->displayCallback();
+		//WWDPhysics->displayCallback();
 			
 
 		};
@@ -149,7 +165,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 	// shutdown OpenGL
-	DisableOpenGL( hWnd, hDC, hRC );
+	DisableOpenGL( blank, hDC, hRC );
 	
 	// destroy the window explicitly
 	DestroyWindow( hWnd );
@@ -162,7 +178,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 // Window Procedure
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	
 	
@@ -204,22 +220,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					sHeight = HIWORD (lParam);
 					if (sOpenGLInitialized)
 					{
-						WWDPhysics->reshape(sWidth,sHeight);
+						//TODO
+						WWDPhysics->reshape(0,0,sWidth,sHeight);
 					}
 				return 0;												// Return
-
+						
+				//resize
 				case SIZE_RESTORED:										// Was Window Restored?
 					sWidth = LOWORD (lParam);
 					sHeight = HIWORD (lParam);
 					if (sOpenGLInitialized)
-					{
-						WWDPhysics->reshape(sWidth,sHeight);
+					{	
+						//TODO
+						WWDPhysics->reshape(0,0,sWidth,sHeight);
 					}
 				return 0;												// Return
 			}
 		break;	
 
 	case WM_CREATE:
+		{
+			int height =1024-16;
+			int width= 768-5;
+			HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL,0, 0, 150, height, hwnd, (HMENU)105, NULL, NULL);
+    SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"name");
+    SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"extension");
+    SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"date");
+    SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"size");
+    //CreateWindowEx(NULL, TEXT("button"), TEXT("FIND"), WS_VISIBLE | WS_CHILD, 410, 40, 50, 20, hwnd, (HMENU)106, NULL, NULL);
+		}
+
 		return 0;
 	
 	case WM_MBUTTONUP:
@@ -285,7 +315,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				WWDPhysics->mouseFunc(0,0,xPos,yPos);
 			break;
 		}
-/*#define WM_LBUTTONUP                    0x0202
+/*#define WM_LBUTTONUP                  0x0202
 #define WM_LBUTTONDBLCLK                0x0203
 #define WM_RBUTTONDOWN                  0x0204
 #define WM_RBUTTONUP                    0x0205
@@ -324,7 +354,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					WWDPhysics->keyboardUpCallback(tolower(wParam),0,0);
 				}
-			return DefWindowProc( hWnd, message, wParam, lParam );
+			return DefWindowProc( hwnd, message, wParam, lParam );
 		}
 
 	case WM_KEYDOWN:
@@ -368,7 +398,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	
 	default:
-		return DefWindowProc( hWnd, message, wParam, lParam );
+		return DefWindowProc( hwnd, message, wParam, lParam );
 			
 	}
 	return 0;

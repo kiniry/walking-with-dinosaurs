@@ -10,8 +10,8 @@
 #include <Windows.h>
 #include <process.h>
 
-const int populationSize = 100;
-const int nrOfGenerations = 50;
+const int populationSize = 1;
+const int nrOfGenerations = 1;
 
 
 
