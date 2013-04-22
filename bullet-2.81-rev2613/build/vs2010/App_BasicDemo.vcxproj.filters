@@ -10,6 +10,9 @@
     <Filter Include="GUI">
       <UniqueIdentifier>{e0c8dc29-5b92-4885-af16-cdbf1b580f39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\M Tree">
+      <UniqueIdentifier>{4ce91a68-350b-4457-b208-13248e14d1f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Demos\WWD\NeuralNetwork.h">
@@ -45,6 +48,15 @@
     <ClInclude Include="..\..\Demos\WWD\resource.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\MTreeNode.h">
+      <Filter>source\M Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\NNLayerNode.h">
+      <Filter>source\M Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\NNNode.h">
+      <Filter>source\M Tree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp">
@@ -76,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Demos\WWD\GUI.cpp">
       <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\WWD\MTree.cpp">
+      <Filter>source\M Tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

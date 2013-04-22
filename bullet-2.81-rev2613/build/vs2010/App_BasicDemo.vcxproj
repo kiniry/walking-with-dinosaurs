@@ -452,8 +452,11 @@
     <ClInclude Include="..\..\Demos\WWD\Evolution.h" />
     <ClInclude Include="..\..\Demos\WWD\Grammar.h" />
     <ClInclude Include="..\..\Demos\WWD\main.h" />
+    <ClInclude Include="..\..\Demos\WWD\MTreeNode.h" />
     <ClInclude Include="..\..\Demos\WWD\NeuralNetwork.h" />
     <ClInclude Include="..\..\Demos\WWD\NeuralNode.h" />
+    <ClInclude Include="..\..\Demos\WWD\NNLayerNode.h" />
+    <ClInclude Include="..\..\Demos\WWD\NNNode.h" />
     <ClInclude Include="..\..\Demos\WWD\NNodeTest.h" />
     <ClInclude Include="..\..\Demos\WWD\Physics.h" />
     <ClInclude Include="..\..\Demos\WWD\resource.h" />
@@ -465,6 +468,7 @@
     <ClCompile Include="..\..\Demos\WWD\Grammar.cpp" />
     <ClCompile Include="..\..\Demos\WWD\GUI.cpp" />
     <ClCompile Include="..\..\Demos\WWD\main.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\MTree.cpp" />
     <ClCompile Include="..\..\Demos\WWD\NeuralNetwork.cpp" />
     <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp" />
     <ClCompile Include="..\..\Demos\WWD\NNodeTest.cpp" />
