@@ -6,7 +6,7 @@
 int readDNA(std::vector<int> *DNA, Physics *world){
 	int index = 0;
 	int blocks = 0;
-	std::vector<DinoTreeNode*>* tempNeural = new std::vector<DinoTreeNode*>;
+	std::vector<int>* tempNeural = new std::vector<int>;
 
 
 	try{
@@ -29,7 +29,7 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 
 	world->theNet=new NeuralNetwork(inputs);
 	//NN - create nodes
-	index=NN(index,DNA, world->theNet,NeuralPart);
+	index=NN(index,DNA, world->theNet);
 	//NN - end building
 	world->theNet->stopBuilding();
 
@@ -41,7 +41,7 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 		NeuralNetwork* subnet = new NeuralNetwork(mainOutputs);
 		world->subnets.push_back(subnet);
 
-		NN(tempNeural->at(i)->DNAindex,DNA,subnet,tempNeural->at(i));
+		NN(tempNeural->at(i),DNA,subnet);
 		subnet->stopBuilding();
 	}
 	delete tempNeural;
@@ -51,7 +51,7 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 	return Gsucces;
 }
 
-int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<DinoTreeNode*>* tempNeural){
+int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural){
 	if(*blocks >= maxBlocks){
 		throw Gfail;
 	}
@@ -103,11 +103,11 @@ int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, s
 	return index;
 }
 
-int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<DinoTreeNode*>* tempNeural){
+int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<int>* tempNeural){
 	int part2 = world->createBox(getDNA(index+10,DNA), getDNA(index+11,DNA), getDNA(index+12,DNA));
 	int j_index = world->createJoint(part1, part2, getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA), getDNA(index+9,DNA));
 	index+=13;
-	tempNeural->push_back(new DinoTreeNode(index,true));
+	tempNeural->push_back(index);
 	index = NN(index,DNA);
 
 	world->effectorNNindex.push_back(getDNA(index,DNA));
@@ -136,25 +136,19 @@ int NN(int index,std::vector<int> *DNA){
 	return index;
 }
 
-int NN(int index, std::vector<int> *DNA, NeuralNetwork* net,DinoTreeNode* partTree){
-	DinoTreeNode* aNode = new DinoTreeNode(index,true);
-	partTree->addChild(aNode);
-
+int NN(int index, std::vector<int> *DNA, NeuralNetwork* net){
 	switch(getDNA(index,DNA)%3){
 	case 0: //this is the last node.
 		index= NI(index+1, DNA, net);
-		aNode->setEnd(index);
 		break;
 	case 1: //there is more nodes in this layer
 		index=NI(index+1, DNA, net);
-		aNode->setEnd(index);
-		index=NN(index, DNA, net,aNode);
+		index=NN(index, DNA, net);
 		break;
 	case 2: //there is another layer
 		index=NI(index+1, DNA, net);
-		aNode->setEnd(index);
 		net->changeLayer();
-		index=NN(index, DNA, net,aNode);
+		index=NN(index, DNA, net);
 		break;
 	}
 	return index;

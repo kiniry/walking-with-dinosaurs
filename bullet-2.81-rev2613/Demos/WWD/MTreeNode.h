@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 
+#define maxDNAVal 10000 //TODO:? get from shared/global var instead
+
 class MTreeNode{
 protected:	
 	int startIndex;
