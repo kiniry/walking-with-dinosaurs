@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	
 	// create main window
 	hWnd = CreateWindow( 
-		"main", "Bullet Physics Sample. http://bulletphysics.org", 
+		"main", "Walking With Dinosaurs", 
 		WS_CAPTION | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
 		0, 0, 1024, 768,
 		NULL, NULL, hInstance, NULL );
@@ -93,13 +93,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	wc.lpszClassName = "blank";
 	RegisterClass( &wc );
 
-	  		int height =1024-16;
-			int width= 768-5;
-	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,150,0,width-150,height-100, hWnd, (HMENU)105, NULL, NULL);
-
+	  		int height =768-16-50;
+			int width= 1024-16;
+	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,150,100,width-150,height-100, hWnd, (HMENU)105, NULL, NULL);
 
 	EnableOpenGL( blank, &hDC, &hRC );
 	
+
+
+			HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL,0, 0, 150, height, hWnd, (HMENU)105, NULL, NULL);
+			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"name");
+			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"extension");
+			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"date");
+			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"size");
+
 /*	
 	GLDebugDrawer debugDraw;
 	gDemoApplication->myinit();
@@ -108,7 +115,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	if (gDemoApplication->getDynamicsWorld())
 		gDemoApplication->getDynamicsWorld()->setDebugDrawer(&debugDraw);
 	
-
 
 
    */
@@ -221,7 +227,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					if (sOpenGLInitialized)
 					{
 						//TODO
-						WWDPhysics->reshape(0,0,sWidth,sHeight);
+						//WWDPhysics->reshape(0,0,sWidth,sHeight);
 					}
 				return 0;												// Return
 						
@@ -232,7 +238,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					if (sOpenGLInitialized)
 					{	
 						//TODO
-						WWDPhysics->reshape(0,0,sWidth,sHeight);
+						//WWDPhysics->reshape(0,0,sWidth,sHeight);
 					}
 				return 0;												// Return
 			}
@@ -240,14 +246,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_CREATE:
 		{
-			int height =1024-16;
-			int width= 768-5;
-			HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL,0, 0, 150, height, hwnd, (HMENU)105, NULL, NULL);
-    SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"name");
-    SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"extension");
-    SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"date");
-    SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"size");
-    //CreateWindowEx(NULL, TEXT("button"), TEXT("FIND"), WS_VISIBLE | WS_CHILD, 410, 40, 50, 20, hwnd, (HMENU)106, NULL, NULL);
+
 		}
 
 		return 0;

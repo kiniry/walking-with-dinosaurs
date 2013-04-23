@@ -1104,7 +1104,7 @@ void DemoApplication::showProfileInfo(int& xOffset,int& yStart, int yIncr)
 
 		}
 
-
+ /*
 		double accumulated_time = 0.f;
 
 		for (int i = 0; !m_profileIterator->Is_Done(); m_profileIterator->Next())
@@ -1124,12 +1124,12 @@ void DemoApplication::showProfileInfo(int& xOffset,int& yStart, int yIncr)
 		sprintf(blockTime,"%s (%.3f %%) :: %.3f ms", "Unaccounted",
 			// (min(0, time_since_reset - totalTime) / time_since_reset) * 100);
 			parent_time > SIMD_EPSILON ? ((parent_time - accumulated_time) / parent_time) * 100 : 0.f, parent_time - accumulated_time);
-
+			  
 		displayProfileString(xOffset,yStart,blockTime);
 		yStart += yIncr;
 
 
-
+		 */
 		sprintf(blockTime,"-------------------------------------------------");
 		displayProfileString(xOffset,yStart,blockTime);
 		yStart += yIncr;
