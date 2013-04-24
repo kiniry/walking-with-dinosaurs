@@ -461,6 +461,7 @@
     <ClInclude Include="..\..\Demos\WWD\NNodeTest.h" />
     <ClInclude Include="..\..\Demos\WWD\partNode.h" />
     <ClInclude Include="..\..\Demos\WWD\Physics.h" />
+    <ClInclude Include="..\..\Demos\WWD\pipe.h" />
     <ClInclude Include="..\..\Demos\WWD\resource.h" />
     <ClInclude Include="..\..\Demos\WWD\test.h" />
   </ItemGroup>
@@ -476,6 +477,7 @@
     <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp" />
     <ClCompile Include="..\..\Demos\WWD\NNodeTest.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Physics.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\pipe.cpp" />
     <ClCompile Include="..\..\Demos\WWD\test.cpp" />
   </ItemGroup>
   <ItemGroup>

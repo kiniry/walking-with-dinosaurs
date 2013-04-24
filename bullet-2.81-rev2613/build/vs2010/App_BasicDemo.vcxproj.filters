@@ -63,6 +63,9 @@
     <ClInclude Include="..\..\Demos\WWD\MTree.h">
       <Filter>source\M Tree</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\pipe.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp">
@@ -100,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Demos\WWD\GUI2.cpp">
       <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Demos\WWD\pipe.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
