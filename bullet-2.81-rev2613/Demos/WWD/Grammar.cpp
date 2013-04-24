@@ -30,25 +30,26 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 		inputs.push_back(new NeuralNode(& (world->sensors.at(i)) ));
 	}
 
-	world->theNet=new NeuralNetwork(inputs);
-	NNLayerNode* netPart = new NNLayerNode(index);
-	world->theTree->addNeuralNetworkLayer(netPart);
+	//world->theNet=new NeuralNetwork(inputs);
+	//NNLayerNode* netPart = new NNLayerNode(index);
+	//world->theTree->addNeuralNetworkLayer(netPart);
 	//NN - create nodes
-	index=NN(index,DNA, world->theNet, world,netPart,true);
+	//index=NN(index,DNA, world->theNet, world,netPart,true);
+	index = newNN(index,DNA,inputs,world,true);
 	//NN - end building
-	world->theNet->stopBuilding();
+	//world->theNet->stopBuilding();
 
 	//link create sub NNs
 	std::vector<NeuralNode*> mainOutputs = world->theNet->getLastLayer();
-	NNLayerNode* falseLayer = new NNLayerNode(0);
+	//NNLayerNode* falseLayer = new NNLayerNode(0);
 	for(int i=0;i<(int)tempNeural->size();i++){
-		NeuralNetwork* subnet = new NeuralNetwork(mainOutputs);
-		world->subnets.push_back(subnet);
-
-		NN(tempNeural->at(i),DNA,subnet,world,falseLayer,false);
-		subnet->stopBuilding();
+		//NeuralNetwork* subnet = new NeuralNetwork(mainOutputs);
+		//world->subnets.push_back(subnet);
+		newNN(tempNeural->at(i),DNA,mainOutputs,world,false);
+		//NN(tempNeural->at(i),DNA,subnet,world,falseLayer,false);
+		//subnet->stopBuilding();
 	}
-	delete falseLayer;
+	//delete falseLayer;
 	delete tempNeural;
 
 	
@@ -110,9 +111,10 @@ int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, s
 }
 
 int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<int>* tempNeural, partNode* body){
-	NNLayerNode* aLayer = new NNLayerNode(index);
-	body->addChild(aLayer);
-	index = NN(index,DNA,body,aLayer);
+	//NNLayerNode* aLayer = new NNLayerNode(index);
+	//body->addChild(aLayer);
+	//index = NN(index,DNA,body,aLayer);
+	index = newNN(index,DNA,body);
 	world->effectorNNindex.push_back(getDNA(index,DNA));
 	world->effectorNNindex.push_back(getDNA(index+1,DNA));
 	world->effectorNNindex.push_back(getDNA(index+2,DNA));
@@ -130,7 +132,7 @@ int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, 
 	index = B(index, DNA, world, blocks, part2, tempNeural,nextBody); //nextBody will end at the end of this B() function
 	return index;
 }
-
+/*
 int NN(int index, std::vector<int> *DNA, NeuralNetwork* net, Physics *world, NNLayerNode* layer, bool notSubnet){
 	NNNode* aNode;
 	if(notSubnet){
@@ -195,7 +197,7 @@ int NN(int index, std::vector<int> *DNA,partNode* body,NNLayerNode* layer){
 	}
 	return index;
 }
-
+*/
 int NI(int index,std::vector<int> *DNA){
 	switch(getDNA(index,DNA)%4){
 	case 0:
@@ -232,6 +234,102 @@ int NI(int index, std::vector<int> *DNA, NeuralNetwork* net){
 		net->insertNode(getDNA(index+1,DNA),getDNA(index+2,DNA),getDNA(index+4,DNA),getDNA(index+6,DNA),toFloat(getDNA(index+3,DNA)),toFloat(getDNA(index+5,DNA)),toFloat(getDNA(index+7,DNA)));
 		index+=8;
 		break;
+	}
+	return index;
+}
+
+int newNN(int index, std::vector<int>* DNA, std::vector<NeuralNode*> inputs, Physics *world, bool isNotSubnet){
+	if(inputs.size()==0){inputs.push_back(new NeuralNode(0.f));} //default input if no sensors (subnets will allways have input.size>0)
+	NeuralNetwork* aNet = new NeuralNetwork(inputs);
+	int amountOfLayers=0;
+	if(isNotSubnet){
+		world->theNet=aNet;
+	}else{
+		world->subnets.push_back(aNet);
+	}
+
+	int chooseValue = getDNA(index,DNA)%100;
+	index++;
+
+	if(chooseValue<15){
+		amountOfLayers=1;
+	}else if(chooseValue<40){
+		amountOfLayers=2;
+	}else if(chooseValue<85){
+		amountOfLayers=3;
+	}else{ //if chooseValue<100
+		amountOfLayers=4;
+	}
+	for(int i=0;i<amountOfLayers;i++){
+		if(isNotSubnet){
+			NNLayerNode* aLayerNode = new NNLayerNode(index);
+			world->theTree->addNeuralNetworkLayer(aLayerNode);
+			index = NNL(index,inputs.size(),DNA,aNet,aLayerNode,false);
+			aLayerNode->setEnd(index);
+		}else{
+			NNLayerNode* aLayerNode = new NNLayerNode(index);
+			index = NNL(index,SUBNET_NET_WIDTH,DNA,aNet,aLayerNode,false);
+			delete aLayerNode;
+		}
+		aNet->changeLayer();
+	}
+
+	aNet->stopBuilding();
+	return index;
+}
+
+//function for calculating subnet size
+int newNN(int index, std::vector<int> *DNA,partNode* body){
+	int amountOfLayers=0;
+	
+	int chooseValue = getDNA(index,DNA)%100;
+	index++;
+	if(chooseValue<15){
+		amountOfLayers=1;
+	}else if(chooseValue<40){
+		amountOfLayers=2;
+	}else if(chooseValue<85){
+		amountOfLayers=3;
+	}else{ //if chooseValue<100
+		amountOfLayers=4;
+	}
+	for(int i=0;i<amountOfLayers;i++){
+		NNLayerNode* aLayerNode = new NNLayerNode(index);
+		body->addChild(aLayerNode);
+		index = NNL(index,SUBNET_NET_WIDTH,DNA,0,aLayerNode,true);
+		aLayerNode->setEnd(index);
+	}
+
+	
+	return index;
+}
+
+//is isJustChecking is set, we are only calculating the size of the DNA part, not creating the actual NN nodes
+int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, NNLayerNode* node, bool isJustChecking){
+	int chooseValue = getDNA(index,DNA)%1000;
+	int usedChance = 0;
+	int nrOfNodes = inputAmount; //assume the most probable case
+
+	for(int i=1;i<inputAmount;i++){
+		if(inputAmount-i<=0){break;}	//since we reached this, none of the chances procced... since the remaining chance-
+										//all belong to the "nrOfNodes = inputAmount" case, this is chosen
+		double dChance = 300;
+		for(int j=0;j<i;j++){
+			dChance = dChance / 2;		//dChance is calculated... the further from the MPC, the lower chance
+		}
+
+		usedChance+=dChance;			//this case is procced if chooseValue is in the interval usedChance..usedChance+dChance
+		if(chooseValue < usedChance){nrOfNodes = inputAmount-i;break;}
+		usedChance+=dChance;			//this case is procced if chooseValue is in the interval usedChance..usedChance+dChance
+		if(chooseValue < usedChance){nrOfNodes = inputAmount+i;break;}
+	}
+	
+	for(int i=0;i<nrOfNodes;i++){
+		NNNode* aNode = new NNNode(index);
+		node->addChild(aNode);
+		if(!isJustChecking){index = NI(index,DNA,aNet);} //insert the nodes
+		else{index = NI(index,DNA);}
+		aNode->setEnd(index);
 	}
 	return index;
 }

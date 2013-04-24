@@ -19,6 +19,8 @@
 
 #define toFloat(X) X/100.f
 
+#define SUBNET_NET_WIDTH 5
+
 /**
 * checks the of the dna, and returns add 0 if the range is excided by one.
 * 0 == default terminate value
@@ -35,10 +37,14 @@ int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, 
 
 int readDNA(std::vector<int> *DNA, Physics *world);
 
-int NN(int index, std::vector<int> *DNA,partNode* body,NNLayerNode* layer);
+//int NN(int index, std::vector<int> *DNA,partNode* body,NNLayerNode* layer);
 int NI(int index, std::vector<int> *DNA);
 
-int NN(int index, std::vector<int> *DNA, NeuralNetwork* net, Physics *world, NNLayerNode* layer, bool notSubnet);
+//int NN(int index, std::vector<int> *DNA, NeuralNetwork* net, Physics *world, NNLayerNode* layer, bool notSubnet);
 int NI(int index, std::vector<int> *DNA, NeuralNetwork* net);
+
+int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, NNLayerNode* node, bool isJustChecking);
+int newNN(int index, std::vector<int> *DNA,partNode* body);
+int newNN(int index, std::vector<int>* DNA, std::vector<NeuralNode*> inputs, Physics *world, bool isNotSubnet);
 
 #endif
