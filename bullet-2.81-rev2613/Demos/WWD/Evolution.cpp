@@ -70,7 +70,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 }
 
 creature getWorthyCreature(float fitnessSum, std::vector<creature> creatures){
-	int Sum = (int)(fitnessSum*10000.f);
+	/*int Sum = (int)(fitnessSum*10000.f);
 	int random = rand()%Sum;
 	int val = 0;
 	int i=0;
@@ -78,7 +78,11 @@ creature getWorthyCreature(float fitnessSum, std::vector<creature> creatures){
 		val+=(int)(creatures.at(i).fitness*10000);
 		if(val>random){break;}
 	}
-	return creatures.at(i);
+	return creatures.at(i);*/
+	
+	//temporary
+	int random = rand()%creatures.size();
+	return creatures.at(random);
 }
 
 std::vector<int> mutate(const std::vector<int> dna){
