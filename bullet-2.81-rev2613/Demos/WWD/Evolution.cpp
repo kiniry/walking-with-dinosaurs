@@ -2,14 +2,19 @@
 
 
 std::vector<creature> evolve(std::vector<creature> creatures){
-	float fitnessSum = 0;
+	float fitnessSumElites = 0;
+	float fitnessSumBreeders = 0;
 	std::vector<creature> result;
+	std::vector<creature> elites;
+	std::vector<creature> breeders;
 
 	std::sort(creatures.begin(), creatures.end(), compareCreatures);
 
 	int survivors = (int) ((creatures.size()/100.f)*((float)survivalRatio)+0.5);
-
+	int cullAmount = (int) ((creatures.size()/100.f)*((float)cullRatio)+0.5);
+	
 	printf("\nsurvivors %d\n", survivors);
+	printf("\nculled creatures %d\n", cullAmount);
 
 	if(survivors == 0 && creatures.size() != 0){
 		survivors =1;
@@ -17,6 +22,13 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 	for(int i =0; i<survivors; i++){
 		result.push_back(creatures.at(i));
+		elites.push_back(creatures.at(i));
+		fitnessSumElites += creatures.at(i).fitness;
+	}
+
+	for(int i =survivors; i<((creatures.size()-survivors)-cullAmount); i++){
+		breeders.push_back(creatures.at(i));
+		fitnessSumBreeders += creatures.at(i).fitness;
 	}
 
 	for(int i =0; i<(int) creatures.size()-survivors;i++){
@@ -25,12 +37,19 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 		int random = rand()%100+1;
 
-		int mut = 20;
-		int cross1 = 40;
+		//int mut = 20;
+		//int cross1 = 40;
 		//int cross2 = 40;
-		std::vector<int> dna = creatures.at(i%survivors).dna;
-		std::vector<int> dna2 = creatures.at(rand()%survivors).dna;
-
+		//std::vector<int> dna = creatures.at(i%survivors).dna;
+		//std::vector<int> dna2 = creatures.at(rand()%survivors).dna;
+		std::vector<int> dna = getWorthyCreature(fitnessSumBreeders,breeders).dna;
+		std::vector<int> dna2 = getWorthyCreature(fitnessSumElites,elites).dna;
+		if(random<=50){
+			creat.dna = mutate(crossOver1(dna,dna2));
+		}else{
+			creat.dna = mutate(crossOver2(dna,dna2));
+		}
+		/*
 		if(random<=mut){
 			creat.dna=mutate(dna);
 		}else if(random<=mut+cross1){
@@ -38,6 +57,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		}else{
 			creat.dna= crossOver2(dna,dna2);
 		}
+		*/
 
 		result.push_back(creat);
 	}
