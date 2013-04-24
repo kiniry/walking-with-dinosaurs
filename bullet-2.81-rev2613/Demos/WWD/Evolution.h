@@ -22,6 +22,9 @@ struct creature{
 	float fitness;
 };
 
+
+void statistik(std::vector<creature> creatures);
+
 static bool compareCreatures(const creature &a, const creature &b){
 	return a.fitness > b.fitness;
 }

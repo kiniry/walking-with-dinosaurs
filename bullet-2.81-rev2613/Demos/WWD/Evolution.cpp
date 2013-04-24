@@ -10,9 +10,12 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 	std::sort(creatures.begin(), creatures.end(), compareCreatures);
 
+
+	statistik(creatures);
+
 	int survivors = (int) ((creatures.size()/100.f)*((float)survivalRatio)+0.5);
 	int cullAmount = (int) ((creatures.size()/100.f)*((float)cullRatio)+0.5);
-	
+
 	printf("\nsurvivors %d\n", survivors);
 	printf("\nculled creatures %d\n", cullAmount);
 
@@ -26,11 +29,12 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		fitnessSumElites += creatures.at(i).fitness;
 	}
 
+	if(creatures.size()>survivors){
 	for(int i =survivors; i<((creatures.size()-survivors)-cullAmount); i++){
 		breeders.push_back(creatures.at(i));
 		fitnessSumBreeders += creatures.at(i).fitness;
 	}
-
+	}
 	for(int i =0; i<(int) creatures.size()-survivors;i++){
 		creature creat;
 		creat.fitness=0;
@@ -51,11 +55,11 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		}
 		/*
 		if(random<=mut){
-			creat.dna=mutate(dna);
+		creat.dna=mutate(dna);
 		}else if(random<=mut+cross1){
-			creat.dna=crossOver1(dna,dna2);
+		creat.dna=crossOver1(dna,dna2);
 		}else{
-			creat.dna= crossOver2(dna,dna2);
+		creat.dna= crossOver2(dna,dna2);
 		}
 		*/
 
@@ -126,4 +130,40 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 		newCreature.push_back(dna1.at(i));
 	}
 	return newCreature;
+}
+
+
+void statistik(std::vector<creature> creatures){
+
+	float max=0, min=0, median=0, mean=0, deviation=0;
+
+
+	max =creatures.at(0).fitness;
+	min = creatures.at(creatures.size()-1).fitness;
+
+	for(int i = 0; i<creatures.size(); i++){
+		mean+=creatures.at(i).fitness;
+	}
+	mean/=creatures.size();
+
+	if(creatures.size()%2 ==0){
+		float tmp1 =creatures.at((int)(creatures.size()/2.+0.5)).fitness;
+		float tmp2 =creatures.at((int)(creatures.size()/2.+0.5)-1).fitness;
+
+		median = (tmp2-tmp1)/2.+tmp1;
+	}else{
+		median= creatures.at((int)(creatures.size()/2.+0.5)-1).fitness;
+	}
+	
+
+	if(creatures.size()>1){
+	 for(int i = 0; i<creatures.size(); i++){
+		deviation+=pow(creatures.at(i).fitness-mean,2);
+	 }
+	 deviation=deviation/((float)(creatures.size()-1));
+	 deviation=sqrt(deviation);
+	}else{
+		 deviation=0;
+	}
+	printf("\nmax %f, min %f, median %f, mean %f, deviation %f\n", max, min, median, mean, deviation);
 }
