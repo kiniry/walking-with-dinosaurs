@@ -27,9 +27,9 @@ subject to the following restrictions:
 #include "BulletDynamics/Dynamics/btDynamicsWorld.h"
 
 #include "resource.h"
-/// This Win32AppMain is shared code between all demos. 
-/// The actual demo, derived from DemoApplication is created using 'createDemo', in a separate .cpp file
 
+#define IDC_LISTBOX 993
+#define IDC_SIM 994
 
 // Function Declarations
 
@@ -95,13 +95,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	  		int height =768-16-50;
 			int width= 1024-16;
-	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,150,100,width-150,height-100, hWnd, (HMENU)105, NULL, NULL);
+	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,150,100,width-150,height-100, hWnd,(HMENU)IDC_SIM, GetModuleHandle(NULL), NULL);
 
 	EnableOpenGL( blank, &hDC, &hRC );
 	
 
 
-			HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL,0, 0, 150, height, hWnd, (HMENU)105, NULL, NULL);
+			HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL,0, 0, 150, height, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
 			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"name");
 			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"extension");
 			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"date");
@@ -396,12 +396,33 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			WWDPhysics->keyboardCallback(wParam,0,0);
 		break;
 	
+
+	case WM_COMMAND:
+		//menu
+		switch(LOWORD(wParam)){
+
+		case IDC_LISTBOX:
+		  	printf("");
+			break;
+		
+		default:
+			 	printf("");
+
+		}
+		break;
+
 	default:
 		return DefWindowProc( hwnd, message, wParam, lParam );
 			
 	}
 	return 0;
 }
+
+
+
+
+
+
 
 // Enable OpenGL
 
