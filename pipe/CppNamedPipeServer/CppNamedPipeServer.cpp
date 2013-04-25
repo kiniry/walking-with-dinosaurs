@@ -4,7 +4,7 @@
 
 
 // The full name of the pipe in the format of \\servername\pipe\pipename.
-#define SERVER_NAME         L"."
+#define SERVER_NAME         L"."	//. means local server
 #define PIPE_NAME           L"WWD"
 #define FULL_PIPE_NAME      L"\\\\" SERVER_NAME L"\\pipe\\" PIPE_NAME
 
@@ -19,7 +19,6 @@
 int wmain(int argc, wchar_t* argv[])
 {
     DWORD dwError = ERROR_SUCCESS;
-    PSECURITY_ATTRIBUTES pSa = NULL;
     HANDLE hNamedPipe = INVALID_HANDLE_VALUE;
 
 
@@ -113,6 +112,11 @@ int wmain(int argc, wchar_t* argv[])
         ))
     {
         dwError = GetLastError();
+
+		if (ERROR_BROKEN_PIPE == GetLastError()){
+		    wprintf(L"broken Pipe w/err 0x%08lx\n", dwError);
+		goto Cleanup;
+		}
         wprintf(L"WriteFile to pipe failed w/err 0x%08lx\n", dwError);
         goto Cleanup;
     }

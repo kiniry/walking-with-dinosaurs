@@ -9,10 +9,14 @@
 #include <ctime>
 #include <Windows.h>
 #include <process.h>
+#include "pipe.h"
 
 const int populationSize = 100;
 const int nrOfGenerations = 50;
 
+
+static int numCores;
+static std::vector<Physics*> worlds;
 
 
 unsigned int __stdcall run(void* data);

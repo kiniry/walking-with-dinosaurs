@@ -1,20 +1,26 @@
 #include "main.h"
 
-
-static int numCores;
-static std::vector<Physics*> worlds;
 int main(int argc,char** argv)
 {
 	//seeds random generator
 	srand(time(0));
 
 
-#ifdef  _DEBUG
-	   //return WWD(argc,argv);
+#ifdef  _DEBUG	 
+	//return pipeClientMain(argc,argv);
+		std::vector<int> ancestor;
+	return pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
+//printf("%s\n",fileName2);
+		//return WWD(argc,argv);
 	return debug(argc,argv);
 
-#else
 
+	
+
+#else
+	//std::vector<int> ancestor;
+	//return pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
+	return pipeClientMain(argc,argv);
 	return WWD(argc,argv);
 
 #endif
@@ -22,7 +28,8 @@ int main(int argc,char** argv)
 	return 0;
 }
 
-unsigned int __stdcall run(void* data){
+
+unsigned int __stdcall threadSim(void* data){
 	//printf("%d ",(int) data); 
 	for(int j=(int) data;j< (int) worlds.size();j+=numCores){
 
@@ -31,7 +38,6 @@ unsigned int __stdcall run(void* data){
 
 	return 0;
 }
-
 
 
 
@@ -139,22 +145,23 @@ int WWD(int argc,char** argv){
 
 				worlds.push_back(WWDPhysics);
 			}
-
+			  /*
 			//run simulator
-			/*#pragma omp for schedule(dynamic)
--			for(int i=0;i< (int) worlds.size();i++){
--				worlds.at(i)->runSimulation(); //runs a physics simulation and save the fitness values
-			} */
+			//#pragma omp for schedule(dynamic)
+			for(int i=0;i< (int) worlds.size();i++){
+				worlds.at(i)->runSimulation(); //runs a physics simulation and save the fitness values
+			}
+			
 			//threads
 			for(int j =0; j<numCores; j++){
-				handles[j] = (HANDLE)_beginthreadex(0, 0, &run,(void*) j, 0, 0);
+				handles[j] = (HANDLE)_beginthreadex(0, 0, &threadSim,(void*) j, 0, 0);
 			}
 
 			WaitForMultipleObjects(numCores, handles, true,INFINITE);
 
 			for(int j =0; j<numCores; j++){
 				CloseHandle(handles[j]);
-			}
+			} */
 
 
 			//#pragma omp for
