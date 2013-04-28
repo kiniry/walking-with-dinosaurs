@@ -9,7 +9,8 @@
 #include <ctime>
 #include <Windows.h>
 #include <process.h>
-#include "pipe.h"
+#include "server.h"
+#include "client.h"
 
 const int populationSize = 100;
 const int nrOfGenerations = 50;

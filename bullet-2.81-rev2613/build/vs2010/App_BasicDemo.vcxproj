@@ -448,6 +448,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Demos\WWD\assert2.h" />
+    <ClInclude Include="..\..\Demos\WWD\Client.h" />
     <ClInclude Include="..\..\Demos\WWD\DinoTreeNode.h" />
     <ClInclude Include="..\..\Demos\WWD\Evolution.h" />
     <ClInclude Include="..\..\Demos\WWD\Grammar.h" />
@@ -463,9 +464,11 @@
     <ClInclude Include="..\..\Demos\WWD\Physics.h" />
     <ClInclude Include="..\..\Demos\WWD\pipe.h" />
     <ClInclude Include="..\..\Demos\WWD\resource.h" />
+    <ClInclude Include="..\..\Demos\WWD\Server.h" />
     <ClInclude Include="..\..\Demos\WWD\test.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Demos\WWD\Client.cpp" />
     <ClCompile Include="..\..\Demos\WWD\DinoTreeNode.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Evolution.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Grammar.cpp" />
@@ -478,6 +481,7 @@
     <ClCompile Include="..\..\Demos\WWD\NNodeTest.cpp" />
     <ClCompile Include="..\..\Demos\WWD\Physics.cpp" />
     <ClCompile Include="..\..\Demos\WWD\pipe.cpp" />
+    <ClCompile Include="..\..\Demos\WWD\Server.cpp" />
     <ClCompile Include="..\..\Demos\WWD\test.cpp" />
   </ItemGroup>
   <ItemGroup>

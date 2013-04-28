@@ -23,14 +23,14 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		survivors =1;
 	}
 
-	for(int i =0; i<survivors; i++){
+	for(int i =0; i<(int)survivors; i++){
 		result.push_back(creatures.at(i));
 		elites.push_back(creatures.at(i));
 		fitnessSumElites += creatures.at(i).fitness;
 	}
 
-	if(creatures.size()>survivors){
-	for(int i =survivors; i<((creatures.size()-survivors)-cullAmount); i++){
+	if((int)creatures.size()>survivors){
+	for(int i =survivors; i<((((int)creatures.size())-survivors)-cullAmount); i++){
 		breeders.push_back(creatures.at(i));
 		fitnessSumBreeders += creatures.at(i).fitness;
 	}
@@ -139,13 +139,13 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 
 void statistik(std::vector<creature> creatures){
 
-	float max=0, min=0, median=0, mean=0, deviation=0;
+	double max=0, min=0, median=0, mean=0, deviation=0;
 
 
 	max =creatures.at(0).fitness;
 	min = creatures.at(creatures.size()-1).fitness;
 
-	for(int i = 0; i<creatures.size(); i++){
+	for(int i = 0; i<(int)creatures.size(); i++){
 		mean+=creatures.at(i).fitness;
 	}
 	mean/=creatures.size();
@@ -161,7 +161,7 @@ void statistik(std::vector<creature> creatures){
 	
 
 	if(creatures.size()>1){
-	 for(int i = 0; i<creatures.size(); i++){
+	 for(int i = 0; i<(int)creatures.size(); i++){
 		deviation+=pow(creatures.at(i).fitness-mean,2);
 	 }
 	 deviation=deviation/((float)(creatures.size()-1));

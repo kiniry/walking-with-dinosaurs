@@ -10,7 +10,6 @@ int main(int argc,char** argv)
 	//return pipeClientMain(argc,argv);
 		std::vector<int> ancestor;
 	return pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
-//printf("%s\n",fileName2);
 		//return WWD(argc,argv);
 	return debug(argc,argv);
 
@@ -18,8 +17,11 @@ int main(int argc,char** argv)
 	
 
 #else
-	//std::vector<int> ancestor;
-	//return pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
+
+	const int temp[] = {1387,38,23,2,1924};
+	int size = sizeof( temp ) / sizeof ( *temp );
+	std::vector<int> ancestor (temp, temp+size);
+	pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
 	return pipeClientMain(argc,argv);
 	return WWD(argc,argv);
 
