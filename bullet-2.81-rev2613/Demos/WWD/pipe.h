@@ -12,19 +12,17 @@
 #include "Grammar.h"
 #include "Evolution.h"
 
-
 // The full name of the pipe in the format of \\servername\pipe\pipename.
 #define serverName         "."	//. means local server
 #define pipeName           "WWD"
 enum orders{stop, go};
 
-static std::string directory;
+static std::string directory ="";
 
 static DWORD dwError = ERROR_SUCCESS;
 
 #define BUFFER_SIZE     1024
 
-
 std::vector<creature> getCreatures(std::string filename);
 
-void setDirectory(); 
+std::string getDirectory(); 

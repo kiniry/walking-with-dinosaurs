@@ -2,18 +2,12 @@
 
 
 int pipeClientMain(int argc,char* argv[]){
-
-
-	//set/get parameters
-	// thread id,
-
-   	
-	 
-	setParameters(argc,argv);
 	
+	
+	//set/get parameters
+	setParameters(argc,argv);
 
 	setupClient();
-    
 
 	while(receiveOrders()){
 		//get creatures
@@ -24,30 +18,27 @@ int pipeClientMain(int argc,char* argv[]){
 		//send results back
 		sendResult(creatures);
 
+		//send Done message
 		sendAcknowledge();
-		//act on ordes
-		//set new par or kill it
+	
 	}
 
 	CloseHandle(pipe);
-	pipe = INVALID_HANDLE_VALUE;   
+	pipe = INVALID_HANDLE_VALUE;
 	getchar();
 	return 0;
 }
 
 void setParameters(int argc,char* argv[]){
-
 	//ID
 	if(argc!=2){
 		printf("to few arguments expected 2, recieved %d\n",argc);
 		exit(-1);
-	} 
-
+	}
 
 	ID=  argv[1];
 	printf("client %s started\n",ID.c_str());
 
-	 
 	//Pipename
 	std::stringstream result;
 
@@ -56,26 +47,24 @@ void setParameters(int argc,char* argv[]){
 
 	printf("pipe name %s\n",fullPipeName.c_str());
 
-	
-	setDirectory();
-
-	creatureFilePath.append(directory.c_str());
+	directory=getDirectory();
+	 printf("dir %s\n",	directory.c_str());
+	creatureFilePath.append(directory);
 	creatureFilePath.append("WWDCreatures");
 	creatureFilePath.append(ID);
 	creatureFilePath.append(".dat");
-	
+
 	printf("the creature path is %s\n",	creatureFilePath.c_str());
 }
 
 void setupClient(){
-
 	// Try to open the named pipe identified by the pipe name.
-	while (TRUE) 
+	while (TRUE)
 	{
-		pipe = CreateFile( 
-			fullPipeName.c_str(),                 // Pipe name 
+		pipe = CreateFile(
+			fullPipeName.c_str(),                 // Pipe name
 			GENERIC_READ | GENERIC_WRITE,   // Read and write access
-			0,                              // No sharing 
+			0,                              // No sharing
 			NULL,                           // Default security attributes
 			OPEN_EXISTING,                  // Opens existing pipe
 			0,                              // Default attributes
@@ -107,7 +96,7 @@ void setupClient(){
 		}
 	}
 
-	// Set the read mode and the blocking mode of the named pipe. In this 
+	// Set the read mode and the blocking mode of the named pipe. In this
 	// sample, we set data to be read from the pipe as a stream of messages.
 	DWORD dwMode = PIPE_READMODE_MESSAGE;
 	if (!SetNamedPipeHandleState(pipe, &dwMode, NULL, NULL))
@@ -116,9 +105,7 @@ void setupClient(){
 		wprintf(L"SetNamedPipeHandleState failed w/err 0x%08lx\n", dwError);
 		exit(-1);
 	}
-
 }
-
 
 void pipeSim(std::vector<creature> creatures){
 	printf("Simulation starte\n");
@@ -138,19 +125,15 @@ void pipeSim(std::vector<creature> creatures){
 		worlds.at(i)->runSimulation(); //runs a physics simulation and save the fitness values
 	}
 
-
 	for(int j= worlds.size()-1; j>=0; j--){
 		creatures.at(j).fitness = worlds.at(j)->getFitness();
-
 	}
 
 	for(int j= worlds.size()-1; j>=0; j--){
 		delete worlds.at(j);
 		worlds.pop_back();
 	}
-
 }
-
 
 void sendAcknowledge(){
 	 printf("sending ack\n");
@@ -173,7 +156,6 @@ void sendAcknowledge(){
 	}
 
 	wprintf(L"Send %ld bytes to server: \"%s\"\n", cbWritten, chRequest);
-
 }
 
 void sendResult(std::vector<creature> creatures){
@@ -196,26 +178,19 @@ void sendResult(std::vector<creature> creatures){
 	os.close();
 }
 
-
-
-
 bool receiveOrders(){
-
-
-	wchar_t chResponse[BUFFER_SIZE];
+	char chResponse[BUFFER_SIZE];
 	DWORD cbResponse, cbRead;
 	cbResponse = sizeof(chResponse);
 
 	BOOL fFinishRead = FALSE;
 	do{
-
-
 		fFinishRead = ReadFile(
 			pipe,                  // Handle of the pipe
 			chResponse,             // Buffer to receive the reply
 			cbResponse,             // Size of buffer in bytes
-			&cbRead,                // Number of bytes read 
-			NULL                    // Not overlapped 
+			&cbRead,                // Number of bytes read
+			NULL                    // Not overlapped
 			);
 
 		if (!fFinishRead && ERROR_MORE_DATA != GetLastError())
@@ -225,13 +200,10 @@ bool receiveOrders(){
 			exit(-1);
 		}
 
-		wprintf(L"Receive %ld bytes from server: \"%s\"\n", cbRead, chResponse);
-
+		printf("Receive %ld bytes from server: \"%s\"\n", cbRead, chResponse);
 	} while (!fFinishRead); // Repeat loop if ERROR_MORE_DATA
-	if (wcscmp(chResponse, L"go")==0){
-		return true;	
-
+	if (strcmp(chResponse, "go")==0){
+		return true;
 	}
 	return false;
-
 }

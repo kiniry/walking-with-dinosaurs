@@ -1,24 +1,17 @@
 #include "pipe.h"
 
-
-
-
 std::vector<creature> getCreatures(std::string filename){
-
-
 	printf("reading creatures from %s\n", filename.c_str());
    	std::vector<creature> creatures;
-	
-	std::ifstream is (filename);
 
+	std::ifstream is (filename);
 
 	int noCreatures;
 	is.read((char*)&noCreatures, sizeof(int));
 
-
 	for(int i=0;i<noCreatures;i++){
 	creature* tmpCreature =new creature();
-	
+
 	//read dna
 	int sizeOfDna;
 	is.read((char*)&sizeOfDna, sizeof(int));
@@ -31,20 +24,12 @@ std::vector<creature> getCreatures(std::string filename){
 	creatures.push_back(*tmpCreature);
 	}
 
-
 	is.close();
-	
-	
-	return creatures;
 
+	return creatures;
 }
 
-
-
-
-void setDirectory(){
-
-
+std::string getDirectory(){
 	//filepath creatures
 	char fileName[MAX_PATH];
 	HINSTANCE hInstance = GetModuleHandle(NULL);
@@ -67,16 +52,14 @@ void setDirectory(){
 			filePathAbs[j]=fileName[i];
 			j++;
 		}
-
-
 	}
 
 	PathRemoveFileSpec(filePathAbs);
 	PathAddBackslash(filePathAbs);
 
-
 	directory.append(filePathAbs);
 
 	printf("directory: %s\n",directory.c_str());
 
+	return directory;
 }

@@ -1,7 +1,6 @@
 #pragma once
 #include "pipe.h"
 
-
 //server
 static std::vector<std::string> fullPipeNames;
 static std::vector<HANDLE> pipes;

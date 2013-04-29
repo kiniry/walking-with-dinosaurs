@@ -1,8 +1,6 @@
 #include "Server.h"
 
 int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor){
-
-
 	std::vector<creature> creatures;
 
 	//create creatures
@@ -17,7 +15,6 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 	printf("creatures %d\n", creatures.size());
 	printf("DNA ");
 	for(int i=0;i<creatures.at(0).dna.size(); i++){
-
 		printf("%d ",creatures.at(0).dna.at(i));
 	}
 	printf("\n");
@@ -28,8 +25,6 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 	//startPrograms(cores);
 
 	waitForClients(cores);
-
-
 
 	for(int i=0;i<nrOfGenerations;i++){
 		sendCreatures(creatures, cores);
@@ -42,14 +37,11 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 
 		creatures=evolve(creatures);
 
-
-
 		for(int j=0;j< (int) (creatures.size());j++){
 			printf("nr %d %f\n",j,creatures.at(j).fitness);
 		}
 
 		printf("round %d \n",i);
-
 	}
 	sendOrders(stop);
 
@@ -62,7 +54,6 @@ void startPrograms(int cores){
 	char fileName[MAX_PATH];
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 	GetModuleFileName(hInstance, fileName, MAX_PATH);
-
 
 	//make absolute
 	std::vector<int> slashes;
@@ -81,34 +72,26 @@ void startPrograms(int cores){
 			filePathAbs[j]=fileName[i];
 			j++;
 		}
-
-
 	}
 
 	PathRemoveFileSpec(filePathAbs);
 	PathAddBackslash(filePathAbs);
 	PathAppend(filePathAbs,"Client.exe");
-	for(int i=0;i<cores;i++){	 
+	for(int i=0;i<cores;i++){
 		std::stringstream commandArgs;
 		commandArgs<<i;
 		ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_SHOW );
-
 	}
-
 }
 
 int setupServer(int cores){
-
-	setDirectory();
+	directory=  getDirectory();
 
 	for(int i =0;i<cores;i++){
-
 		std::stringstream	 creatureFilePath;
 
 		creatureFilePath<<directory.c_str()<<"WWDCreatures" <<i<<".dat";
 		creatureFilePaths.push_back(creatureFilePath.str());
-
-
 
 		//Pipename
 		std::stringstream result;
@@ -116,16 +99,14 @@ int setupServer(int cores){
 		fullPipeNames.push_back(result.str());
 		pipes.push_back(INVALID_HANDLE_VALUE);
 
-
-
 		// Create the named pipe.
 		pipes.at(i) = CreateNamedPipe(
 			fullPipeNames.at(i).c_str(),             // Pipe name.
-			PIPE_ACCESS_DUPLEX,         // The pipe is duplex; both server and 
-			// client processes can read from and 
+			PIPE_ACCESS_DUPLEX,         // The pipe is duplex; both server and
+			// client processes can read from and
 			// write to the pipe
-			PIPE_TYPE_MESSAGE |         // Message type pipe 
-			PIPE_READMODE_MESSAGE |     // Message-read mode 
+			PIPE_TYPE_MESSAGE |         // Message type pipe
+			PIPE_READMODE_MESSAGE |     // Message-read mode
 			PIPE_WAIT,                  // Blocking mode is enabled
 			PIPE_UNLIMITED_INSTANCES,   // Max. instances
 			BUFFER_SIZE,                // Output buffer size in bytes
@@ -148,9 +129,6 @@ int setupServer(int cores){
 
 int waitForClients(int cores){
 
-
-
-
 	// Wait for the client to connect.
 	wprintf(L"Waiting for the client's connection...\n");
 	for(int i =0; i<cores;i++){
@@ -168,12 +146,7 @@ int waitForClients(int cores){
 	return 0;
 }
 
-
-
-
 int sendCreatures(std::vector<creature> Creatures, int cores){
-
-   	
 	for(int id=0;id<cores;id++){
 		printf("writing creatures from %s\n", creatureFilePaths.at(id).c_str());
 		std::ofstream os (creatureFilePaths.at(id));
@@ -186,7 +159,7 @@ int sendCreatures(std::vector<creature> Creatures, int cores){
 		}else{
 			noCreatures=min;
 		}
-		printf("writing %d/%d creatures to client %d\n", noCreatures, Creatures.size(), id);  
+		printf("writing %d/%d creatures to client %d\n", noCreatures, Creatures.size(), id);
 		os.write((const char*)&noCreatures, sizeof(int));
 
 		for(int j =id; j<Creatures.size();j+=cores){
@@ -204,24 +177,24 @@ int sendCreatures(std::vector<creature> Creatures, int cores){
 }
 
 int sendOrders(int j){
-	wchar_t chResponse[] = L"go";
-	/*
+	std::string chResponse;
+	//wchar_t chResponse[] =L"go";						  
+	 
 	if(j==go){
-	chResponse = L"go";
+	chResponse = "go";
 	}else{
-	chResponse = L"stop";
-	} 	*/
+	chResponse = "stop";
+	} 	
 
 	for(int i=0; i<pipes.size();i++){
 		DWORD cbResponse, cbWritten;
-		cbResponse = sizeof(chResponse);
-
+		cbResponse = sizeof(chResponse.c_str());
 
 		if (!WriteFile(
 			pipes.at(i),     // Handle of the pipe
-			chResponse,     // Buffer to write
-			cbResponse,     // Number of bytes to write 
-			&cbWritten,     // Number of bytes written 
+			chResponse.c_str(),     // Buffer to write
+			cbResponse,     // Number of bytes to write
+			&cbWritten,     // Number of bytes written
 			NULL            // Not overlapped I/O
 			))
 		{
@@ -239,17 +212,15 @@ int sendOrders(int j){
 }
 
 void receiveAcknowledges(){
-	// 
+	//
 	// Receive a request from client.
-	// 
+	//
 	printf("waiting for Ack\n");
 	wchar_t chRequest[BUFFER_SIZE];
 	DWORD cbRequest, cbRead;
 	cbRequest = sizeof(chRequest);
 	BOOL fFinishRead = FALSE;
 	do{
-
-
 		fFinishRead = ReadFile(
 			pipes.at(0),     // Handle of the pipe
 			chRequest,      // Buffer to receive data
@@ -271,17 +242,15 @@ void receiveAcknowledges(){
 		}
 
 		wprintf(L"Receive %ld bytes from client: \"%s\"\n", cbRead, chRequest);
-
 	} while (!fFinishRead); // Repeat loop if ERROR_MORE_DATA
 
 	if (wcscmp(chRequest, L"DONE")!=0){
 		wprintf(L"Handshake failed:\n");
-		exit(-1);	
+		exit(-1);
 	}else{
 		printf("ack recieved\n");
 	}
 }
-
 
 std::vector<creature> getResults(int cores){
 	std::vector<creature> results;
@@ -289,9 +258,8 @@ std::vector<creature> getResults(int cores){
 	//TODO:
 	for(int	i =0;i<cores;i++){
 		std::vector<creature> tmp =	 getCreatures(creatureFilePaths.at(i));
-		results.insert(results.begin(), tmp.begin(), tmp.end());	 
+		results.insert(results.begin(), tmp.begin(), tmp.end());
 	}
-
 
 	return results;
 }

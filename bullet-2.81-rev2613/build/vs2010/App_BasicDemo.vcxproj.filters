@@ -13,7 +13,7 @@
     <Filter Include="source\M Tree">
       <UniqueIdentifier>{4ce91a68-350b-4457-b208-13248e14d1f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\pipe">
+    <Filter Include="source\IPC">
       <UniqueIdentifier>{d16721ad-c695-4622-a050-53ea0b1bdbfc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -67,13 +67,13 @@
       <Filter>source\M Tree</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Demos\WWD\pipe.h">
-      <Filter>source\pipe</Filter>
+      <Filter>source\IPC</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Demos\WWD\Client.h">
-      <Filter>source\pipe</Filter>
+      <Filter>source\IPC</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Demos\WWD\Server.h">
-      <Filter>source\pipe</Filter>
+      <Filter>source\IPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -114,13 +114,13 @@
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Demos\WWD\pipe.cpp">
-      <Filter>source\pipe</Filter>
+      <Filter>source\IPC</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Demos\WWD\Client.cpp">
-      <Filter>source\pipe</Filter>
+      <Filter>source\IPC</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Demos\WWD\Server.cpp">
-      <Filter>source\pipe</Filter>
+      <Filter>source\IPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

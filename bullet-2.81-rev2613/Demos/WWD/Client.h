@@ -9,7 +9,6 @@ static HANDLE pipe = INVALID_HANDLE_VALUE;
 
 static std::string creatureFilePath;
 
-
 int pipeClientMain(int argc,char** argv);
 void setParameters(int argc,char** argv);
 void setupClient();

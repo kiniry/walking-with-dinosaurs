@@ -4,6 +4,7 @@
 *.idb
 *.lib
 *.exe
+*.dat
 
 *.pydevproject
 .project
