@@ -65,6 +65,14 @@ struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallbac
 
 #define PI 3.1415926
 
+#define BIT(x) (1<<(x))		//snippet from wikipedia http://www.bulletphysics.org/mediawiki-1.5.8/index.php?title=Collision_Filtering
+
+enum collisiontypes {		//definition of the collision groups
+    COL_NOTHING = 0,		//Collide with nothing
+    COL_GROUND = BIT(0),	//Ground collision group
+    COL_BOX = BIT(1),		//Boxes collision group
+};
+
 enum{pressure, angle, light};
 
 enum{HINGE,GENERIC6DOF};

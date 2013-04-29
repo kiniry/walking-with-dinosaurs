@@ -193,13 +193,13 @@ void Physics::simulationLoopStep(float stepSize){
 void Physics::runSimulation(){
 	calcSize();
 	solveGroundConflicts();
-	if(!isLegal()){
-				fitness = -999999;
-	}else{
+	//if(!isLegal()){
+	//			fitness = -999999;
+	//}else{
 		while(totaltime<10000){ //10 s = 10000 ms
 			simulationLoopStep(1/1000.f);
 		}
-	}
+	//}
 }
 
 void Physics::clientMoveAndDisplay()
@@ -272,7 +272,7 @@ void	Physics::initPhysics(){
 	groundTransform.setIdentity();
 	groundTransform.setOrigin(btVector3(0,0,0));
 
-	btRigidBody* ground = localCreateRigidBody(0.,groundTransform,groundShape);
+	btRigidBody* ground = localCreateRigidBody(0.,groundTransform,groundShape,COL_GROUND,COL_BOX); //ground collides with boxes only
 	ground->setUserPointer((void*)(-1));;
 
 	currentBoxIndex++;
@@ -304,7 +304,7 @@ int Physics::createBox(int x1, int y1, int z1){
 	//btScalar mass = btScalar(0);
 	startTransform.setOrigin(btVector3(0,0,0));
 
-	box= localCreateRigidBody(mass,startTransform,boxShape);
+	box= localCreateRigidBody(mass,startTransform,boxShape,COL_BOX,COL_GROUND);
 
 	box->setUserPointer((void*)-1);
 

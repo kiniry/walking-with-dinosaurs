@@ -555,7 +555,7 @@ void	DemoApplication::shootBox(const btVector3& destination)
 
 		setShootBoxShape ();
 
-		btRigidBody* body = this->localCreateRigidBody(mass, startTransform,m_shootBoxShape);
+		btRigidBody* body = this->localCreateRigidBody(mass, startTransform,m_shootBoxShape,0,0);
 		body->setUserPointer((void*)-1);
 		
 		body->setLinearFactor(btVector3(1,1,1));
@@ -987,7 +987,7 @@ void	DemoApplication::mouseMotionFunc(int x,int y)
 
 
 
-btRigidBody*	DemoApplication::localCreateRigidBody(float mass, const btTransform& startTransform,btCollisionShape* shape)
+btRigidBody*	DemoApplication::localCreateRigidBody(float mass, const btTransform& startTransform,btCollisionShape* shape,short colgroup,short colmask)
 {
 	btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
 
@@ -1014,7 +1014,7 @@ btRigidBody*	DemoApplication::localCreateRigidBody(float mass, const btTransform
 	body->setWorldTransform(startTransform);
 #endif//
 
-	m_dynamicsWorld->addRigidBody(body);
+	m_dynamicsWorld->addRigidBody(body,colgroup,colmask);
 
 	return body;
 }
