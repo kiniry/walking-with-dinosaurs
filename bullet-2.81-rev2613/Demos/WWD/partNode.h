@@ -9,7 +9,7 @@ public:
 	partNode(int start) :  MTreeNode(start){
 		startIndex = start;
 		children = new std::vector<MTreeNode*>();
-		NNChildren = new std::vector<MTreeNode*>();
+		NNChildren = new std::vector<NNLayerNode*>();
 	}
 
 	void addNNChild(NNLayerNode* aNode){
