@@ -109,6 +109,7 @@ std::vector<int> mutate(const std::vector<int> dna, double deviation){
 		if(forskel>0){
 
 			int chance=dna.size()*forskel/deviation;
+			if(chance==dna.size()){chance--;}
 			chanceToMutate = rand()%(dna.size()-chance);
 
 		}else{
