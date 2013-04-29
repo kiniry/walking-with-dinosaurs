@@ -94,9 +94,6 @@ void Physics::solveGroundConflicts(){
 		setCameraPosition(cam);
 	}
 	*/
-#ifdef  _DEBUG
-	isLegal(); //for debug mode
-#endif
 }
 
 void Physics::simulationLoopStep(float stepSize){

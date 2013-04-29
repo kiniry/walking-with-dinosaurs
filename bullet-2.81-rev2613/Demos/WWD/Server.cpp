@@ -46,7 +46,7 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 	sendOrders(stop);
 
 	//close pipes
-
+	getchar();
 	return 0;
 }
 
@@ -165,7 +165,7 @@ int sendCreatures(std::vector<creature> Creatures, int cores){
 		for(int j =id; j<Creatures.size();j+=cores){
 			int size = Creatures.at(j).dna.size();
 			os.write((const char*)&size, sizeof(int));
-			os.write((const char*)&Creatures.at(j).dna, sizeof(Creatures.at(j).dna));
+			os.write((const char*)&Creatures.at(j).dna[0], sizeof(int)*size);
 			os.write((const char*)&Creatures.at(j).fitness, sizeof(float));
 		}
 		os.close();
@@ -188,7 +188,7 @@ int sendOrders(int j){
 
 	for(int i=0; i<pipes.size();i++){
 		DWORD cbResponse, cbWritten;
-		cbResponse = sizeof(chResponse.c_str());
+		cbResponse = sizeof(chResponse);
 
 		if (!WriteFile(
 			pipes.at(i),     // Handle of the pipe
@@ -248,18 +248,22 @@ void receiveAcknowledges(){
 		wprintf(L"Handshake failed:\n");
 		exit(-1);
 	}else{
-		printf("ack recieved\n");
+		printf("ack recieved\n\n");
 	}
 }
 
 std::vector<creature> getResults(int cores){
+
+	printf("getting results\n");
 	std::vector<creature> results;
 
 	//TODO:
 	for(int	i =0;i<cores;i++){
 		std::vector<creature> tmp =	 getCreatures(creatureFilePaths.at(i));
-		results.insert(results.begin(), tmp.begin(), tmp.end());
+		results.insert(results.end(), tmp.begin(), tmp.end());
+		printf("fitness nr %d: %f\n",i, tmp.at(i).dna);
 	}
-
+	
+	printf("\n");
 	return results;
 }

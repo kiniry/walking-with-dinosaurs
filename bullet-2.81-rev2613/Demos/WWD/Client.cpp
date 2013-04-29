@@ -13,7 +13,7 @@ int pipeClientMain(int argc,char* argv[]){
 		//get creatures
 		std::vector<creature> creatures = getCreatures(creatureFilePath);
 
-		pipeSim(creatures);
+		creatures = pipeSim(creatures);
 
 		//send results back
 		sendResult(creatures);
@@ -25,6 +25,7 @@ int pipeClientMain(int argc,char* argv[]){
 
 	CloseHandle(pipe);
 	pipe = INVALID_HANDLE_VALUE;
+
 	getchar();
 	return 0;
 }
@@ -105,9 +106,10 @@ void setupClient(){
 		wprintf(L"SetNamedPipeHandleState failed w/err 0x%08lx\n", dwError);
 		exit(-1);
 	}
+	printf("\n");
 }
 
-void pipeSim(std::vector<creature> creatures){
+std::vector<creature> pipeSim(std::vector<creature> creatures){
 	printf("Simulation starte\n");
 	std::vector<Physics*> worlds;
 	for(int j =0; j<(int)creatures.size(); j++){
@@ -133,6 +135,8 @@ void pipeSim(std::vector<creature> creatures){
 		delete worlds.at(j);
 		worlds.pop_back();
 	}
+	printf("\n");
+	return creatures;
 }
 
 void sendAcknowledge(){
@@ -156,6 +160,7 @@ void sendAcknowledge(){
 	}
 
 	wprintf(L"Send %ld bytes to server: \"%s\"\n", cbWritten, chRequest);
+	printf("\n");
 }
 
 void sendResult(std::vector<creature> creatures){
@@ -172,10 +177,12 @@ void sendResult(std::vector<creature> creatures){
 		int size = creatures.at(j).dna.size();
 		os.write((const char*)&size, sizeof(int));
 
-		os.write((const char*)&creatures.at(j).dna, sizeof(creatures.at(j).dna));
+		os.write((const char*)&creatures.at(j).dna[0], sizeof(int)*size);
+		printf("fitness nr %d: %f\n",j, creatures.at(j).fitness);
 		os.write((const char*)&creatures.at(j).fitness, sizeof(float));
 	}
 	os.close();
+	printf("\n");
 }
 
 bool receiveOrders(){
@@ -205,5 +212,6 @@ bool receiveOrders(){
 	if (strcmp(chResponse, "go")==0){
 		return true;
 	}
+	printf("\n");
 	return false;
 }

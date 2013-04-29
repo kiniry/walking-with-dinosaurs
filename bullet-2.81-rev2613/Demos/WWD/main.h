@@ -12,8 +12,8 @@
 #include "server.h"
 #include "client.h"
 
-const int populationSize = 100;
-const int nrOfGenerations = 10;
+const int populationSize = 10;
+const int nrOfGenerations = 2;
 
 
 static int numCores;
