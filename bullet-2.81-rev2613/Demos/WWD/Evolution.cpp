@@ -90,7 +90,7 @@ creature getWorthyCreature(float fitnessSum, std::vector<creature> creatures){
 		printf("FAIL... how irritating");
 		return creatures.at(creatures.size()-1);
 	}
-	printf(" %d ",i);
+	//printf(" %d ",i);
 	return creatures.at(i);
 }
 

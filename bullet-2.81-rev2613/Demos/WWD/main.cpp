@@ -9,8 +9,8 @@ int main(int argc,char** argv)
 #ifdef  _DEBUG	 
 	//return pipeClientMain(argc,argv);
 		std::vector<int> ancestor;
-	return pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
-		//return WWD(argc,argv);
+	//return pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
+		return WWD(argc,argv);
 	return debug(argc,argv);
 
 
@@ -21,8 +21,8 @@ int main(int argc,char** argv)
 	const int temp[] = {1387,38,23,2,1924};
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
-	pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
-	return pipeClientMain(argc,argv);
+	//pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
+	//return pipeClientMain(argc,argv);
 	return WWD(argc,argv);
 
 #endif
@@ -147,13 +147,13 @@ int WWD(int argc,char** argv){
 
 				worlds.push_back(WWDPhysics);
 			}
-			  /*
+			  
 			//run simulator
 			//#pragma omp for schedule(dynamic)
 			for(int i=0;i< (int) worlds.size();i++){
 				worlds.at(i)->runSimulation(); //runs a physics simulation and save the fitness values
 			}
-			
+			/*
 			//threads
 			for(int j =0; j<numCores; j++){
 				handles[j] = (HANDLE)_beginthreadex(0, 0, &threadSim,(void*) j, 0, 0);
