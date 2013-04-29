@@ -7,7 +7,7 @@ public:
 		startIndex = start;
 		children = new std::vector<MTreeNode*>();
 	}
-
+/*
 	std::vector<int> mutate(){
 		std::vector<int> result = std::vector<int>();
 		int random;
@@ -48,4 +48,5 @@ public:
 		
 		return std::vector<int>();
 	}
+*/
 };

@@ -295,7 +295,7 @@ int newNN(int index, std::vector<int> *DNA,partNode* body){
 	}
 	for(int i=0;i<amountOfLayers;i++){
 		NNLayerNode* aLayerNode = new NNLayerNode(index);
-		body->addChild(aLayerNode);
+		body->addNNChild(aLayerNode);
 		index = NNL(index,SUBNET_NET_WIDTH,DNA,0,aLayerNode,true);
 		aLayerNode->setEnd(index);
 	}

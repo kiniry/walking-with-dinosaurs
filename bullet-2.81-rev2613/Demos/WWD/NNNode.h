@@ -7,7 +7,7 @@ public:
 		startIndex = start;
 		children = new std::vector<MTreeNode*>();
 	}
-
+/*
 	std::vector<int> mutate(){
 		std::vector<int> result = std::vector<int>();
 		
@@ -44,4 +44,5 @@ public:
 			}
 		return result;
 	}
+*/
 };
