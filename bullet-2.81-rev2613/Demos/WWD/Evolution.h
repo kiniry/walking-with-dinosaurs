@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <vector>
 #include <algorithm>
+#include "MTree.h"
 
 //results in a range  of values from
 #define maxDNAValue 10000
@@ -22,6 +23,7 @@
 struct creature{
 	std::vector<int> dna;
 	float fitness;
+	MTree* treePointer;
 };
 
 static double totalDiviation =0;

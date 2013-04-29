@@ -46,29 +46,18 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 		int random = rand()%100+1;
 
-		//int mut = 20;
-		//int cross1 = 40;
-		//int cross2 = 40;
-		//std::vector<int> dna = creatures.at(i%survivors).dna;
-		//std::vector<int> dna2 = creatures.at(rand()%survivors).dna;
-		
-		std::vector<int> dna = getWorthyCreature(fitnessSumBreeders,breeders).dna;
+		/*std::vector<int> dna = getWorthyCreature(fitnessSumBreeders,breeders).dna;
 		std::vector<int> dna2 = getWorthyCreature(fitnessSumElites,elites).dna;
 		if(random<=50){
 			creat.dna = mutate(crossOver1(dna,dna2),deviation);
 		}else{
 			creat.dna = mutate(crossOver2(dna,dna2),deviation);
-		}
-		/*
-		if(random<=mut){
-		creat.dna=mutate(dna);
-		}else if(random<=mut+cross1){
-		creat.dna=crossOver1(dna,dna2);
-		}else{
-		creat.dna= crossOver2(dna,dna2);
-		}
-		*/
-
+		}*/
+		creature breed = getWorthyCreature(fitnessSumBreeders,breeders);
+		creature seed = getWorthyCreature(fitnessSumElites,elites);
+		
+		creat.dna = breed.treePointer->crossBreed(breed.dna,seed.dna,seed.treePointer);
+		creat.dna = mutate(creat.dna,deviation);
 		result.push_back(creat);
 	}
 
