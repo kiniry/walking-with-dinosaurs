@@ -18,10 +18,13 @@
 #define pipeName           "WWD"
 enum orders{stop, go};
 
+static std::string directory;
+
 static DWORD dwError = ERROR_SUCCESS;
 
 #define BUFFER_SIZE     1024
 
 
+std::vector<creature> getCreatures(std::string filename);
 
-	 
+void setDirectory(); 

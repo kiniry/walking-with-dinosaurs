@@ -3,9 +3,11 @@
 
 //client
 static std::string ID ="0";
-static LPCSTR fullPipeName ="\\\\.\\pipe\\WWD0";
+static std::string fullPipeName;
 static char filePathAbs[MAX_PATH];
 static HANDLE pipe = INVALID_HANDLE_VALUE;
+
+static std::string creatureFilePath;
 
 
 int pipeClientMain(int argc,char** argv);

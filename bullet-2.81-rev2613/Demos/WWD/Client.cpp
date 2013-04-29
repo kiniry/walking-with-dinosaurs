@@ -7,22 +7,21 @@ int pipeClientMain(int argc,char* argv[]){
 	//set/get parameters
 	// thread id,
 
+   	
+	 
+	setParameters(argc,argv);
 	
-	//setParameters(argc,argv);
 
-	
-	
 	setupClient();
-
+    
 
 	while(receiveOrders()){
 		//get creatures
-		std::vector<creature> creatures = getCreatures();
+		std::vector<creature> creatures = getCreatures(creatureFilePath);
 
 		pipeSim(creatures);
 
 		//send results back
-
 		sendResult(creatures);
 
 		sendAcknowledge();
@@ -31,70 +30,41 @@ int pipeClientMain(int argc,char* argv[]){
 	}
 
 	CloseHandle(pipe);
-	pipe = INVALID_HANDLE_VALUE;
+	pipe = INVALID_HANDLE_VALUE;   
+	getchar();
 	return 0;
 }
 
 void setParameters(int argc,char* argv[]){
-   
+
 	//ID
 	if(argc!=2){
-	printf("to few arguments expected 2, recieved %d\n",argc);
-	  exit(-1);
-	}  
-	std::stringstream id;
-	id << argv[1];
-	ID =id.str(); 
+		printf("to few arguments expected 2, recieved %d\n",argc);
+		exit(-1);
+	} 
+
+
+	ID=  argv[1];
+	printf("client %s started\n",ID.c_str());
+
 	 
-
-	printf("client  %s started\n",ID);
-
-
 	//Pipename
 	std::stringstream result;
 
-	//result <<"\\\\" <<serverName <<"\\pipe\\" <<pipeName <<ID;
-	result <<"\\\\.\\pipe\\WWD" <<ID;
-	//fullPipeName= (result.str()).c_str();
+	result <<"\\\\" <<serverName <<"\\pipe\\" <<pipeName <<ID;
+	fullPipeName= (result.str());
 
-	printf("pipe name %s\n",fullPipeName);
-	//printf("pipe name %s\n",result.str());
+	printf("pipe name %s\n",fullPipeName.c_str());
 
-
-
-
-
-//filepath creatures
-char fileName[MAX_PATH];
-HINSTANCE hInstance = GetModuleHandle(NULL);
-GetModuleFileName(hInstance, fileName, MAX_PATH);
- 
 	
-//make absolute
-std::vector<int> slashes;
-int j =0;
-for(int i =0;i<MAX_PATH; i++){
-	if(fileName[i]=='\\'){
-		slashes.push_back(i);
-	}
-	if(fileName[i]=='.' && fileName[i+1]=='.' && fileName[i+2]=='\\'){
-		slashes.pop_back();
-		i++;
-		j=slashes.back()+1;
-		slashes.pop_back();
-	}else{
-		filePathAbs[j]=fileName[i];
-		j++;
-	}
+	setDirectory();
 
-
-}
-
-PathRemoveFileSpec(filePathAbs);
-PathAddBackslash(filePathAbs);
-PathAppend(filePathAbs,"WWDCreatures");
-PathAppend(filePathAbs,ID.c_str());
-PathAppend(filePathAbs,".txt");
+	creatureFilePath.append(directory.c_str());
+	creatureFilePath.append("WWDCreatures");
+	creatureFilePath.append(ID);
+	creatureFilePath.append(".dat");
+	
+	printf("the creature path is %s\n",	creatureFilePath.c_str());
 }
 
 void setupClient(){
@@ -103,7 +73,7 @@ void setupClient(){
 	while (TRUE) 
 	{
 		pipe = CreateFile( 
-			fullPipeName,                 // Pipe name 
+			fullPipeName.c_str(),                 // Pipe name 
 			GENERIC_READ | GENERIC_WRITE,   // Read and write access
 			0,                              // No sharing 
 			NULL,                           // Default security attributes
@@ -115,7 +85,7 @@ void setupClient(){
 		// If the pipe handle is opened successfully ...
 		if (pipe != INVALID_HANDLE_VALUE)
 		{
-			wprintf(L"The named pipe (%s) is connected.\n", fullPipeName);
+			printf("The named pipe %s is connected.\n", fullPipeName.c_str());
 			break;
 		}
 
@@ -129,7 +99,7 @@ void setupClient(){
 		}
 
 		// All pipe instances are busy, so wait for 5 seconds.
-		if (!WaitNamedPipe(fullPipeName, 5000))
+		if (!WaitNamedPipe(fullPipeName.c_str(), 5000))
 		{
 			dwError = GetLastError();
 			wprintf(L"Could not open pipe: 5 second wait timed out.");
@@ -149,20 +119,6 @@ void setupClient(){
 
 }
 
-std::vector<creature> getCreatures(){
-
-    std::string STRING;
-	std::ifstream infile;
-	infile.open ("names.txt");
-        while(!infile.eof()) // To get you all the lines.
-        {
-	        getline(infile,STRING); // Saves the line in STRING.
-        }
-	infile.close();
-
-	std::vector<creature> creatures;
-	return creatures;
-}
 
 void pipeSim(std::vector<creature> creatures){
 	printf("Simulation starte\n");
@@ -197,7 +153,7 @@ void pipeSim(std::vector<creature> creatures){
 
 
 void sendAcknowledge(){
-
+	 printf("sending ack\n");
 	//send results back
 	wchar_t chRequest[] = L"DONE";
 	DWORD cbRequest, cbWritten;
@@ -221,10 +177,27 @@ void sendAcknowledge(){
 }
 
 void sendResult(std::vector<creature> creatures){
-	   printf("Sending results");
+	printf("Sending results\n");
 
+	std::stringstream filename;
+	filename << "WWDCreatures"<<ID<<".dat";
+	std::ofstream os (filename.str());
+	int noCreatures =creatures.size();
 
+	os.write((const char*)&noCreatures, sizeof(int));
+
+	for(int j =0; j<creatures.size();j++){
+		int size = creatures.at(j).dna.size();
+		os.write((const char*)&size, sizeof(int));
+
+		os.write((const char*)&creatures.at(j).dna, sizeof(creatures.at(j).dna));
+		os.write((const char*)&creatures.at(j).fitness, sizeof(float));
+	}
+	os.close();
 }
+
+
+
 
 bool receiveOrders(){
 
