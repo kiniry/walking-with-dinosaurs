@@ -11,7 +11,7 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 	creatures.at(0).fitness=0;
 	for(int i=1; i<populationSize;i++){
 		creatures.push_back(creature());
-		creatures.at(i).dna=mutate(ancestor);
+		creatures.at(i).dna=mutate(ancestor,2);
 		creatures.at(i).fitness=0;
 	}
 	printf("creatures %d\n", creatures.size());

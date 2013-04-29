@@ -129,7 +129,7 @@ int WWD(int argc,char** argv){
 	creatures.at(0).fitness=0;
 	for(int i=1; i<populationSize;i++){
 		creatures.push_back(creature());
-		creatures.at(i).dna=mutate(ancestor);
+		creatures.at(i).dna=mutate(ancestor,2);
 		creatures.at(i).fitness=0;
 	}
 

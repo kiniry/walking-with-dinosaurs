@@ -17,20 +17,27 @@
 #define maxDNAValue 10000
 #define randomDnaValue rand()%maxDNAValue
 
+#define expectedDiviation 1.5
+
 struct creature{
 	std::vector<int> dna;
 	float fitness;
 };
 
+static double totalDiviation =0;
+static double timesDiviation =0;
 
-void statistik(std::vector<creature> creatures);
+void normalizeFitness(std::vector<creature> creatures);
+
+
+double statistik(std::vector<creature> creatures);
 
 static bool compareCreatures(const creature &a, const creature &b){
 	return a.fitness > b.fitness;
 }
 std::vector<creature> evolve(std::vector<creature> creatures);
 
-std::vector<int> mutate(const std::vector<int>  dna);
+std::vector<int> mutate(const std::vector<int>  dna, double deviation);
 
 std::vector<int> crossOver1(std::vector<int> dna1, std::vector<int> dna2);
 
