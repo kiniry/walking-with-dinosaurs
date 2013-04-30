@@ -13,7 +13,7 @@ int pipeClientMain(int argc,char** argv);
 void setParameters(int argc,char** argv);
 void setupClient();
 std::vector<creature> getCreatures();
-std::vector<creature>  pipeSim(std::vector<creature> creatures);
+void  pipeSim(std::vector<creature> *creatures);
 void sendResult(std::vector<creature> creatures);
 void sendAcknowledge();
 bool receiveOrders(); 

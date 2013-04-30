@@ -13,7 +13,7 @@
 #include "client.h"
 
 const int populationSize = 10;
-const int nrOfGenerations = 2;
+const int nrOfGenerations = 1;
 
 
 static int numCores;

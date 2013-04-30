@@ -10,7 +10,7 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 	for(int i=1; i<populationSize;i++){
 		creatures.push_back(creature());
 		creatures.at(i).dna=mutate(ancestor,2);
-		creatures.at(i).fitness=0;
+		creatures.at(i).fitness=101;
 	}
 	printf("creatures %d\n", creatures.size());
 	printf("DNA ");
@@ -22,7 +22,7 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 	setupServer(cores);
 
 	//star programs
-	//startPrograms(cores);
+	startPrograms(cores);
 
 	waitForClients(cores);
 
@@ -80,7 +80,7 @@ void startPrograms(int cores){
 	for(int i=0;i<cores;i++){
 		std::stringstream commandArgs;
 		commandArgs<<i;
-		ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_SHOW );
+		ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_SHOWMINIMIZED );
 	}
 }
 
@@ -261,7 +261,7 @@ std::vector<creature> getResults(int cores){
 	for(int	i =0;i<cores;i++){
 		std::vector<creature> tmp =	 getCreatures(creatureFilePaths.at(i));
 		results.insert(results.end(), tmp.begin(), tmp.end());
-		printf("fitness nr %d: %f\n",i, tmp.at(i).dna);
+		printf("fitness nr %d: %f\n",i, tmp.at(i).fitness);
 	}
 	
 	printf("\n");

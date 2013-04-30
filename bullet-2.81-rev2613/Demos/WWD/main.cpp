@@ -5,11 +5,21 @@ int main(int argc,char** argv)
 	//seeds random generator
 	srand(time(0));
 
+	//threads
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo( &sysinfo );
+
+	numCores= sysinfo.dwNumberOfProcessors;
+	numCores=1;
+	printf("cores %d\n", numCores);
+
 
 #ifdef  _DEBUG	 
-	return pipeClientMain(argc,argv);
-		std::vector<int> ancestor;
-	//return pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
+	//return pipeClientMain(argc,argv);
+const int temp[] = {1387,38,23,2,1924};
+	int size = sizeof( temp ) / sizeof ( *temp );
+	std::vector<int> ancestor (temp, temp+size);
+	return pipeServerMain(numCores,populationSize,nrOfGenerations,ancestor);
 		return WWD(argc,argv);
 	return debug(argc,argv);
 
@@ -21,8 +31,8 @@ int main(int argc,char** argv)
 	const int temp[] = {1387,38,23,2,1924};
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
-	return pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
-	//return pipeClientMain(argc,argv);
+	//return pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
+	return pipeClientMain(argc,argv);
 	return WWD(argc,argv);
 
 #endif
@@ -83,13 +93,7 @@ int debug(int argc,char** argv){
 
 int WWD(int argc,char** argv){
 
-	//threads
-	SYSTEM_INFO sysinfo;
-	GetSystemInfo( &sysinfo );
 
-	numCores= sysinfo.dwNumberOfProcessors;
-	numCores=1;
-	printf("cores %d\n", numCores);
 
 
 	HANDLE *handles =new HANDLE[numCores];

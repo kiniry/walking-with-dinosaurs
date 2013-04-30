@@ -13,7 +13,7 @@ int pipeClientMain(int argc,char* argv[]){
 		//get creatures
 		std::vector<creature> creatures = getCreatures(creatureFilePath);
 
-		creatures = pipeSim(creatures);
+		pipeSim(&creatures);
 
 		//send results back
 		sendResult(creatures);
@@ -109,34 +109,22 @@ void setupClient(){
 	printf("\n");
 }
 
-std::vector<creature> pipeSim(std::vector<creature> creatures){
+void pipeSim(std::vector<creature> *creatures){
 	printf("Simulation starte\n");
 	std::vector<Physics*> worlds;
-	for(int j =0; j<(int)creatures.size(); j++){
-		//init world
-		Physics* WWDPhysics = new Physics(creatures.at(j).dna);
 
-		//init creature
-		readDNA(&creatures.at(j).dna,WWDPhysics);
-
-		worlds.push_back(WWDPhysics);
-	}
 
 	//run simulator
-	for(int i=0;i< (int) worlds.size();i++){
-		worlds.at(i)->runSimulation(); //runs a physics simulation and save the fitness values
+	for(int i=0;i< worlds.size();i++){
+		Physics* WWDPhysics = new Physics(creatures->at(i).dna);
+		readDNA(&creatures->at(i).dna,WWDPhysics);
+		WWDPhysics->runSimulation(); //runs a physics simulation and save the fitness values
+		creatures->at(i).fitness = WWDPhysics->getFitness();
+		delete WWDPhysics;
 	}
 
-	for(int j= worlds.size()-1; j>=0; j--){
-		creatures.at(j).fitness = worlds.at(j)->getFitness();
-	}
-
-	for(int j= worlds.size()-1; j>=0; j--){
-		delete worlds.at(j);
-		worlds.pop_back();
-	}
 	printf("\n");
-	return creatures;
+
 }
 
 void sendAcknowledge(){
