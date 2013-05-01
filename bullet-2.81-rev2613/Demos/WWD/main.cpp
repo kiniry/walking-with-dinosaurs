@@ -173,7 +173,7 @@ int WWD(int argc,char** argv){
 			//#pragma omp for
 			for(int j= worlds.size()-1; j>=0; j--){
 				creatures.at(j).fitness = worlds.at(j)->getFitness();
-
+				creatures.at(j).treePointer = worlds.at(j)->theTree;
 			}
 			//#pragma omp single nowait
 			for(int j= worlds.size()-1; j>=0; j--){
