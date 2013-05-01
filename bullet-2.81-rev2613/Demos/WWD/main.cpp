@@ -13,18 +13,14 @@ int main(int argc,char** argv)
 	numCores=1;
 	printf("cores %d\n", numCores);
 
-
-#ifdef  _DEBUG	 
+#ifdef  _DEBUG
 	//return pipeClientMain(argc,argv);
-const int temp[] = {1387,38,23,2,1924};
+	const int temp[] = {1387,38,23,2,1924};
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
-	return pipeServerMain(numCores,populationSize,nrOfGenerations,ancestor);
-		return WWD(argc,argv);
+	//return pipeServerMain(numCores,populationSize,nrOfGenerations,ancestor);
+	return WWD(argc,argv);
 	return debug(argc,argv);
-
-
-	
 
 #else
 
@@ -40,21 +36,18 @@ const int temp[] = {1387,38,23,2,1924};
 	return 0;
 }
 
-
+//dosnt work
+//simulation loop changed
 unsigned int __stdcall threadSim(void* data){
-	//printf("%d ",(int) data); 
+	//printf("%d ",(int) data);
 	for(int j=(int) data;j< (int) worlds.size();j+=numCores){
-
 		worlds.at(j)->runSimulation(); //runs a physics simulation and save the fitness values
 	}
 
 	return 0;
 }
 
-
-
 int debug(int argc,char** argv){
-
 	test();
 	const int temp[] = {1387,38,23,2,1924};
 	//	const int temp[] = {
@@ -90,15 +83,9 @@ int debug(int argc,char** argv){
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 }
 
-
 int WWD(int argc,char** argv){
 
-
-
-
 	HANDLE *handles =new HANDLE[numCores];
-
-	
 
 	const int temp[] = {
 		//Body
@@ -138,10 +125,10 @@ int WWD(int argc,char** argv){
 	}
 
 	for(int i=0;i<nrOfGenerations;i++){
-		  //#pragma omp parallel
+		//#pragma omp parallel
 		{
-			//initialise
-			//#pragma omp single
+			//run simulator
+			//#pragma omp for schedule(dynamic)
 			for(int j =0; j<populationSize; j++){
 				//init world
 				Physics* WWDPhysics = new Physics(creatures.at(j).dna);
@@ -149,37 +136,25 @@ int WWD(int argc,char** argv){
 				//init creature
 				readDNA(&creatures.at(j).dna,WWDPhysics);
 
-				worlds.push_back(WWDPhysics);
+				//run sim
+				WWDPhysics->runSimulation();
+				creatures.at(j).fitness = WWDPhysics->getFitness();
+				creatures.at(j).treePointer = WWDPhysics->theTree;
+				delete WWDPhysics;
 			}
-			  
-			//run simulator
-			//#pragma omp for schedule(dynamic)
-			for(int j=0;j< (int) worlds.size();j++){
-				worlds.at(j)->runSimulation(); //runs a physics simulation and save the fitness values
-			}
+
 			/*
 			//threads
 			for(int j =0; j<numCores; j++){
-				handles[j] = (HANDLE)_beginthreadex(0, 0, &threadSim,(void*) j, 0, 0);
+			handles[j] = (HANDLE)_beginthreadex(0, 0, &threadSim,(void*) j, 0, 0);
 			}
 
 			WaitForMultipleObjects(numCores, handles, true,INFINITE);
 
 			for(int j =0; j<numCores; j++){
-				CloseHandle(handles[j]);
+			CloseHandle(handles[j]);
 			} */
 
-
-			//#pragma omp for
-			for(int j= worlds.size()-1; j>=0; j--){
-				creatures.at(j).fitness = worlds.at(j)->getFitness();
-				creatures.at(j).treePointer = worlds.at(j)->theTree;
-			}
-			//#pragma omp single nowait
-			for(int j= worlds.size()-1; j>=0; j--){
-				delete worlds.at(j);
-				worlds.pop_back();
-			}
 			//print all unsorted
 			/*for(int j=0;j< (int) worlds.size();j++){
 			printf("nr %d %f\n",j,worlds.at(j)->getFitness());
@@ -190,11 +165,11 @@ int WWD(int argc,char** argv){
 			creatures=evolve(creatures);
 			//print survivors sorted
 
-			 //#pragma omp for ordered
+			//#pragma omp for ordered
 			for(int j=0;j< (int) (creatures.size()/5.f);j++){
 				printf("nr %d %f\n",j,creatures.at(j).fitness);
 			}
-			 //#pragma omp for ordered
+			//#pragma omp for ordered
 			printf("round %d \n",i);
 		}
 	}
@@ -211,7 +186,7 @@ int WWD(int argc,char** argv){
 
 	WWDPhysics->calcSize();
 	WWDPhysics->solveGroundConflicts();
+	printf("\nPress enter to continue\n");
 	getchar();
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
-
 }
