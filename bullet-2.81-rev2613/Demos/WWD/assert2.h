@@ -1,3 +1,5 @@
+#pragma once
+
 #include <assert.h>
 
 #define assertFloat(val1,val2,margin) assert((val1-val2)>=(-margin) && (val1-val2)<=margin);

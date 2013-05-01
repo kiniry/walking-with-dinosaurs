@@ -31,7 +31,7 @@ const int temp[] = {1387,38,23,2,1924};
 	const int temp[] = {1387,38,23,2,1924};
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
-	//return pipeServerMain(1,populationSize,nrOfGenerations,ancestor);
+	//return pipeServerMain(numCores,populationSize,nrOfGenerations,ancestor);
 	return pipeClientMain(argc,argv);
 	return WWD(argc,argv);
 
@@ -154,8 +154,8 @@ int WWD(int argc,char** argv){
 			  
 			//run simulator
 			//#pragma omp for schedule(dynamic)
-			for(int i=0;i< (int) worlds.size();i++){
-				worlds.at(i)->runSimulation(); //runs a physics simulation and save the fitness values
+			for(int j=0;j< (int) worlds.size();j++){
+				worlds.at(j)->runSimulation(); //runs a physics simulation and save the fitness values
 			}
 			/*
 			//threads

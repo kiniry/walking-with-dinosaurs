@@ -11,6 +11,7 @@
 #include "Physics.h"
 #include "Grammar.h"
 #include "Evolution.h"
+#include "assert2.h"
 
 // The full name of the pipe in the format of \\servername\pipe\pipename.
 #define serverName         "."	//. means local server

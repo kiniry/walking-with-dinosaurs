@@ -73,7 +73,7 @@
       <Filter>source\IPC</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Demos\WWD\Server.h">
-      <Filter>source\M Tree</Filter>
+      <Filter>source\IPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

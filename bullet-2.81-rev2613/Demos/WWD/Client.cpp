@@ -1,9 +1,6 @@
 #include "Client.h"
 
-
 int pipeClientMain(int argc,char* argv[]){
-	
-	
 	//set/get parameters
 	setParameters(argc,argv);
 
@@ -20,13 +17,11 @@ int pipeClientMain(int argc,char* argv[]){
 
 		//send Done message
 		sendAcknowledge();
-	
 	}
 
 	CloseHandle(pipe);
 	pipe = INVALID_HANDLE_VALUE;
 
-	getchar();
 	return 0;
 }
 
@@ -49,7 +44,7 @@ void setParameters(int argc,char* argv[]){
 	printf("pipe name %s\n",fullPipeName.c_str());
 
 	directory=getDirectory();
-	 printf("dir %s\n",	directory.c_str());
+	printf("dir %s\n",	directory.c_str());
 	creatureFilePath.append(directory);
 	creatureFilePath.append("WWDCreatures");
 	creatureFilePath.append(ID);
@@ -113,22 +108,21 @@ void pipeSim(std::vector<creature> *creatures){
 	printf("Simulation starte\n");
 	std::vector<Physics*> worlds;
 
-
 	//run simulator
-	for(int i=0;i< worlds.size();i++){
+	for(int i=0;i< creatures->size();i++){
 		Physics* WWDPhysics = new Physics(creatures->at(i).dna);
 		readDNA(&creatures->at(i).dna,WWDPhysics);
 		WWDPhysics->runSimulation(); //runs a physics simulation and save the fitness values
 		creatures->at(i).fitness = WWDPhysics->getFitness();
+		printf("sim fit nr %d: %f\n",	i,creatures->at(i).fitness);
 		delete WWDPhysics;
 	}
 
 	printf("\n");
-
 }
 
 void sendAcknowledge(){
-	 printf("sending ack\n");
+	printf("sending ack\n");
 	//send results back
 	wchar_t chRequest[] = L"DONE";
 	DWORD cbRequest, cbWritten;
@@ -156,7 +150,9 @@ void sendResult(std::vector<creature> creatures){
 
 	std::stringstream filename;
 	filename << "WWDCreatures"<<ID<<".dat";
-	std::ofstream os (filename.str());
+	std::ofstream os;
+	os.open(filename.str(),std::ios::out | std::ios::binary);
+
 	int noCreatures =creatures.size();
 
 	os.write((const char*)&noCreatures, sizeof(int));
@@ -169,8 +165,13 @@ void sendResult(std::vector<creature> creatures){
 		printf("fitness nr %d: %f\n",j, creatures.at(j).fitness);
 		os.write((const char*)&creatures.at(j).fitness, sizeof(float));
 	}
+	if(!os.good()){
+		printf("error\n");
+		exit(-1);
+	}
+	os.flush();
 	os.close();
-	printf("\n");
+	printf("sending done\n\n");
 }
 
 bool receiveOrders(){

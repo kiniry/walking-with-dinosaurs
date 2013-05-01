@@ -10,7 +10,7 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 	for(int i=1; i<populationSize;i++){
 		creatures.push_back(creature());
 		creatures.at(i).dna=mutate(ancestor,2);
-		creatures.at(i).fitness=101;
+		creatures.at(i).fitness=0;
 	}
 	printf("creatures %d\n", creatures.size());
 	printf("DNA ");
@@ -25,7 +25,9 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 	startPrograms(cores);
 
 	waitForClients(cores);
-
+	for(int i=1; i<populationSize;i++){
+		assertFloat(0,creatures.at(i).fitness,0.0005);
+	}
 	for(int i=0;i<nrOfGenerations;i++){
 		sendCreatures(creatures, cores);
 		sendOrders(go);
@@ -34,9 +36,10 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 
 		//get creatures
 		creatures=getResults(cores);
+		assertInt(creatures.size(), populationSize);
 
 		creatures=evolve(creatures);
-
+		assertInt(creatures.size(), populationSize);
 		for(int j=0;j< (int) (creatures.size());j++){
 			printf("nr %d %f\n",j,creatures.at(j).fitness);
 		}
@@ -77,6 +80,7 @@ void startPrograms(int cores){
 	PathRemoveFileSpec(filePathAbs);
 	PathAddBackslash(filePathAbs);
 	PathAppend(filePathAbs,"Client.exe");
+
 	for(int i=0;i<cores;i++){
 		std::stringstream commandArgs;
 		commandArgs<<i;
@@ -128,28 +132,28 @@ int setupServer(int cores){
 }
 
 int waitForClients(int cores){
-
 	// Wait for the client to connect.
 	wprintf(L"Waiting for the client's connection...\n");
 	for(int i =0; i<cores;i++){
-	if (!ConnectNamedPipe(pipes.at(i), NULL))
-	{
-		if (ERROR_PIPE_CONNECTED != GetLastError())
+		if (!ConnectNamedPipe(pipes.at(i), NULL))
 		{
-			dwError = GetLastError();
-			wprintf(L"ConnectNamedPipe failed w/err 0x%08lx\n", dwError);
-			return -1;
+			if (ERROR_PIPE_CONNECTED != GetLastError())
+			{
+				dwError = GetLastError();
+				wprintf(L"ConnectNamedPipe failed w/err 0x%08lx\n", dwError);
+				return -1;
+			}
 		}
-	}
-	wprintf(L"Client is connected.\n");
+		printf("Client is connected.\n\n");
 	}
 	return 0;
 }
 
 int sendCreatures(std::vector<creature> Creatures, int cores){
 	for(int id=0;id<cores;id++){
-		printf("writing creatures from %s\n", creatureFilePaths.at(id).c_str());
-		std::ofstream os (creatureFilePaths.at(id));
+		printf("writing creatures to %s\n", creatureFilePaths.at(id).c_str());
+		std::ofstream os;
+		os.open(creatureFilePaths.at(id),std::ios::out | std::ios::binary);
 		int noCreatures;
 
 		int min = Creatures.size()/cores;
@@ -167,24 +171,30 @@ int sendCreatures(std::vector<creature> Creatures, int cores){
 			os.write((const char*)&size, sizeof(int));
 			os.write((const char*)&Creatures.at(j).dna[0], sizeof(int)*size);
 			os.write((const char*)&Creatures.at(j).fitness, sizeof(float));
+			printf("creat nr %d : %f\n",j, Creatures.at(j).fitness);
 		}
+		if(!os.good()){
+			printf("error\n");
+			exit(-1);
+		}
+		os.flush();
 		os.close();
 	}
 
-	printf("writing done\n");
+	printf("writing done\n\n");
 
 	return 0;
 }
 
 int sendOrders(int j){
 	std::string chResponse;
-	//wchar_t chResponse[] =L"go";						  
-	 
+	//wchar_t chResponse[] =L"go";
+
 	if(j==go){
-	chResponse = "go";
+		chResponse = "go";
 	}else{
-	chResponse = "stop";
-	} 	
+		chResponse = "stop";
+	}
 
 	for(int i=0; i<pipes.size();i++){
 		DWORD cbResponse, cbWritten;
@@ -253,17 +263,15 @@ void receiveAcknowledges(){
 }
 
 std::vector<creature> getResults(int cores){
-
 	printf("getting results\n");
 	std::vector<creature> results;
 
-	//TODO:
 	for(int	i =0;i<cores;i++){
 		std::vector<creature> tmp =	 getCreatures(creatureFilePaths.at(i));
 		results.insert(results.end(), tmp.begin(), tmp.end());
-		printf("fitness nr %d: %f\n",i, tmp.at(i).fitness);
+		//printf("fitness nr %d: %f\n",i, tmp.at(i).fitness);
 	}
-	
+
 	printf("\n");
 	return results;
 }
