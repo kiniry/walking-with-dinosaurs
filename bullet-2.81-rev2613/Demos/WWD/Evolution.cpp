@@ -60,6 +60,11 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		creat.dna = mutate(creat.dna,deviation);
 		result.push_back(creat);
 	}
+	
+	//cleanup
+	for(int i=0;i<creatures.size();i++){
+		delete creatures.at(i).treePointer;
+	}
 
 	return result;
 }

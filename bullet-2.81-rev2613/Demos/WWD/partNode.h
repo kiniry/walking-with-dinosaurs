@@ -11,6 +11,12 @@ public:
 		children = new std::vector<MTreeNode*>();
 		NNChildren = new std::vector<NNLayerNode*>();
 	}
+	virtual ~partNode(void){
+		for(int i=0;i<NNChildren->size();i++){
+			delete NNChildren->at(i);
+		}
+		delete NNChildren;
+	}
 
 	void addNNChild(NNLayerNode* aNode){
 		NNChildren->push_back(aNode);

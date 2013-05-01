@@ -18,6 +18,12 @@ public:
 		startIndex=start;
 		endIndex=end;
 	}
+	virtual ~MTreeNode(void){
+		for(int i=0;i<children->size();i++){
+			delete children->at(i);
+		}
+		delete children;
+	}
 	void setEnd(int end){
 		endIndex=end;
 	}

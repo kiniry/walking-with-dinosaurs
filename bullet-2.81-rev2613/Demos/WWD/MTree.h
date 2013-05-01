@@ -11,6 +11,13 @@ public:
 	MTree(){
 		NNPart = new std::vector<NNLayerNode*>();
 	}
+	~MTree(void){
+		for(int i=0;i<NNPart->size();i++){
+			delete NNPart->at(i);
+		}
+		delete bodyPart;
+		delete NNPart;
+	}
 	std::vector<int> mutateDNA(std::vector<int> DNA);
 	void setBody(partNode* body){bodyPart=body;}
 	partNode* getBodyPart(){return bodyPart;}
