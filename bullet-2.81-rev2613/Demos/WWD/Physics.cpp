@@ -106,7 +106,7 @@ void Physics::simulationLoopStep(float stepSize){
 		}
  
 		//fitness test
-		calcFitness();
+		calcFitness(move);
 
 		for(int i=0;i< (int) effectorNNindex.size();i=i+3){
 			setEffect(i/3,
@@ -784,11 +784,52 @@ inputs.push_back(new NeuralNode(testPoint));
 	*/
 }
 
-void Physics::calcFitness(){
-	btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
-	if(height<4){fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));}
-	else{fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;}
+void Physics::calcFitness(int test){
+
+	switch(test){
+
+	case move:
+		{
+		btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
+		if(height<4){
+			fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));
+		}else{
+			fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;
+		}
+		}
+		break;
+
+	case jump:
+		{
+		static float startHeight =  m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin().getY();
+
+		//fix ground collision
+		//collision detection
+		//one per btPersistentManifold for each collision
+		int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
+
+		for (int i=0;i<numManifolds;i++){
+
+			btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+			int box1 = (int)contactManifold->getBody0()->getUserPointer();
+			int box2 = (int)contactManifold->getBody1()->getUserPointer();
+
+			if(box1 == ground || box1 == ground){
+				return;
+			}
+
+		}
+
+		fitness = max(fitness,  m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin().getY()-startHeight);
+		}
+		break;
+
+
+	default:
+
+	printf("unkown fitness test\n");
+
+	}
+
+
 }
-
-
-

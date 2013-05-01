@@ -133,9 +133,12 @@ class Physics : public PlatformDemoApplication{
 		float getBoxHalfHeight(btCollisionObject* object);
 
 	public:
-				virtual void displayCallback();
-				virtual void clientResetScene();
-		 virtual void clientMoveAndDisplay();
+		enum boxes{ground=-2};
+		enum fitnessTest{jump, move};
+
+		virtual void displayCallback();
+		virtual void clientResetScene();
+		virtual void clientMoveAndDisplay();
 		NeuralNetwork* theNet;
 
 		std::vector<NeuralNetwork*> subnets;
@@ -148,7 +151,7 @@ class Physics : public PlatformDemoApplication{
 			return fitness;
 		}
 
-		void calcFitness();
+		void calcFitness(int test);
 
 		Physics(std::vector<int> Ancestor){
 			ancestor=Ancestor;
