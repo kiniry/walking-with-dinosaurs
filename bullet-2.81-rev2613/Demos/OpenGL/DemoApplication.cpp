@@ -537,6 +537,9 @@ void	DemoApplication::setShootBoxShape ()
 	if (!m_shootBoxShape)
 	{
 		btBoxShape* box = new btBoxShape(btVector3(0.5,0.5,0.5));
+		int* userP = new int();
+		*userP = 0;
+		box->setUserPointer2((void*)userP);
       //  box->initializePolyhedralFeatures();
 		m_shootBoxShape = box;
 	}
@@ -1203,11 +1206,12 @@ void	DemoApplication::renderscene(int pass)
 
 		if (!(getDebugMode()& btIDebugDraw::DBG_DrawWireframe))
 		{
+
 			switch(pass)
 			{
-			case	0:	m_shapeDrawer->drawOpenGL(m,colObj->getCollisionShape(),wireColor,getDebugMode(),aabbMin,aabbMax);break;
+			case	0:	m_shapeDrawer->drawOpenGL(m,colObj->getCollisionShape(),btVector3 (1.f,1.f,1.f),getDebugMode(),aabbMin,aabbMax,&colObj->getWorldTransform().getBasis());break;
 			case	1:	m_shapeDrawer->drawShadow(m,m_sundirection*rot,colObj->getCollisionShape(),aabbMin,aabbMax);break;
-			case	2:	m_shapeDrawer->drawOpenGL(m,colObj->getCollisionShape(),wireColor*btScalar(0.3),0,aabbMin,aabbMax);break;
+			case	2:	m_shapeDrawer->drawOpenGL(m,colObj->getCollisionShape(),btVector3 (0.f,0.f,1.f)*btScalar(0.3),0,aabbMin,aabbMax,&colObj->getWorldTransform().getBasis());break;
 			}
 		}
 	}

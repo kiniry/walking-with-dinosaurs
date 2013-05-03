@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Demos">
@@ -92,5 +92,10 @@
     <ClCompile Include="..\..\Demos\OpenGL\Win32DemoApplication.cpp">
       <Filter>Demos\OpenGL</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bullet_logo.png">
+      <Filter>Demos\OpenGL</Filter>
+    </None>
   </ItemGroup>
 </Project>

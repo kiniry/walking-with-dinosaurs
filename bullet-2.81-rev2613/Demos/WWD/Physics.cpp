@@ -262,6 +262,9 @@ void	Physics::initPhysics(){
 
 	//create ground body
 	btBoxShape* groundShape = new btBoxShape(btVector3(btScalar(1000.),btScalar(10.),btScalar(1000.)));
+	int* userP = new int();
+	*userP = 0;
+	groundShape->setUserPointer2((void*)userP);
 
 	m_collisionShapes.push_back(groundShape);
 
@@ -292,6 +295,9 @@ int Physics::createBox(int x1, int y1, int z1){
 	btAssert(z>=0.05 && z<=10);
 
 	btBoxShape* boxShape = new btBoxShape(btVector3(x/2.f,y/2.f,z/2.f));
+	int* userP = new int();
+	*userP = 1;
+	boxShape->setUserPointer2((void*)userP);
 	m_collisionShapes.push_back(boxShape);
 
 	btTransform startTransform;

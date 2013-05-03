@@ -21,6 +21,7 @@ class btShapeHull;
 #include "LinearMath/btVector3.h"
 
 #include "BulletCollision/CollisionShapes/btShapeHull.h"
+#include "stb_image.h"
 
 /// OpenGL shape drawing
 class GL_ShapeDrawer
@@ -36,6 +37,7 @@ protected:
 	//clean-up memory of dynamically created shape hulls
 	btAlignedObjectArray<ShapeCache*>	m_shapecaches;
 	unsigned int						m_texturehandle;
+	unsigned int						m_texturehandle2;
 	bool								m_textureenabled;
 	bool								m_textureinitialized;
 	
@@ -48,7 +50,7 @@ public:
 		virtual ~GL_ShapeDrawer();
 
 		///drawOpenGL might allocate temporary memoty, stores pointer in shape userpointer
-		virtual void		drawOpenGL(btScalar* m, const btCollisionShape* shape, const btVector3& color,int	debugMode,const btVector3& worldBoundsMin,const btVector3& worldBoundsMax);
+		virtual void		drawOpenGL(btScalar* m, const btCollisionShape* shape, const btVector3& color,int	debugMode,const btVector3& worldBoundsMin,const btVector3& worldBoundsMax,btMatrix3x3* basis);
 		virtual void		drawShadow(btScalar* m, const btVector3& extrusion,const btCollisionShape* shape,const btVector3& worldBoundsMin,const btVector3& worldBoundsMax);
 		
 		bool		enableTexture(bool enable) { bool p=m_textureenabled;m_textureenabled=enable;return(p); }

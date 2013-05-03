@@ -29,6 +29,7 @@ ATTRIBUTE_ALIGNED16(class) btCollisionShape
 protected:
 	int m_shapeType;
 	void* m_userPointer;
+	void* m_userPointer2;
 
 public:
 
@@ -129,6 +130,15 @@ public:
 	void*	getUserPointer() const
 	{
 		return m_userPointer;
+	}
+	void	setUserPointer2(void*  userPtr)
+	{
+		m_userPointer2 = userPtr;
+	}
+
+	void*	getUserPointer2() const
+	{
+		return m_userPointer2;
 	}
 
 	virtual	int	calculateSerializeBufferSize() const;

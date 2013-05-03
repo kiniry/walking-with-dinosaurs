@@ -944,7 +944,7 @@ btScalar btSequentialImpulseConstraintSolver::solveGroupCacheFriendlySetup(btCol
 						break;
 					}
 				}
-				btAssert(found);
+				//btAssert(found);
 			}
 		}
 	}

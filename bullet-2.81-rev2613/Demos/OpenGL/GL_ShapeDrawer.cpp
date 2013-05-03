@@ -401,7 +401,7 @@ void renderSquareA(float x, float y, float z)
 inline void glDrawVector(const btVector3& v) { glVertex3d(v[0], v[1], v[2]); }
 
 
-void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, const btVector3& color,int	debugMode,const btVector3& worldBoundsMin,const btVector3& worldBoundsMax)
+void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, const btVector3& color,int	debugMode,const btVector3& worldBoundsMin,const btVector3& worldBoundsMax, btMatrix3x3* basis)
 {
 	
 	if (shape->getShapeType() == CUSTOM_CONVEX_SHAPE_TYPE)
@@ -476,7 +476,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 			{0,0,scalingFactor,0},
 			{0,0,0,1}};
 
-			drawOpenGL( (btScalar*)tmpScaling,convexShape,color,debugMode,worldBoundsMin,worldBoundsMax);
+			drawOpenGL( (btScalar*)tmpScaling,convexShape,color,debugMode,worldBoundsMin,worldBoundsMax,basis);
 		}
 		glPopMatrix();
 		return;
@@ -491,14 +491,14 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 			const btCollisionShape* colShape = compoundShape->getChildShape(i);
 			ATTRIBUTE_ALIGNED16(btScalar) childMat[16];
 			childTrans.getOpenGLMatrix(childMat);
-			drawOpenGL(childMat,colShape,color,debugMode,worldBoundsMin,worldBoundsMax);
+			drawOpenGL(childMat,colShape,color,debugMode,worldBoundsMin,worldBoundsMax,basis);
 		}
 
 	} else
 	{
 		if(m_textureenabled&&(!m_textureinitialized))
 		{
-			GLubyte*	image=new GLubyte[256*256*3];
+			/*GLubyte*	image=new GLubyte[256*256*3];
 			for(int y=0;y<256;++y)
 			{
 				const int	t=y>>4;
@@ -510,8 +510,12 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 					GLubyte			c=b+((s+t&1)&1)*(255-b);
 					pi[0]=pi[1]=pi[2]=c;pi+=3;
 				}
-			}
-
+			}*/
+			int x=0,y=0,n=0;
+			stbi_uc* theTex = stbi_load("c:\\scale.png",&x,&y,&n,0);
+			printf("x: %d y: %d n: %d",x,y,n);
+			GLenum type = GL_RGB;
+			if(n==4){type=GL_RGBA;}
 			glGenTextures(1,(GLuint*)&m_texturehandle);
 			glBindTexture(GL_TEXTURE_2D,m_texturehandle);
 			glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
@@ -519,18 +523,43 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
 			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-			gluBuild2DMipmaps(GL_TEXTURE_2D,3,256,256,GL_RGB,GL_UNSIGNED_BYTE,image);
-			delete[] image;
-	
+			gluBuild2DMipmaps(GL_TEXTURE_2D,n,x,y,type,GL_UNSIGNED_BYTE,theTex);
 			
+			
+			int x2=0,y2=0,n2=0;
+			stbi_uc* theTex2 = stbi_load("c:\\scale.png",&x2,&y2,&n2,0);
+			printf("x: %d y: %d n: %d",x,y,n);
+			GLenum type2 = GL_RGB;
+			if(n2==4){type2=GL_RGBA;}
+
+			glGenTextures(1,(GLuint*)&m_texturehandle2);
+			glBindTexture(GL_TEXTURE_2D,m_texturehandle2);
+			glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+			gluBuild2DMipmaps(GL_TEXTURE_2D,n2,x2,y2,type2,GL_UNSIGNED_BYTE,theTex2);
+			delete[] theTex;
+			delete[] theTex2;
+
+
 		}
 
 		glMatrixMode(GL_TEXTURE);
 		glLoadIdentity();
-		glScalef(0.025f,0.025f,0.025f);
+		if(*(int*)(shape->getUserPointer2())==0){
+				glScalef(0.025f,0.025f,0.025f);	//scale tex 1 up (the size of the place to put the texture down relative to the texture)
+			}else if(*(int*)(shape->getUserPointer2())==1){
+				glScalef(2.f,2.f,2.f);	//scale tex 2 down
+			}
 		glMatrixMode(GL_MODELVIEW);
 
+		btScalar* openGLMat = new btScalar[12];
+		basis->getOpenGLSubMatrix(openGLMat);
 		static const GLfloat	planex[]={1,0,0,0};
+		//static const GLfloat	planex[]={openGLMat[0],openGLMat[1],openGLMat[2],openGLMat[3]};
+		//static const GLfloat	planez[]={openGLMat[8],openGLMat[9],openGLMat[10],openGLMat[11]};
 		//	static const GLfloat	planey[]={0,1,0,0};
 			static const GLfloat	planez[]={0,0,1,0};
 			glTexGenfv(GL_S,GL_OBJECT_PLANE,planex);
@@ -552,14 +581,22 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 		if(m_textureenabled) 
 		{
 			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D,m_texturehandle);
+			//int x,y,n;
+			//m_texturehandle = (unsigned int)stbi_load("Grass2.png", &x, &y, &n, 0);
+			//m_texturehandle = 0;
+			if(*(int*)(shape->getUserPointer2())==0){
+				glBindTexture(GL_TEXTURE_2D,m_texturehandle);	//tex 1
+			}else if(*(int*)(shape->getUserPointer2())==1){
+				glBindTexture(GL_TEXTURE_2D,m_texturehandle2);	//tex 2
+			}
 		} else
 		{
 			glDisable(GL_TEXTURE_2D);
 		}
 
 
-		glColor3f(color.x(),color.y(), color.z());		
+		glColor3f(color.x(),color.y(), color.z());	//debug colors	
+		//glColor3f(0,1, 0);							//green... shades also green -.-' function used for several purposes
 
 		bool useWireframeFallback = true;
 
@@ -721,7 +758,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 					childTransform.setOrigin(multiSphereShape->getSpherePosition(i));
 					ATTRIBUTE_ALIGNED16(btScalar) childMat[16];
 					childTransform.getOpenGLMatrix(childMat);
-					drawOpenGL(childMat,&sc,color,debugMode,worldBoundsMin,worldBoundsMax);
+					drawOpenGL(childMat,&sc,color,debugMode,worldBoundsMin,worldBoundsMax,basis);
 				}
 
 				break;
@@ -919,6 +956,7 @@ void		GL_ShapeDrawer::drawShadow(btScalar* m,const btVector3& extrusion,const bt
 	else
 	{
 	//	bool useWireframeFallback = true;
+	//	glColor3f(0.f,0.f,0.f);
 		if (shape->isConvex())
 		{
 			ShapeCache*	sc=cache((btConvexShape*)shape);
@@ -981,6 +1019,7 @@ GL_ShapeDrawer::~GL_ShapeDrawer()
 	if(m_textureinitialized)
 	{
 		glDeleteTextures(1,(const GLuint*) &m_texturehandle);
+		glDeleteTextures(1,(const GLuint*) &m_texturehandle2);
 	}
 }
 
