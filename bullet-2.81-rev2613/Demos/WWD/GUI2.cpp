@@ -30,6 +30,7 @@ subject to the following restrictions:
 
 #define IDC_LISTBOX 993
 #define IDC_SIM 994
+#define IDC_RUN_BUTTON 995
 
 // Function Declarations
 
@@ -101,11 +102,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	
 
 
-			HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL,0, 0, 150, height, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
+			HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL|LBS_NOTIFY,0, 0, 150, height, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
 			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"name");
 			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"extension");
 			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"date");
 			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"size");
+
+
+
+		//button
+	// Create a push button
+	HWND hWndButton=CreateWindowEx(NULL,TEXT("BUTTON"),
+		"RUN",
+		WS_TABSTOP|WS_VISIBLE|
+		WS_CHILD|BS_DEFPUSHBUTTON,
+		150,
+		50,
+		100,
+		24,
+		hWnd,
+		(HMENU)IDC_RUN_BUTTON,
+		GetModuleHandle(NULL),
+		NULL);
+	HGDIOBJ hfDefault=GetStockObject(DEFAULT_GUI_FONT);
+	SendMessage(hWndButton,WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE,0));
 
 /*	
 	GLDebugDrawer debugDraw;
@@ -416,13 +436,76 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	
 
 	case WM_COMMAND:
-		//menu
-		switch(LOWORD(wParam)){
+switch(LOWORD(wParam)){
 
 		case IDC_LISTBOX:
-		  	printf("");
+			{
+
+			  switch (HIWORD(wParam)) 
+                { 	  
+                case LBN_SELCHANGE:
+                    {
+						HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX); 
+
+                        // Get selected index.
+                        int index = (int)SendMessage(hwndList, LB_GETCURSEL, 0, 0); 
+
+
+						// Get length of text in listbox
+				int textLen = (int) SendMessage(hwndList, LB_GETTEXTLEN, (WPARAM) index, 0);
+
+				// Allocate buffer to store text (consider +1 for end of string)
+				TCHAR * textBuffer = new TCHAR[textLen + 1];
+
+				// Get actual text in buffer
+				SendMessage(hwndList, LB_GETTEXT, (WPARAM) index, (LPARAM) textBuffer );
+
+				// Show it
+				MessageBox(NULL, textBuffer, TEXT("Selected Text:"), MB_OK);
+
+				// Free text
+				delete [] textBuffer;
+
+				// Avoid dangling references
+				textBuffer = NULL; 
+
+                        return TRUE; 
+                    } 
+                }
+	}
 			break;
-		
+		case IDC_RUN_BUTTON:
+			{
+				HWND hwndList1 = GetDlgItem(hwnd, IDC_LISTBOX);
+
+				_ASSERTE(hwndList1 != NULL);
+
+				// Get current selection index in listbox
+				int itemIndex = (int) SendMessage(hwndList1, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
+				if (itemIndex == LB_ERR)
+				{
+					// No selection
+					return 0;
+				}
+
+				// Get length of text in listbox
+				int textLen = (int) SendMessage(hwndList1, LB_GETTEXTLEN, (WPARAM) itemIndex, 0);
+
+				// Allocate buffer to store text (consider +1 for end of string)
+				TCHAR * textBuffer = new TCHAR[textLen + 1];
+
+				// Get actual text in buffer
+				SendMessage(hwndList1, LB_GETTEXT, (WPARAM) itemIndex, (LPARAM) textBuffer );
+
+				// Show it
+				MessageBox(NULL, textBuffer, TEXT("Selected Text:"), MB_OK);
+
+				// Free text
+				delete [] textBuffer;
+
+				// Avoid dangling references
+				textBuffer = NULL; }
+			break;
 		default:
 			 	printf("");
 
