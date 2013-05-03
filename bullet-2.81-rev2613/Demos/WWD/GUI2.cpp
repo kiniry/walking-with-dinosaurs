@@ -256,6 +256,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int xPos = LOWORD(lParam); 
 			int yPos = HIWORD(lParam); 
 			WWDPhysics->mouseFunc(1,1,xPos,yPos);
+			POINT p = POINT();
+			p.x=xPos; p.y=yPos;
+			SetFocus(ChildWindowFromPoint(hwnd,p));
 		break;
 	}
 	case WM_MBUTTONDOWN:
@@ -263,6 +266,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int xPos = LOWORD(lParam); 
 			int yPos = HIWORD(lParam); 
 			WWDPhysics->mouseFunc(1,0,xPos,yPos);
+			POINT p = POINT();
+			p.x=xPos; p.y=yPos;
+			SetFocus(ChildWindowFromPoint(hwnd,p));
 		break;
 	}
 
@@ -271,6 +277,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int xPos = LOWORD(lParam); 
 			int yPos = HIWORD(lParam); 
 			WWDPhysics->mouseFunc(0,1,xPos,yPos);
+			POINT p = POINT();
+			p.x=xPos; p.y=yPos;
+			SetFocus(ChildWindowFromPoint(hwnd,p));
 		break;
 	}
 	case 0x020A://WM_MOUSEWHEEL:
@@ -298,6 +307,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int xPos = LOWORD(lParam); 
 			int yPos = HIWORD(lParam); 
 			WWDPhysics->mouseFunc(2,1,xPos,yPos);
+			POINT p = POINT();
+			p.x=xPos; p.y=yPos;
+			SetFocus(ChildWindowFromPoint(hwnd,p));
 		break;
 	}
 	case WM_RBUTTONDOWN:
@@ -305,6 +317,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int xPos = LOWORD(lParam); 
 			int yPos = HIWORD(lParam); 
 			WWDPhysics->mouseFunc(2,0,xPos,yPos);
+			POINT p = POINT();
+			p.x=xPos; p.y=yPos;
+			SetFocus(ChildWindowFromPoint(hwnd,p));
 		break;
 	}
 	case WM_LBUTTONDOWN:
@@ -312,6 +327,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				int xPos = LOWORD(lParam); 
 				int yPos = HIWORD(lParam); 
 				WWDPhysics->mouseFunc(0,0,xPos,yPos);
+				POINT p = POINT();
+			p.x=xPos; p.y=yPos;
+			SetFocus(ChildWindowFromPoint(hwnd,p));
 			break;
 		}
 /*#define WM_LBUTTONUP                  0x0202
