@@ -145,8 +145,6 @@ class Physics : public PlatformDemoApplication{
 		std::vector<float> sensors;
 		std::vector<int> effectorNNindex;
 
-		MTree* theTree;
-
 		float getFitness(){
 			return fitness;
 		}

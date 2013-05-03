@@ -10,7 +10,7 @@ int main(int argc,char** argv)
 	GetSystemInfo( &sysinfo );
 
 	numCores= sysinfo.dwNumberOfProcessors;
-	numCores=1;
+	//numCores=1;
 	printf("cores %d\n", numCores);
 
 #ifdef  _DEBUG
@@ -27,9 +27,9 @@ int main(int argc,char** argv)
 	const int temp[] = {1387,38,23,2,1924};
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
-	//return pipeServerMain(numCores,populationSize,nrOfGenerations,ancestor);
-	return pipeClientMain(argc,argv);
-	return WWD(argc,argv);
+	return pipeServerMain(numCores,populationSize,nrOfGenerations,ancestor);
+	//return pipeClientMain(argc,argv);
+	//return WWD(argc,argv);
 
 #endif
 
@@ -139,7 +139,7 @@ int WWD(int argc,char** argv){
 				//run sim
 				WWDPhysics->runSimulation();
 				creatures.at(j).fitness = WWDPhysics->getFitness();
-				creatures.at(j).treePointer = WWDPhysics->theTree;
+				creatures.at(j).treePointer = getMTree(&creatures.at(j).dna);
 				delete WWDPhysics;
 			}
 
@@ -162,7 +162,7 @@ int WWD(int argc,char** argv){
 
 			//mutate
 			//#pragma omp single nowait
-			creatures=evolve(creatures);
+			creatures=evolve(creatures); //Evolve cleans up the MTrees so no need for that here
 			//print survivors sorted
 
 			//#pragma omp for ordered

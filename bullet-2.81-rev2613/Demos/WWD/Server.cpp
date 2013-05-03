@@ -38,7 +38,12 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 		creatures=getResults(cores);
 		assertInt(creatures.size(), populationSize);
 
-		creatures=evolve(creatures);
+		//Create MTree's
+		for(int j=0;j<(int)creatures.size();j++){
+			creatures.at(j).treePointer=getMTree(&creatures.at(j).dna);
+		}
+
+		creatures=evolve(creatures); //evolve clean up the MTree's so no need for that
 		assertInt(creatures.size(), populationSize);
 		for(int j=0;j< (int) (creatures.size());j++){
 			printf("nr %d %f\n",j,creatures.at(j).fitness);

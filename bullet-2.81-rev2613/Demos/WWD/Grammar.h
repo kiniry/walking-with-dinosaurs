@@ -32,8 +32,8 @@ inline int getDNA(int x, std::vector<int> *dna){
 		return dna->at(x);
 };
 
-int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural, partNode* body);
-int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<int>* tempNeural, partNode* body);
+int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural);
+int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<int>* tempNeural);
 
 int readDNA(std::vector<int> *DNA, Physics *world);
 
@@ -44,7 +44,12 @@ int NI(int index, std::vector<int> *DNA);
 int NI(int index, std::vector<int> *DNA, NeuralNetwork* net);
 
 int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, NNLayerNode* node, bool isJustChecking);
-int newNN(int index, std::vector<int> *DNA,partNode* body);
-int newNN(int index, std::vector<int>* DNA, std::vector<NeuralNode*> inputs, Physics *world, bool isNotSubnet);
+int NN(int index, std::vector<int> *DNA,partNode* body);
+int NN(int index, std::vector<int>* DNA, std::vector<NeuralNode*> inputs, Physics *world, bool isNotSubnet);
+
+MTree* getMTree(std::vector<int> *DNA);
+int treeB(int index, std::vector<int> *DNA, int *blocks, partNode* body);
+int treeJ(int index, std::vector<int> *DNA, int *blocks, partNode* body);
+int treeNN(int index, std::vector<int> *DNA,MTree* mainTree);
 
 #endif
