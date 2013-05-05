@@ -1,63 +1,30 @@
-
-/*
-Bullet Continuous Collision Detection and Physics Library
-Copyright (c) 2003-2010 Erwin Coumans  http://bulletphysics.org
-
-This software is provided 'as-is', without any express or implied warranty.
-In no event will the authors be held liable for any damages arising from the use of this software.
-Permission is granted to anyone to use this software for any purpose, 
-including commercial applications, and to alter it and redistribute it freely, 
-subject to the following restrictions:
-
-1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
-2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
-3. This notice may not be removed or altered from any source distribution.
-*/
-
-
-#include <windows.h>
-#include <gl/gl.h>
-#include "Grammar.h"
-
-#include "DemoApplication.h"
-
-#include "GLDebugDrawer.h"
-#include "GLDebugFont.h"
-#include "Physics.h"
-#include "BulletDynamics/Dynamics/btDynamicsWorld.h"
-
-#include "resource.h"
-
-#define IDC_LISTBOX 993
-#define IDC_SIM 994
-#define IDC_RUN_BUTTON 995
-
-// Function Declarations
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-void EnableOpenGL(HWND hWnd, HDC * hDC, HGLRC * hRC);
-void DisableOpenGL(HWND hWnd, HDC hDC, HGLRC hRC);
-static bool sOpenGLInitialized = false;
-static int sWidth = 0;
-static int sHeight =0;
-static int quitRequest = 0;
-
-Physics* WWDPhysics = new Physics();
+#include "GUI.h"
 
 // WinMain
-  HWND blank;
+HWND blank;
+
+LPWSTR *argv;
+int argc;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
-				   LPSTR lpCmdLine, int iCmdShow)
+	LPSTR lpCmdLine, int iCmdShow)
 {
+
+	argv =CommandLineToArgvW(GetCommandLineW(),&argc);
+
+
+	console();
+
+
+	loadSaves();
+
 	WNDCLASS wc;
 	HWND hWnd;
-	HWND hWnd2;
 	HDC hDC;
 	HGLRC hRC;
 	MSG msg;
 	BOOL quit = FALSE;
 	float theta = 0.0f;
-	
+
 
 
 	// register window class
@@ -72,16 +39,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	wc.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
 	wc.lpszClassName = "main";
 	RegisterClass( &wc );
-	
+
 	// create main window
 	hWnd = CreateWindow( 
 		"main", "Walking With Dinosaurs", 
 		WS_CAPTION | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
 		0, 0, 1024, 768,
 		NULL, NULL, hInstance, NULL );
-		// create main window
+	// create main window
 
-		// register window class
+	// register window class
 	wc.style = CS_OWNDC;
 	wc.lpfnWndProc = WndProc;
 	wc.cbClsExtra = 0;
@@ -94,28 +61,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	wc.lpszClassName = "blank";
 	RegisterClass( &wc );
 
-	  		int height =768-16-50;
-			int width= 1024-16;
+	int height =768-16-50;
+	int width= 1024-16;
 	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,150,100,width-150,height-100, hWnd,(HMENU)IDC_SIM, GetModuleHandle(NULL), NULL);
 
 	EnableOpenGL( blank, &hDC, &hRC );
-	
-
-
-			HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL|LBS_NOTIFY,0, 0, 150, height, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
-			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"name");
-			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"extension");
-			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"date");
-			SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)"size");
 
 
 
-		//button
+	HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL|LBS_NOTIFY,0, 0, 150, height, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
+	for(int i=0;i<saves.size();i++){
+		SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)saves.at(i)->name.c_str());
+	}
+	SendMessage(hWndList,LB_SETCURSEL,0,0);
+
+	WWDPhysics = new Physics();
+
+	//init creature
+	readDNA(&saves.at(0)->dna,WWDPhysics);
+	WWDPhysics->solveGroundConflicts();
+	WWDPhysics->reshape(0,0,sWidth,sHeight);
+
+
+
+
+
+	//button
 	// Create a push button
-	HWND hWndButton=CreateWindowEx(NULL,TEXT("BUTTON"),
-		"RUN",
-		WS_TABSTOP|WS_VISIBLE|
-		WS_CHILD|BS_DEFPUSHBUTTON,
+	HWND hWndButton=CreateWindowEx(NULL,TEXT("BUTTON"),	"RUN", WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_DEFPUSHBUTTON,
 		150,
 		50,
 		100,
@@ -127,37 +100,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	HGDIOBJ hfDefault=GetStockObject(DEFAULT_GUI_FONT);
 	SendMessage(hWndButton,WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE,0));
 
-/*	
+	/*	
 	GLDebugDrawer debugDraw;
 	gDemoApplication->myinit();
 	//gDemoApplication->reshape(1024, 768);
 	gDemoApplication->initPhysics();
 	if (gDemoApplication->getDynamicsWorld())
-		gDemoApplication->getDynamicsWorld()->setDebugDrawer(&debugDraw);
-	
+	gDemoApplication->getDynamicsWorld()->setDebugDrawer(&debugDraw);
 
 
-   */
-	const int temp[] = {1387,38,23,2,1924};
 
-	int size = sizeof( temp ) / sizeof ( *temp );
-	std::vector<int> ancestor (temp, temp+size);
-	//init creature
-	readDNA(&ancestor,WWDPhysics);
-
-	WWDPhysics->solveGroundConflicts();
+	*/
 
 
-	WWDPhysics->reshape(0,0,sWidth,sHeight);
 
 	// program main loop
 	while ( !quit )
 	{
-		
+
 		// check for messages
 		if ( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE )  )
 		{
-			
+
 			// handle or dispatch messages
 			if ( msg.message == WM_QUIT ) 
 			{
@@ -168,46 +132,45 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				TranslateMessage( &msg );
 				DispatchMessage( &msg );
 			}
-			
-		//WWDPhysics->displayCallback();
-			
+
+			//WWDPhysics->displayCallback();
+
 
 		};
-		
-		// OpenGL animation code goes here
-		
+
+		//OpenGL animation code goes here
+
 		glClearColor( .7f, 0.7f, 0.7f, 1.f );
-		
+
 		WWDPhysics->clientMoveAndDisplay();
 
-			
+
 		SwapBuffers( hDC );
-		
+
 		theta += 1.0f;
-	
-		
+
+
 	}
-	
+
 
 
 	// shutdown OpenGL
 	DisableOpenGL( blank, hDC, hRC );
-	
+
 	// destroy the window explicitly
 	DestroyWindow( hWnd );
 
 	delete WWDPhysics;
 
 	return msg.wParam;
-	
+
 }
 
 // Window Procedure
-
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	
-	
+
+
 
 	switch (message)
 	{
@@ -229,39 +192,39 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				WWDPhysics->m_modifierKeys = 0;
 			}
-			
+
 			break;
 		}
 
-		
-		case WM_SIZE:													// Size Action Has Taken Place
 
-			switch (wParam)												// Evaluate Size Action
+	case WM_SIZE:													// Size Action Has Taken Place
+
+		switch (wParam)												// Evaluate Size Action
+		{
+		case SIZE_MINIMIZED:									// Was Window Minimized?
+			return 0;												// Return
+
+		case SIZE_MAXIMIZED:									// Was Window Maximized?
+			sWidth = LOWORD (lParam);
+			sHeight = HIWORD (lParam);
+			if (sOpenGLInitialized)
 			{
-				case SIZE_MINIMIZED:									// Was Window Minimized?
-				return 0;												// Return
-
-				case SIZE_MAXIMIZED:									// Was Window Maximized?
-					sWidth = LOWORD (lParam);
-					sHeight = HIWORD (lParam);
-					if (sOpenGLInitialized)
-					{
-						//TODO
-						//WWDPhysics->reshape(0,0,sWidth,sHeight);
-					}
-				return 0;												// Return
-						
-				//resize
-				case SIZE_RESTORED:										// Was Window Restored?
-					sWidth = LOWORD (lParam);
-					sHeight = HIWORD (lParam);
-					if (sOpenGLInitialized)
-					{	
-						//TODO
-						//WWDPhysics->reshape(0,0,sWidth,sHeight);
-					}
-				return 0;												// Return
+				//TODO
+				//WWDPhysics->reshape(0,0,sWidth,sHeight);
 			}
+			return 0;												// Return
+
+			//resize
+		case SIZE_RESTORED:										// Was Window Restored?
+			sWidth = LOWORD (lParam);
+			sHeight = HIWORD (lParam);
+			if (sOpenGLInitialized)
+			{	
+				//TODO
+				//WWDPhysics->reshape(0,0,sWidth,sHeight);
+			}
+			return 0;												// Return
+		}
 		break;	
 
 	case WM_CREATE:
@@ -270,107 +233,107 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 
 		return 0;
-	
+
 	case WM_MBUTTONUP:
-	{
+		{
 			int xPos = LOWORD(lParam); 
 			int yPos = HIWORD(lParam); 
 			WWDPhysics->mouseFunc(1,1,xPos,yPos);
 			POINT p = POINT();
 			p.x=xPos; p.y=yPos;
 			SetFocus(ChildWindowFromPoint(hwnd,p));
-		break;
-	}
+			break;
+		}
 	case WM_MBUTTONDOWN:
-	{
+		{
 			int xPos = LOWORD(lParam); 
 			int yPos = HIWORD(lParam); 
 			WWDPhysics->mouseFunc(1,0,xPos,yPos);
 			POINT p = POINT();
 			p.x=xPos; p.y=yPos;
 			SetFocus(ChildWindowFromPoint(hwnd,p));
-		break;
-	}
+			break;
+		}
 
 	case WM_LBUTTONUP:
-	{
+		{
 			int xPos = LOWORD(lParam); 
 			int yPos = HIWORD(lParam); 
 			WWDPhysics->mouseFunc(0,1,xPos,yPos);
 			POINT p = POINT();
 			p.x=xPos; p.y=yPos;
 			SetFocus(ChildWindowFromPoint(hwnd,p));
-		break;
-	}
+			break;
+		}
 	case 0x020A://WM_MOUSEWHEEL:
-	{
+		{
 
-		int  zDelta = (short)HIWORD(wParam);
-		int xPos = LOWORD(lParam); 
-		int yPos = HIWORD(lParam); 
-		if (zDelta>0)
-			WWDPhysics->zoomIn();
-		else
-			WWDPhysics->zoomOut();
-		break;
-	}
+			int  zDelta = (short)HIWORD(wParam);
+			int xPos = LOWORD(lParam); 
+			int yPos = HIWORD(lParam); 
+			if (zDelta>0)
+				WWDPhysics->zoomIn();
+			else
+				WWDPhysics->zoomOut();
+			break;
+		}
 
 	case WM_MOUSEMOVE:
 		{
-				int xPos = LOWORD(lParam); 
-				int yPos = HIWORD(lParam); 
-				WWDPhysics->mouseMotionFunc(xPos,yPos);
+			int xPos = LOWORD(lParam); 
+			int yPos = HIWORD(lParam); 
+			WWDPhysics->mouseMotionFunc(xPos,yPos);
 			break;
 		}
 	case WM_RBUTTONUP:
-	{
+		{
 			int xPos = LOWORD(lParam); 
 			int yPos = HIWORD(lParam); 
 			WWDPhysics->mouseFunc(2,1,xPos,yPos);
 			POINT p = POINT();
 			p.x=xPos; p.y=yPos;
 			SetFocus(ChildWindowFromPoint(hwnd,p));
-		break;
-	}
+			break;
+		}
 	case WM_RBUTTONDOWN:
-	{
+		{
 			int xPos = LOWORD(lParam); 
 			int yPos = HIWORD(lParam); 
 			WWDPhysics->mouseFunc(2,0,xPos,yPos);
 			POINT p = POINT();
 			p.x=xPos; p.y=yPos;
 			SetFocus(ChildWindowFromPoint(hwnd,p));
-		break;
-	}
+			break;
+		}
 	case WM_LBUTTONDOWN:
 		{
-				int xPos = LOWORD(lParam); 
-				int yPos = HIWORD(lParam); 
-				WWDPhysics->mouseFunc(0,0,xPos,yPos);
-				POINT p = POINT();
+			int xPos = LOWORD(lParam); 
+			int yPos = HIWORD(lParam); 
+			WWDPhysics->mouseFunc(0,0,xPos,yPos);
+			POINT p = POINT();
 			p.x=xPos; p.y=yPos;
 			SetFocus(ChildWindowFromPoint(hwnd,p));
 			break;
 		}
-/*#define WM_LBUTTONUP                  0x0202
-#define WM_LBUTTONDBLCLK                0x0203
-#define WM_RBUTTONDOWN                  0x0204
-#define WM_RBUTTONUP                    0x0205
-#define WM_RBUTTONDBLCLK                0x0206
-#define WM_MBUTTONDOWN                  0x0207
-#define WM_MBUTTONUP                    0x0208
-#define WM_MBUTTONDBLCLK                0x0209
-*/
+		/*#define WM_LBUTTONUP                  0x0202
+		#define WM_LBUTTONDBLCLK                0x0203
+		#define WM_RBUTTONDOWN                  0x0204
+		#define WM_RBUTTONUP                    0x0205
+		#define WM_RBUTTONDBLCLK                0x0206
+		#define WM_MBUTTONDOWN                  0x0207
+		#define WM_MBUTTONUP                    0x0208
+		#define WM_MBUTTONDBLCLK                0x0209
+		*/
 
 
 
 	case WM_CLOSE:
 		PostQuitMessage( 0 );
 		return 0;
-		
+
 	case WM_DESTROY:
 		return 0;
-		
+
 	case WM_KEYUP:
 		switch ( wParam )
 		{		
@@ -387,10 +350,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					WWDPhysics->specialKeyboardUp(wParam,0,0);
 				return 0;
 			}
-			default:
-				{
-					WWDPhysics->keyboardUpCallback(tolower(wParam),0,0);
-				}
+		default:
+			{
+				WWDPhysics->keyboardUpCallback(tolower(wParam),0,0);
+			}
 			return DefWindowProc( hwnd, message, wParam, lParam );
 		}
 
@@ -425,54 +388,63 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				PostQuitMessage(0);
 			}
 			return 0;
-			
+
 		}
 		return 0;
-		
+
 	case WM_CHAR:
 		if (!quitRequest)
 			WWDPhysics->keyboardCallback(wParam,0,0);
 		break;
-	
+
 
 	case WM_COMMAND:
-switch(LOWORD(wParam)){
+		switch(LOWORD(wParam)){
 
 		case IDC_LISTBOX:
 			{
 
-			  switch (HIWORD(wParam)) 
-                { 	  
-                case LBN_SELCHANGE:
-                    {
+				switch (HIWORD(wParam)) 
+				{ 	  
+				case LBN_SELCHANGE:
+					{
 						HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX); 
 
-                        // Get selected index.
-                        int index = (int)SendMessage(hwndList, LB_GETCURSEL, 0, 0); 
+						// Get selected index.
+						int index = (int)SendMessage(hwndList, LB_GETCURSEL, 0, 0); 
+
+						delete WWDPhysics;
+
+						WWDPhysics = new Physics();
+
+						readDNA(&saves.at(0)->dna,WWDPhysics);
+						WWDPhysics->solveGroundConflicts();
+						WWDPhysics->reshape(0,0,sWidth,sHeight);
+
 
 
 						// Get length of text in listbox
-				int textLen = (int) SendMessage(hwndList, LB_GETTEXTLEN, (WPARAM) index, 0);
+						int textLen = (int) SendMessage(hwndList, LB_GETTEXTLEN, (WPARAM) index, 0);
 
-				// Allocate buffer to store text (consider +1 for end of string)
-				TCHAR * textBuffer = new TCHAR[textLen + 1];
+						// Allocate buffer to store text (consider +1 for end of string)
+						TCHAR * textBuffer = new TCHAR[textLen + 1];
 
-				// Get actual text in buffer
-				SendMessage(hwndList, LB_GETTEXT, (WPARAM) index, (LPARAM) textBuffer );
+						// Get actual text in buffer
+						SendMessage(hwndList, LB_GETTEXT, (WPARAM) index, (LPARAM) textBuffer );
 
-				// Show it
-				MessageBox(NULL, textBuffer, TEXT("Selected Text:"), MB_OK);
+						// Show it
+						MessageBox(NULL, textBuffer, TEXT("Selected Creature:"), MB_OK);
 
-				// Free text
-				delete [] textBuffer;
+						// Free text
+						delete [] textBuffer;
 
-				// Avoid dangling references
-				textBuffer = NULL; 
+						// Avoid dangling references
+						textBuffer = NULL; 
 
-                        return TRUE; 
-                    } 
-                }
-	}
+						return TRUE; 
+					} 
+				}
+			}
 			break;
 		case IDC_RUN_BUTTON:
 			{
@@ -488,53 +460,46 @@ switch(LOWORD(wParam)){
 					return 0;
 				}
 
-				// Get length of text in listbox
-				int textLen = (int) SendMessage(hwndList1, LB_GETTEXTLEN, (WPARAM) itemIndex, 0);
 
-				// Allocate buffer to store text (consider +1 for end of string)
-				TCHAR * textBuffer = new TCHAR[textLen + 1];
+				//seeds random generator
+				srand(time(0));
 
-				// Get actual text in buffer
-				SendMessage(hwndList1, LB_GETTEXT, (WPARAM) itemIndex, (LPARAM) textBuffer );
+				//threads
+				SYSTEM_INFO sysinfo;
+				GetSystemInfo( &sysinfo );
 
-				// Show it
-				MessageBox(NULL, textBuffer, TEXT("Selected Text:"), MB_OK);
+				int numCores= sysinfo.dwNumberOfProcessors;
+				//int numCores=1;
+				int pop =100;
+				int noG = 10;
+				pipeServerMain(numCores,pop,noG,saves.at(itemIndex)->dna);
 
-				// Free text
-				delete [] textBuffer;
 
-				// Avoid dangling references
-				textBuffer = NULL; }
+			}
 			break;
 		default:
-			 	printf("");
+			printf("");
 
 		}
 		break;
 
 	default:
 		return DefWindowProc( hwnd, message, wParam, lParam );
-			
+
 	}
 	return 0;
 }
 
 
-
-
-
-
-
 // Enable OpenGL
-
 void EnableOpenGL(HWND hWnd, HDC * hDC, HGLRC * hRC)
 {
 	PIXELFORMATDESCRIPTOR pfd;
 	int format;
-	
+
 	// get the device context (DC)
 	*hDC = GetDC( hWnd );
-	
+
 	// set the pixel format for the DC
 	ZeroMemory( &pfd, sizeof( pfd ) );
 	pfd.nSize = sizeof( pfd );
@@ -547,17 +512,16 @@ void EnableOpenGL(HWND hWnd, HDC * hDC, HGLRC * hRC)
 	pfd.iLayerType = PFD_MAIN_PLANE;
 	format = ChoosePixelFormat( *hDC, &pfd );
 	SetPixelFormat( *hDC, format, &pfd );
-	
+
 	// create and enable the render context (RC)
 	*hRC = wglCreateContext( *hDC );
 	wglMakeCurrent( *hDC, *hRC );
 	sOpenGLInitialized = true;
-	
-	
+
+
 }
 
 // Disable OpenGL
-
 void DisableOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 {
 	sOpenGLInitialized = false;
@@ -565,4 +529,47 @@ void DisableOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 	wglMakeCurrent( NULL, NULL );
 	wglDeleteContext( hRC );
 	ReleaseDC( hWnd, hDC );
+}
+
+
+void loadSaves(){
+
+	int temp[] = {1387,38,23,2,1924};
+	int size = sizeof( temp ) / sizeof ( *temp );
+	std::vector<int> ancestor (temp, temp+size);
+
+	save* tmp = new save();
+	tmp->dna=ancestor;
+	tmp->name="test string";
+
+	saves.push_back(tmp);
+
+	int temp2[] = {1387,38,23,2,1924};
+	int size2 = sizeof( temp2 ) / sizeof ( *temp2 );
+	std::vector<int> ancestor2 (temp2, temp2+size2);
+
+	save* tmp2 = new save();
+	tmp2->dna=ancestor2;
+	tmp2->name="hula hula";
+
+	saves.push_back(tmp2);
+}
+
+void console(){
+
+	// console borrowed from http://justcheckingonall.wordpress.com/2008/08/29/console-window-win32-app/
+	AllocConsole();
+
+	HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
+	int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
+	FILE* hf_out = _fdopen(hCrt, "w");
+	setvbuf(hf_out, NULL, _IONBF, 1);
+	*stdout = *hf_out;
+
+	HANDLE handle_in = GetStdHandle(STD_INPUT_HANDLE);
+	hCrt = _open_osfhandle((long) handle_in, _O_TEXT);
+	FILE* hf_in = _fdopen(hCrt, "r");
+	setvbuf(hf_in, NULL, _IONBF, 128);
+	*stdin = *hf_in;
+
 }

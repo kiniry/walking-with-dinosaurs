@@ -452,6 +452,7 @@
     <ClInclude Include="..\..\Demos\WWD\DinoTreeNode.h" />
     <ClInclude Include="..\..\Demos\WWD\Evolution.h" />
     <ClInclude Include="..\..\Demos\WWD\Grammar.h" />
+    <ClInclude Include="..\..\Demos\WWD\GUI.h" />
     <ClInclude Include="..\..\Demos\WWD\main.h" />
     <ClInclude Include="..\..\Demos\WWD\MTree.h" />
     <ClInclude Include="..\..\Demos\WWD\MTreeNode.h" />

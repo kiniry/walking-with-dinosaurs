@@ -178,4 +178,5 @@ class Physics : public PlatformDemoApplication{
 		void testPhysics();
 		void calcSize();
 		void solveGroundConflicts();
+		void removeCreatures();
 };

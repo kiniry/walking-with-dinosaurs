@@ -75,6 +75,9 @@
     <ClInclude Include="..\..\Demos\WWD\Server.h">
       <Filter>source\IPC</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Demos\WWD\GUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Demos\WWD\NeuralNode.cpp">
