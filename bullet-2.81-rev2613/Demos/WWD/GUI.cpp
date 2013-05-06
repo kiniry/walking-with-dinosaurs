@@ -35,7 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//look of the cursor
 	wc.hCursor = LoadCursor( NULL, IDC_ARROW );
 	//background color
-	wc.hbrBackground = (HBRUSH)GetStockObject( BLACK_BRUSH );
+	wc.hbrBackground = (HBRUSH)GetStockObject( LTGRAY_BRUSH );
 	//menu bar
 	wc.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
 	wc.lpszClassName = "main";
@@ -52,7 +52,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// create main window
 	hWnd = CreateWindowEx( WS_EX_CLIENTEDGE,
 		"main", "Walking With Dinosaurs", 
-		WS_CAPTION | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
+		WS_CAPTION | WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX |WS_CLIPCHILDREN,
 		0, 0, 1024, 768,
 		NULL, NULL, hInstance, NULL );
 	// create main window
@@ -70,17 +70,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.hbrBackground = (HBRUSH)GetStockObject( BLACK_BRUSH );
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = "blank";
-	RegisterClassEx( &wc );
+	if(!RegisterClassEx(&wc)){
+		MessageBox(NULL, "Window Registration Failed!", "Error!",
+			MB_ICONEXCLAMATION | MB_OK);
+		return 0;
+	}
 
-	calcSizes(768,1024);
+	calcSizes(768-menuHeight,1024);
 
 	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,listWidth,bAreaHeight,simWidth,simHeight, hWnd,(HMENU)IDC_SIM, GetModuleHandle(NULL), NULL);
 
 	EnableOpenGL( blank, &hDC, &hRC );
 
 
-
-	HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL|LBS_NOTIFY,0, 0, listWidth, listHeight, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
+	//listbox
+	hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL|LBS_NOTIFY,0, 0, listWidth, listHeight, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
 	for(int i=0;i<(int)saves.size();i++){
 		SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)saves.at(i)->name.c_str());
 	}
@@ -91,8 +95,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//init creature
 	readDNA(&saves.at(0)->dna,WWDPhysics);
 	WWDPhysics->solveGroundConflicts();
-	WWDPhysics->reshape(sWidth,sHeight);
-
+	WWDPhysics->reshape(simWidth,simHeight);
 
 
 
@@ -105,7 +108,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	HGDIOBJ hfDefault=GetStockObject(DEFAULT_GUI_FONT);
 	SendMessage(hWndButton,WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE,0));
 
+	HWND hWndNoG=CreateWindowEx(NULL,TEXT("STATIC"),"NoG",WS_CHILD|WS_VISIBLE,	150, 20, 100, 18,
+		hWnd, (HMENU)IDC_NOG_STATIC, GetModuleHandle(NULL),	NULL);
 
+	HWND hWndNoGS=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE,	250, 20, 100, 18,
+		hWnd, (HMENU)IDC_NOG_EDIT, GetModuleHandle(NULL),	NULL);
+
+
+	 HWND hWndPopS=CreateWindowEx(NULL,TEXT("STATIC"),	"Population",WS_CHILD|WS_VISIBLE,	600, 20, 100, 18,
+		hWnd, (HMENU)IDC_POP_STATIC, GetModuleHandle(NULL),	NULL);
+	HWND hWndPop=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE |ES_NUMBER,	700, 20, 100, 18,
+		hWnd, (HMENU)IDC_POP_EDIT, GetModuleHandle(NULL),	NULL);
+	
+	
 
 	//ShowWindow(hWnd, cmdShow);
 	//UpdateWindow(hWnd);
@@ -200,25 +215,38 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case SIZE_MINIMIZED:									// Was Window Minimized?
 			return 0;												// Return
 
-		case SIZE_MAXIMIZED:									// Was Window Maximized?
-			sWidth = LOWORD (lParam);
-			sHeight = HIWORD (lParam);
+		case SIZE_MAXIMIZED:
+			{									// Was Window Maximized?
+			int Width = LOWORD (lParam);
+			int Height = HIWORD (lParam);  
+			calcSizes(HIWORD (lParam),LOWORD (lParam));
+	
+			MoveWindow(hWndList,0,0,listWidth,listHeight,true);
+			MoveWindow(blank,listWidth,bAreaHeight,simWidth,simHeight,true);
+
 			if (sOpenGLInitialized)
 			{
-				//TODO
-				//WWDPhysics->reshape(0,0,sWidth,sHeight);
+				
+				WWDPhysics->reshape(simWidth,simHeight);
+			}
 			}
 			return 0;												// Return
 
 			//resize
-		case SIZE_RESTORED:										// Was Window Restored?
-			sWidth = LOWORD (lParam);
-			sHeight = HIWORD (lParam);
-			if (sOpenGLInitialized)
-			{	
-				//TODO
-				//WWDPhysics->reshape(0,0,sWidth,sHeight);
+		case SIZE_RESTORED:// Was Window Restored?	
+			/*{
+			int Width = LOWORD (lParam);
+			int Height = HIWORD (lParam);  
+			calcSizes(HIWORD (lParam),LOWORD (lParam));
+	
+			MoveWindow(hWndList,0,0,listWidth,listHeight,true);
+			MoveWindow(blank,listWidth,bAreaHeight,simWidth,simHeight,true);
+				
+			if (sOpenGLInitialized){
+				
+				WWDPhysics->reshape(simWidth,simHeight);
 			}
+			}	*/
 			return 0;												// Return
 		}
 		break;	
@@ -415,7 +443,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 						readDNA(&saves.at(0)->dna,WWDPhysics);
 						WWDPhysics->solveGroundConflicts();
-						WWDPhysics->reshape(sWidth,sHeight);
+						WWDPhysics->reshape(simWidth,simHeight);
 
 
 
@@ -465,8 +493,37 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				GetSystemInfo( &sysinfo );
 
 				int numCores= sysinfo.dwNumberOfProcessors;
-				//int numCores=1;
-				int pop =100;
+				
+
+
+				int pop =0;
+				HWND hwndPop = GetDlgItem(hwnd, IDC_POP_EDIT);
+
+				_ASSERTE(hwndPop != NULL);
+				
+				int length;
+
+		length = GetWindowTextLength(hwndPop);
+		// No need to bother if there's no text.
+		if(length > 0)
+		{
+			TCHAR * text = new TCHAR[length + 1];
+
+				GetWindowText(hwndPop,text,length+1);
+				for(int i =0; i<length;i++){
+					pop+=((text[i]-48)*pow(10.,i)+0.5);
+				}
+				printf("\npop %s\n", text);
+
+		}else{
+
+		 	 MessageBox(NULL, "No populastion size selected", TEXT("ERROR"), MB_OK);
+				  return 0;
+		}
+
+
+
+				
 				int noG = 10;
 				pipeServerMain(numCores,pop,noG,saves.at(itemIndex)->dna);
 
@@ -572,11 +629,13 @@ void console(){
 
 void calcSizes(int height, int witdh){
 
-	mainHeight=	height-borders-menuHeight;
-	mainWidth= witdh-borders;
+
+
+	mainHeight=height;
+	mainWidth= witdh;
 
 	listWidth=150;
-	listHeight=mainHeight;
+	listHeight=mainHeight+10;
 
 	bAreaHeight=100;
 	bAreaWidth=mainWidth-listWidth;

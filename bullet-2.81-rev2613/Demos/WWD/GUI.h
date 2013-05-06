@@ -17,21 +17,24 @@
 #define IDC_LISTBOX 993
 #define IDC_SIM 994
 #define IDC_RUN_BUTTON 995
+#define IDC_NOG_EDIT 996
+#define IDC_NOG_STATIC 997
+#define IDC_POP_EDIT 998
+#define IDC_POP_STATIC 999
 
 
 static bool sOpenGLInitialized = false;
-static int sWidth = 0;
-static int sHeight =0;
 static int quitRequest = 0;
 
 #define	menuHeight 50
-#define borders 16
+#define borders 10
 int mainHeight, mainWidth;
 int listHeight, listWidth;
 int simHeight, simWidth;
 int bAreaHeight, bAreaWidth;
 
 HWND blank;
+HWND hWndList;
 
 LPWSTR *argv;
 int argc;

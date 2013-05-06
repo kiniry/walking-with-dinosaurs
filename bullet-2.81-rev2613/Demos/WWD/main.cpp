@@ -28,7 +28,7 @@ int main(int argc,char** argv)
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
 	return pipeServerMain(numCores,populationSize,nrOfGenerations,ancestor);
-	//return pipeClientMain(argc,argv);
+	return pipeClientMain(argc,argv);
 	//return WWD(argc,argv);
 
 #endif

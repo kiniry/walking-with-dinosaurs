@@ -149,7 +149,7 @@ void sendResult(std::vector<creature> creatures){
 	printf("Sending results\n");
 
 	std::stringstream filename;
-	filename << "WWDCreatures"<<ID<<".dat";
+	filename << directory<< "WWDCreatures"<<ID<<".dat";
 	std::ofstream os;
 	os.open(filename.str(),std::ios::out | std::ios::binary);
 

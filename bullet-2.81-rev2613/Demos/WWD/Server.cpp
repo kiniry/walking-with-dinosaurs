@@ -231,40 +231,43 @@ void receiveAcknowledges(){
 	// Receive a request from client.
 	//
 	printf("waiting for Ack\n");
-	wchar_t chRequest[BUFFER_SIZE];
-	DWORD cbRequest, cbRead;
-	cbRequest = sizeof(chRequest);
-	BOOL fFinishRead = FALSE;
-	do{
-		fFinishRead = ReadFile(
-			pipes.at(0),     // Handle of the pipe
-			chRequest,      // Buffer to receive data
-			cbRequest,      // Size of buffer in bytes
-			&cbRead,        // Number of bytes read
-			NULL            // Not overlapped I/O
-			);
+	for(int i =0;i<pipes.size();i++){
+		wchar_t chRequest[BUFFER_SIZE];
+		DWORD cbRequest, cbRead;
+		cbRequest = sizeof(chRequest);
+		BOOL fFinishRead = FALSE;
+		do{
+			fFinishRead = ReadFile(
+				pipes.at(i),     // Handle of the pipe
+				chRequest,      // Buffer to receive data
+				cbRequest,      // Size of buffer in bytes
+				&cbRead,        // Number of bytes read
+				NULL            // Not overlapped I/O
+				);
 
-		if (ERROR_BROKEN_PIPE == GetLastError()){
-			wprintf(L"broken Pipe w/err 0x%08lx\n", dwError);
+			if (ERROR_BROKEN_PIPE == GetLastError()){
+				wprintf(L"broken Pipe w/err 0x%08lx\n", dwError);
+				exit(-1);
+			}
+
+			if (!fFinishRead && ERROR_MORE_DATA != GetLastError())
+			{
+				dwError = GetLastError();
+				wprintf(L"ReadFile from pipe failed w/err 0x%08lx\n", dwError);
+				exit(-1);
+			}
+
+			wprintf(L"Receive %ld bytes from client: \"%s\"\n", cbRead, chRequest);
+		} while (!fFinishRead); // Repeat loop if ERROR_MORE_DATA
+
+		if (wcscmp(chRequest, L"DONE")!=0){
+			wprintf(L"Handshake failed:\n");
 			exit(-1);
+		}else{
+			printf("ack recieved from %d\n",i);
 		}
-
-		if (!fFinishRead && ERROR_MORE_DATA != GetLastError())
-		{
-			dwError = GetLastError();
-			wprintf(L"ReadFile from pipe failed w/err 0x%08lx\n", dwError);
-			exit(-1);
-		}
-
-		wprintf(L"Receive %ld bytes from client: \"%s\"\n", cbRead, chRequest);
-	} while (!fFinishRead); // Repeat loop if ERROR_MORE_DATA
-
-	if (wcscmp(chRequest, L"DONE")!=0){
-		wprintf(L"Handshake failed:\n");
-		exit(-1);
-	}else{
-		printf("ack recieved\n\n");
 	}
+	printf("\n");
 }
 
 std::vector<creature> getResults(int cores){
