@@ -349,7 +349,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		#define WM_MBUTTONDBLCLK                0x0209
 		*/
 
-
+	case WM_CONTEXTMENU:{
+		POINT p;
+		HMENU popupMenu = CreatePopupMenu();
+		InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RUN_BUTTON,"Run");
+		GetCursorPos(&p);
+		TrackPopupMenu(popupMenu,TPM_BOTTOMALIGN|TPM_LEFTALIGN,p.x,p.y,0,hwnd,NULL);
+		break;}
 
 	case WM_CLOSE:
 		PostQuitMessage( 0 );
