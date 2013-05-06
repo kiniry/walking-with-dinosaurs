@@ -54,7 +54,6 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 	sendOrders(stop);
 
 	//close pipes
-	getchar();
 	return 0;
 }
 

@@ -622,6 +622,81 @@ void loadSaves(){
 	tmp2->name="hula hula";
 
 	saves.push_back(tmp2);
+
+
+	std::stringstream filename;
+	filename << directory<< "GenPool.dino";
+
+
+	std::ifstream is;
+	is.open(filename.str(),std::ios::in | std::ios::binary);
+
+	int noCreatures;
+	is.read((char*)&noCreatures, sizeof(int));
+
+	printf("creatures to be read %d\n",	 noCreatures);
+
+	for(int i=0;i<noCreatures;i++){
+		save* tmpCreature =new save();
+
+		//read name
+		int nameLength;
+		is.read((char*)&nameLength, sizeof(int));
+		tmpCreature->name.resize(nameLength);
+		is.read((char*)&tmpCreature->name[0], sizeof(int)*nameLength);
+
+		//read dna
+		int sizeOfDna;
+		is.read((char*)&sizeOfDna, sizeof(int));
+		tmpCreature->dna.resize(sizeOfDna);
+		is.read((char*)&tmpCreature->dna[0], sizeof(int)*sizeOfDna);
+
+		//read fitness
+		is.read((char*)&tmpCreature->fitness, sizeof(float));
+		printf("fitness nr %d: %f\n",i, tmpCreature->fitness);
+		saves.push_back(tmpCreature);
+
+	}
+	if(!is.good()){
+		printf("error\n");
+		exit(-1);
+	}
+	is.close();
+
+
+}
+
+void saveSaves(std::vector<save> saves){
+	printf("Sending results\n");
+
+	std::stringstream filename;
+	filename << directory<< "GenPool.dino";
+	std::ofstream os;
+	os.open(filename.str(),std::ios::out | std::ios::binary);
+
+	int noCreatures =saves.size();
+
+	os.write((const char*)&noCreatures, sizeof(int));
+
+	for(int j =0; j< (int)saves.size();j++){
+		int nameLenght = saves.at(j).name.length();
+		os.write((const char*)&nameLenght, sizeof(int));
+		os.write((const char*)&saves.at(j).name[0], sizeof(char)*nameLenght);
+
+		int size = saves.at(j).dna.size();
+		os.write((const char*)&size, sizeof(int));
+
+		os.write((const char*)&saves.at(j).dna[0], sizeof(int)*size);
+		printf("fitness nr %d: %f\n",j, saves.at(j).fitness);
+		os.write((const char*)&saves.at(j).fitness, sizeof(float));
+	}
+	if(!os.good()){
+		printf("error\n");
+		exit(-1);
+	}
+	os.flush();
+	os.close();
+	printf("sending done\n\n");
 }
 
 void console(){
