@@ -226,7 +226,7 @@ public:
 
 	virtual void specialKeyboardUp(int key, int x, int y){}
 
-	virtual void reshape(int x, int y, int w, int h);
+	virtual void reshape(int w, int h);
 
 	virtual void mouseFunc(int button, int state, int x, int y);
 

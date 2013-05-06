@@ -2,9 +2,7 @@
 
 
 // WinMain
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
-	LPSTR lpCmdLine, int cmdShow)
-{
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int cmdShow){
 
 	argv =CommandLineToArgvW(GetCommandLineW(),&argc);
 
@@ -74,15 +72,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	wc.lpszClassName = "blank";
 	RegisterClassEx( &wc );
 
-	int height =768-16-50;
-	int width= 1024-16;
-	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,150,100,width-150,height-100, hWnd,(HMENU)IDC_SIM, GetModuleHandle(NULL), NULL);
+	calcSizes(768,1024);
+
+	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,listWidth,bAreaHeight,simWidth,simHeight, hWnd,(HMENU)IDC_SIM, GetModuleHandle(NULL), NULL);
 
 	EnableOpenGL( blank, &hDC, &hRC );
 
 
 
-	HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL|LBS_NOTIFY,0, 0, 150, height, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
+	HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL|LBS_NOTIFY,0, 0, listWidth, listHeight, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
 	for(int i=0;i<(int)saves.size();i++){
 		SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)saves.at(i)->name.c_str());
 	}
@@ -93,7 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//init creature
 	readDNA(&saves.at(0)->dna,WWDPhysics);
 	WWDPhysics->solveGroundConflicts();
-	WWDPhysics->reshape(0,0,sWidth,sHeight);
+	WWDPhysics->reshape(sWidth,sHeight);
 
 
 
@@ -102,14 +100,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//button
 	// Create a push button
 	HWND hWndButton=CreateWindowEx(NULL,TEXT("BUTTON"),	"RUN", WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_DEFPUSHBUTTON,
-		150,
-		50,
-		100,
-		24,
-		hWnd,
-		(HMENU)IDC_RUN_BUTTON,
-		GetModuleHandle(NULL),
-		NULL);
+		150, 50, 100, 24,
+		hWnd, (HMENU)IDC_RUN_BUTTON, GetModuleHandle(NULL),	NULL);
 	HGDIOBJ hfDefault=GetStockObject(DEFAULT_GUI_FONT);
 	SendMessage(hWndButton,WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE,0));
 
@@ -423,7 +415,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 						readDNA(&saves.at(0)->dna,WWDPhysics);
 						WWDPhysics->solveGroundConflicts();
-						WWDPhysics->reshape(0,0,sWidth,sHeight);
+						WWDPhysics->reshape(sWidth,sHeight);
 
 
 
@@ -575,5 +567,21 @@ void console(){
 	FILE* hf_in = _fdopen(hCrt, "r");
 	setvbuf(hf_in, NULL, _IONBF, 128);
 	*stdin = *hf_in;
+
+}
+
+void calcSizes(int height, int witdh){
+
+	mainHeight=	height-borders-menuHeight;
+	mainWidth= witdh-borders;
+
+	listWidth=150;
+	listHeight=mainHeight;
+
+	bAreaHeight=100;
+	bAreaWidth=mainWidth-listWidth;
+
+	simHeight=mainHeight-bAreaHeight;
+	simWidth=mainWidth-listWidth;
 
 }

@@ -24,6 +24,12 @@ static int sWidth = 0;
 static int sHeight =0;
 static int quitRequest = 0;
 
+#define	menuHeight 50
+#define borders 16
+int mainHeight, mainWidth;
+int listHeight, listWidth;
+int simHeight, simWidth;
+int bAreaHeight, bAreaWidth;
 
 HWND blank;
 
@@ -47,5 +53,5 @@ void DisableOpenGL(HWND hWnd, HDC hDC, HGLRC hRC);
 
 
 void console();
-
+ void calcSizes(int height, int witdh);
 void loadSaves();
