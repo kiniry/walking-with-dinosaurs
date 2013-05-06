@@ -22,6 +22,9 @@ class btShapeHull;
 
 #include "BulletCollision/CollisionShapes/btShapeHull.h"
 #include "stb_image.h"
+#include <string>
+#include <vector>
+#include <Shlwapi.h>
 
 /// OpenGL shape drawing
 class GL_ShapeDrawer
@@ -62,11 +65,48 @@ public:
 		static void		drawCylinder(float radius,float halfHeight, int upAxis);
 		void			drawSphere(btScalar r, int lats, int longs);
 		static void		drawCoordSystem();
-		
+	
+
+
+		char* getTexturePath(char* FileName){
+	//filepath creatures
+	char* fileName = (char*) malloc(MAX_PATH*sizeof(char));
+	HINSTANCE hInstance = GetModuleHandle(NULL);
+	GetModuleFileName(hInstance, fileName, MAX_PATH);
+
+	char* filePathAbs = (char*) malloc(MAX_PATH*sizeof(char));
+	//make absolute
+	std::vector<int> slashes;
+	int j =0;
+	for(int i =0;i<MAX_PATH; i++){
+		if(fileName[i]=='\\'){
+			slashes.push_back(i);
+		}
+		if(fileName[i]=='.' && fileName[i+1]=='.' && fileName[i+2]=='\\'){
+			slashes.pop_back();
+			i++;
+			j=slashes.back()+1;
+			slashes.pop_back();
+		}else{
+			filePathAbs[j]=fileName[i];
+			j++;
+		}
+	}
+
+	PathRemoveFileSpec(filePathAbs);
+	PathAddBackslash(filePathAbs);
+	
+	
+	PathAppend(filePathAbs,FileName);
+	delete fileName;
+	
+	return filePathAbs;
+}
+
+
 };
 
 void OGL_displaylist_register_shape(btCollisionShape * shape);
 void OGL_displaylist_clean();
-
 #endif //GL_SHAPE_DRAWER_H
 
