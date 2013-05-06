@@ -512,17 +512,17 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 				}
 			}*/
 			int x=0,y=0,n=0;
-			stbi_uc* theTex = stbi_load("c:\\scale.png",&x,&y,&n,0);
+			stbi_uc* theTex = stbi_load("c:\\Grass2.png",&x,&y,&n,0);
 			printf("x: %d y: %d n: %d",x,y,n);
 			GLenum type = GL_RGB;
 			if(n==4){type=GL_RGBA;}
 			glGenTextures(1,(GLuint*)&m_texturehandle);
 			glBindTexture(GL_TEXTURE_2D,m_texturehandle);
-			glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+			//glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
 			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_MIRRORED_REPEAT);
+			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_MIRRORED_REPEAT);
 			gluBuild2DMipmaps(GL_TEXTURE_2D,n,x,y,type,GL_UNSIGNED_BYTE,theTex);
 			
 			
@@ -555,20 +555,20 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 			}
 		glMatrixMode(GL_MODELVIEW);
 
-		btScalar* openGLMat = new btScalar[12];
-		basis->getOpenGLSubMatrix(openGLMat);
-		static const GLfloat	planex[]={1,0,0,0};
+		//btScalar* openGLMat = new btScalar[12];
+		//basis->getOpenGLSubMatrix(openGLMat);
+		//static const GLfloat	planex[]={1,0,0,0};
 		//static const GLfloat	planex[]={openGLMat[0],openGLMat[1],openGLMat[2],openGLMat[3]};
 		//static const GLfloat	planez[]={openGLMat[8],openGLMat[9],openGLMat[10],openGLMat[11]};
 		//	static const GLfloat	planey[]={0,1,0,0};
-			static const GLfloat	planez[]={0,0,1,0};
-			glTexGenfv(GL_S,GL_OBJECT_PLANE,planex);
-			glTexGenfv(GL_T,GL_OBJECT_PLANE,planez);
-			glTexGeni(GL_S,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
-			glTexGeni(GL_T,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
-			glEnable(GL_TEXTURE_GEN_S);
-			glEnable(GL_TEXTURE_GEN_T);
-			glEnable(GL_TEXTURE_GEN_R);
+			//static const GLfloat	planez[]={0,0,1,0};
+			//glTexGenfv(GL_S,GL_OBJECT_PLANE,planex);
+			//glTexGenfv(GL_T,GL_OBJECT_PLANE,planez);
+			//glTexGeni(GL_S,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
+			//glTexGeni(GL_T,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
+			//glEnable(GL_TEXTURE_GEN_S);
+			//glEnable(GL_TEXTURE_GEN_T);
+			//glEnable(GL_TEXTURE_GEN_R);
 			m_textureinitialized=true;
 
 		
@@ -628,15 +628,15 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 						0,1,2,
 						3,2,1,
 						4,0,6,
-						6,0,2,
+						2,6,0,//6,0,2,
 						5,1,4,
-						4,1,0,
-						7,3,1,
-						7,1,5,
+						0,4,1,//4,1,0,
+						3,1,7,//7,3,1,
+						5,7,1,//7,1,5,
 						5,4,7,
-						7,4,6,
-						7,2,3,
-						7,6,2};
+						6,7,4,//7,4,6,
+						3,7,2,//7,2,3,
+						6,2,7};//7,6,2};
 
 					 btVector3 vertices[8]={	
 						btVector3(halfExtent[0],halfExtent[1],halfExtent[2]),
@@ -650,18 +650,31 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 #if 1
 					glBegin (GL_TRIANGLES);
 					int si=36;
+					/*int val = halfExtent[0];
+					if(val>halfExtent[1]){val=halfExtent[1];}
+					if(val>halfExtent[2]){val=halfExtent[2];}
+					if(val<1){val=1;}
+					val=val*6;*/
+					int toggle = 1;
 					for (int i=0;i<si;i+=3)
 					{
 						const btVector3& v1 = vertices[indices[i]];;
 						const btVector3& v2 = vertices[indices[i+1]];
 						const btVector3& v3 = vertices[indices[i+2]];
+
+						btScalar xSize = max((v1).distance(v2),1)*4;
+						btScalar ySize = max((v1).distance(v3),1)*4;
+
 						btVector3 normal = (v3-v1).cross(v2-v1);
 						normal.normalize ();
 						glNormal3f(normal.getX(),normal.getY(),normal.getZ());
+						glTexCoord2f(toggle*xSize,toggle*ySize);
 						glVertex3f (v1.x(), v1.y(), v1.z());
+						glTexCoord2f((1-toggle)*xSize,toggle*ySize);
 						glVertex3f (v2.x(), v2.y(), v2.z());
+						glTexCoord2f(toggle*xSize,(1-toggle)*ySize);
 						glVertex3f (v3.x(), v3.y(), v3.z());
-						
+						toggle = 1-toggle;
 					}
 					glEnd();
 #endif
