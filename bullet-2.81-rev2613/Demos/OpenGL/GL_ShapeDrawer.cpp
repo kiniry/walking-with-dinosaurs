@@ -668,8 +668,8 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 						const btVector3& v2 = vertices[indices[i+1]];
 						const btVector3& v3 = vertices[indices[i+2]];
 
-						btScalar xSize = max((v1).distance(v2),1)*4;
-						btScalar ySize = max((v1).distance(v3),1)*4;
+						btScalar xSize = max((v1).distance(v2),1)*3;
+						btScalar ySize = max((v1).distance(v3),1)*3;
 
 						btVector3 normal = (v3-v1).cross(v2-v1);
 						normal.normalize ();

@@ -164,7 +164,9 @@ int NN(int index, std::vector<int> *DNA,partNode* body){
 		NNLayerNode* aLayerNode = new NNLayerNode(index);
 		body->addNNChild(aLayerNode);
 		index = NNL(index,SUBNET_NET_WIDTH,DNA,0,aLayerNode,true);
-		aLayerNode->setEnd(index);
+		if(index<=DNA->size()){
+			aLayerNode->setEnd(index);}
+		else{aLayerNode->setEnd(DNA->size());}
 	}
 
 	
@@ -196,7 +198,9 @@ int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, 
 		node->addChild(aNode);
 		if(!isJustChecking){index = NI(index,DNA,aNet);} //insert the nodes
 		else{index = NI(index,DNA);}
-		aNode->setEnd(index);
+		if(index<=DNA->size()){
+			aNode->setEnd(index);}
+		else{aNode->setEnd(DNA->size());}
 	}
 	return index;
 }
@@ -238,7 +242,9 @@ int treeB(int index, std::vector<int> *DNA, int *blocks, partNode* body){
 	for(int i=0;i<attachedCount;i++){
 		index = treeJ(index, DNA, blocks, body);
 	}
-	body->setEnd(index);
+	if(index<=DNA->size()){
+		body->setEnd(index);}
+	else{body->setEnd(DNA->size());}
 	return index;
 }
 
@@ -276,7 +282,9 @@ int treeNN(int index, std::vector<int> *DNA,MTree* mainTree){
 		NNLayerNode* aLayerNode = new NNLayerNode(index);
 		mainTree->addNeuralNetworkLayer(aLayerNode);
 		index = NNL(index,SUBNET_NET_WIDTH,DNA,0,aLayerNode,true);
-		aLayerNode->setEnd(index);
+		if(index<=DNA->size()){
+			aLayerNode->setEnd(index);}
+		else{aLayerNode->setEnd(DNA->size());}
 	}
 	return index;
 }
