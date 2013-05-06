@@ -15,6 +15,8 @@ subject to the following restrictions:
 #ifndef GLUT_STUFF_H
 #define GLUT_STUFF_H
 
+#  include <GL/glew.h>
+
 #ifdef _WIN32//for glut.h
 #include <windows.h>
 #endif
@@ -33,8 +35,10 @@ subject to the following restrictions:
 #include <GL/gl.h>
 #include <GL/glu.h>
 #else
-#include <GL/gl.h>
+
+//#include <GL/gl.h>
 #include <GL/glut.h>
+
 #endif //_WINDOWS
 #endif //APPLE
 

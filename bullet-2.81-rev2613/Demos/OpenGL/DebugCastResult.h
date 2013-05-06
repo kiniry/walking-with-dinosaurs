@@ -28,7 +28,7 @@ subject to the following restrictions:
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
-#include <GL/gl.h>
+//#include <GL/gl.h>
 #endif
 struct btDebugCastResult : public btConvexCast::CastResult
 {
