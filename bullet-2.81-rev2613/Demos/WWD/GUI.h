@@ -1,15 +1,11 @@
 #pragma once
 
 #include <windows.h>
-#include <gl/gl.h>
-#include "Grammar.h"
 
-//#include "DemoApplication.h"
+#include "Grammar.h"
 
 #include "Server.h"
 #include <ctime>
-#include "GLDebugDrawer.h"
-#include "GLDebugFont.h"
 #include "Physics.h"
 #include "BulletDynamics/Dynamics/btDynamicsWorld.h"
 
@@ -29,6 +25,10 @@ static int sHeight =0;
 static int quitRequest = 0;
 
 
+HWND blank;
+
+LPWSTR *argv;
+int argc;
 
 struct save{
 	std::string name;

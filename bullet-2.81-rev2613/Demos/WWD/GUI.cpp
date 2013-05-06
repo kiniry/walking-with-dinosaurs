@@ -1,11 +1,7 @@
-													#include "GUI.h"
+#include "GUI.h"
+
 
 // WinMain
-HWND blank;
-
-LPWSTR *argv;
-int argc;
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 	LPSTR lpCmdLine, int cmdShow)
 {
@@ -31,7 +27,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// register window class
 	//definere et vindues classe og dens parametre/udsende
 	wc.cbSize		 = sizeof(WNDCLASSEX);
-	wc.style = CS_OWNDC;
+	wc.style = 0;
 	wc.lpfnWndProc = WndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
@@ -65,6 +61,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	// register window class
 	wc.cbSize		 = sizeof(WNDCLASSEX);
+	//cs_owndc svaes the cach, used for painting outside normal routine
 	wc.style = CS_OWNDC;
 	wc.lpfnWndProc = WndProc;
 	wc.cbClsExtra = 0;
@@ -86,7 +83,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 	HWND hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL|LBS_NOTIFY,0, 0, 150, height, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
-	for(int i=0;i<saves.size();i++){
+	for(int i=0;i<(int)saves.size();i++){
 		SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)saves.at(i)->name.c_str());
 	}
 	SendMessage(hWndList,LB_SETCURSEL,0,0);

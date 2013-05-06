@@ -109,7 +109,7 @@ void pipeSim(std::vector<creature> *creatures){
 	std::vector<Physics*> worlds;
 
 	//run simulator
-	for(int i=0;i< creatures->size();i++){
+	for(int i=0;i< (int) creatures->size();i++){
 		Physics* WWDPhysics = new Physics(creatures->at(i).dna);
 		readDNA(&creatures->at(i).dna,WWDPhysics);
 		WWDPhysics->runSimulation(); //runs a physics simulation and save the fitness values
@@ -157,7 +157,7 @@ void sendResult(std::vector<creature> creatures){
 
 	os.write((const char*)&noCreatures, sizeof(int));
 
-	for(int j =0; j<creatures.size();j++){
+	for(int j =0; j< (int)creatures.size();j++){
 		int size = creatures.at(j).dna.size();
 		os.write((const char*)&size, sizeof(int));
 

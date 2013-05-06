@@ -31,13 +31,13 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 	for(int i =0; i<(int)survivors; i++){
 		result.push_back(creatures.at(i));
 		elites.push_back(creatures.at(i));
-		fitnessSumElites += (creatures.at(i).fitness>0.001?creatures.at(i).fitness:0.001);
+		fitnessSumElites += (float) (creatures.at(i).fitness>0.001?creatures.at(i).fitness:0.001);
 	}
 
 	if((int)creatures.size()>survivors){
 	for(int i =survivors; i<((((int)creatures.size())-survivors)-cullAmount); i++){
 		breeders.push_back(creatures.at(i));
-		fitnessSumBreeders += (creatures.at(i).fitness>0.001?creatures.at(i).fitness:0.001);
+		fitnessSumBreeders += (float) (creatures.at(i).fitness>0.001?creatures.at(i).fitness:0.001);
 	}
 	}
 	for(int i =0; i<(int) creatures.size()-survivors;i++){
@@ -62,7 +62,7 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 	}
 	
 	//cleanup
-	for(int i=0;i<creatures.size();i++){
+	for(int i=0;i<(int)creatures.size();i++){
 		delete creatures.at(i).treePointer;
 	}
 
@@ -85,7 +85,7 @@ creature getWorthyCreature(float fitnessSum, std::vector<creature> creatures){
 			break;
 		}
 	}
-	if(i>=creatures.size()){
+	if(i>= (int)creatures.size()){
 		printf("FAIL... how irritating");
 		return creatures.at(creatures.size()-1);
 	}
@@ -102,7 +102,7 @@ std::vector<int> mutate(const std::vector<int> dna, double deviation){
 
 		if(forskel>0){
 
-			int chance=dna.size()*forskel/deviation;
+			int chance=(int)(dna.size()*forskel/deviation+0.5);
 			if(chance==dna.size()){chance--;}
 			chanceToMutate = rand()%(dna.size()-chance);
 
@@ -202,7 +202,7 @@ double statistik(std::vector<creature> creatures){
 
 void normalizeFitness(std::vector<creature> creatures){
 	double sum = 0;
-	for(int i =0; i<creatures.size();i++){
+	for(int i =0; i<(int)creatures.size();i++){
 		if(	creatures.at(i).fitness<=0){
 		   creatures.at(i).fitness=0.0001;
 		}
@@ -210,8 +210,8 @@ void normalizeFitness(std::vector<creature> creatures){
 	}
 
 	
-	for(int i =0; i<creatures.size();i++){
+	for(int i =0; i<(int)creatures.size();i++){
 
-		creatures.at(i).fitness=creatures.at(i).fitness/sum*100.;
+		creatures.at(i).fitness=(float)creatures.at(i).fitness/sum*100.;
 	}
 }
