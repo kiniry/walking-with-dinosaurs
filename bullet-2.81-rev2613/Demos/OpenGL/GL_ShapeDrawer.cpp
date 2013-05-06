@@ -511,9 +511,13 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 					pi[0]=pi[1]=pi[2]=c;pi+=3;
 				}
 			}*/
+			
+
 			int x=0,y=0,n=0;
-			stbi_uc* theTex = stbi_load("c:\\Grass2.png",&x,&y,&n,0);
-			printf("x: %d y: %d n: %d",x,y,n);
+			char* path = getTexturePath("Textures\\Grass2.png");
+			stbi_uc* theTex = stbi_load(path,&x,&y,&n,0);
+			delete path;
+
 			GLenum type = GL_RGB;
 			if(n==4){type=GL_RGBA;}
 			glGenTextures(1,(GLuint*)&m_texturehandle);
@@ -527,8 +531,10 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 			
 			
 			int x2=0,y2=0,n2=0;
-			stbi_uc* theTex2 = stbi_load("c:\\scale.png",&x2,&y2,&n2,0);
-			printf("x: %d y: %d n: %d",x,y,n);
+			char* path2 = getTexturePath("Textures\\scale.png");
+			stbi_uc* theTex2 = stbi_load(path2,&x2,&y2,&n2,0);
+			delete path2;
+
 			GLenum type2 = GL_RGB;
 			if(n2==4){type2=GL_RGBA;}
 
