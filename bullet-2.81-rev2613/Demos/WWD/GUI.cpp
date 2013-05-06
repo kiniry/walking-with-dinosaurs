@@ -501,30 +501,46 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				_ASSERTE(hwndPop != NULL);
 				
-				int length;
+				int length=0;
 
 		length = GetWindowTextLength(hwndPop);
-		// No need to bother if there's no text.
-		if(length > 0)
-		{
-			TCHAR * text = new TCHAR[length + 1];
 
+		if(length > 0){
+			TCHAR * text = new TCHAR[length + 1];
 				GetWindowText(hwndPop,text,length+1);
 				for(int i =0; i<length;i++){
-					pop+=((text[i]-48)*pow(10.,i)+0.5);
+
+					int value = ((int)text[i])-48;
+					int res =  (value* pow(10.,length-1-i)+0.5);
+					pop+=res;
 				}
-				printf("\npop %s\n", text);
-
 		}else{
-
 		 	 MessageBox(NULL, "No populastion size selected", TEXT("ERROR"), MB_OK);
 				  return 0;
 		}
 
+		 int noG = 0;
+		  				HWND hwndNoG = GetDlgItem(hwnd, IDC_NOG_EDIT);
 
-
+				_ASSERTE(hwndNoG != NULL);
 				
-				int noG = 10;
+				length=0;
+
+		length = GetWindowTextLength(hwndNoG);
+				if(length > 0){
+			TCHAR * text = new TCHAR[length + 1];
+				GetWindowText(hwndNoG,text,length+1);
+				for(int i =0; i<length;i++){
+
+					int value = ((int)text[i])-48;
+					int res =  (value* pow(10.,length-1-i)+0.5);
+					noG+=res;
+				}
+		}else{
+		 	 MessageBox(NULL, "No number of generations selected", TEXT("ERROR"), MB_OK);
+				  return 0;
+		}
+
 				pipeServerMain(numCores,pop,noG,saves.at(itemIndex)->dna);
 
 
