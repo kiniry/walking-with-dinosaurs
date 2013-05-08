@@ -5,6 +5,7 @@
 *.lib
 *.exe
 *.dat
+*.dino
 
 *.pydevproject
 .project

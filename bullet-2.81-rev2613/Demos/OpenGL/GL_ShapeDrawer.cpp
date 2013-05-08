@@ -415,7 +415,7 @@ void GL_ShapeDrawer::drawSkybox(){
 			names.push_back("Textures\\top1h.jpg");		//defined top place
 			names.push_back("Textures\\left1h.jpg");	//defined left place
 			names.push_back("Textures\\back1h.jpg");	//defined back place
-			names.push_back("Textures\\bot1h.jpg");		//defined bottom place
+			names.push_back("Textures\\bot1h.png");		//defined bottom place
 
 			for(int i=0;i<6;i++){
 				int x=0,y=0,n=0;
@@ -641,7 +641,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 			
 			
 			int x2=0,y2=0,n2=0;
-			char* path2 = getTexturePath("Textures\\scale.png");
+			char* path2 = getTexturePath("Textures\\scale3.png");
 			stbi_uc* theTex2 = stbi_load(path2,&x2,&y2,&n2,0);
 			delete path2;
 
