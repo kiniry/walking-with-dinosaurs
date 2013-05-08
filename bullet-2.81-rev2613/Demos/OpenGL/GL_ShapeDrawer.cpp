@@ -624,7 +624,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 		if(m_textureenabled&&(!m_textureinitialized))
 		{
 			int x=0,y=0,n=0;
-			char* path = getTexturePath("Textures\\Grass2.png");
+			char* path = getTexturePath("Textures\\Grass.png");
 			stbi_uc* theTex = stbi_load(path,&x,&y,&n,0);
 			delete path;
 
