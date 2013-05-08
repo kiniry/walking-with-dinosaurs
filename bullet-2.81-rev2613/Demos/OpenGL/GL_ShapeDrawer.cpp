@@ -401,7 +401,7 @@ void renderSquareA(float x, float y, float z)
 inline void glDrawVector(const btVector3& v) { glVertex3d(v[0], v[1], v[2]); }
 
 void GL_ShapeDrawer::drawSkybox(){
-	glFrontFace(GL_CW);
+	//glFrontFace(GL_CW);
 	glDisable(GL_LIGHTING);
 	//glPushMatrix(); 
 	//btglMultMatrix(m);
@@ -411,9 +411,9 @@ void GL_ShapeDrawer::drawSkybox(){
 			m_skyboxhandle = new std::vector<unsigned int>();
 			//for(int i=0;i<6;i++){names.push_back("Textures\\scale.png");}
 			names.push_back("Textures\\front1h.jpg");	//defined front place
-			names.push_back("Textures\\left1h.jpg");	//defined left place
-			names.push_back("Textures\\top1h.jpg");		//defined top place
 			names.push_back("Textures\\right1h.jpg");	//defined right place
+			names.push_back("Textures\\top1h.jpg");		//defined top place
+			names.push_back("Textures\\left1h.jpg");	//defined left place
 			names.push_back("Textures\\back1h.jpg");	//defined back place
 			names.push_back("Textures\\bot1h.jpg");		//defined bottom place
 
@@ -432,8 +432,8 @@ void GL_ShapeDrawer::drawSkybox(){
 				glBindTexture(GL_TEXTURE_2D,m_skyboxhandle->at(i));
 				glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 				glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-				glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-				glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+				glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+				glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
 				gluBuild2DMipmaps(GL_TEXTURE_2D,n,x,y,type,GL_UNSIGNED_BYTE,theTex);
 				delete theTex;
 			}
@@ -460,28 +460,22 @@ void GL_ShapeDrawer::drawSkybox(){
 		glColor3f(1,1, 1);
 
 		bool useWireframeFallback = true;
-
-			int shapetype=BOX_SHAPE_PROXYTYPE;
-			switch (shapetype)
-			{
-				case BOX_SHAPE_PROXYTYPE:
-				{
 					//const btBoxShape* boxShape = static_cast<const btBoxShape*>(shape);
 					//btVector3 halfExtent = boxShape->getHalfExtentsWithMargin();
 					btVector3 halfExtent = btVector3(5000,5000,5000);
 					static int indices[36] = {
-						3,2,1,//0,1,2,
-						0,1,2,//3,2,1,
-						2,6,0,//4,0,6,
-						4,0,6,//2,6,0,
-						1,0,5,//5,1,4,
-						4,5,0,//0,4,1,
-						7,3,5,//3,1,7,
-						1,5,3,//5,7,1,
-						6,7,4,//5,4,7,
-						5,4,7,//6,7,4,
-						3,7,2,
-						6,2,7};
+						2,3,0,//3,1,2,
+						1,0,3,//0,2,1,
+						6,2,4,//2,0,6,
+						0,4,2,//4,6,0,
+						0,1,4,//1,5,0,
+						5,4,1,//4,0,5,
+						3,7,1,//7,5,3,
+						5,1,7,//1,3,5,
+						7,6,5,//6,4,7,
+						4,5,6,//5,7,4,
+						3,2,7,//
+						6,7,2};//
 
 					 btVector3 vertices[8]={	
 						btVector3(halfExtent[0],halfExtent[1],halfExtent[2]),
@@ -492,8 +486,7 @@ void GL_ShapeDrawer::drawSkybox(){
 						btVector3(-halfExtent[0],halfExtent[1],-halfExtent[2]),	
 						btVector3(halfExtent[0],-halfExtent[1],-halfExtent[2]),	
 						btVector3(-halfExtent[0],-halfExtent[1],-halfExtent[2])};
-#if 1
-					
+
 					//int si=36;
 					int toggle = 1;
 					int i=0;
@@ -519,19 +512,18 @@ void GL_ShapeDrawer::drawSkybox(){
 						}
 						glEnd();
 					}
-#endif
+
 
 					useWireframeFallback = false;
-					break;
-				}
+					
 	
 	glEnable(GL_LIGHTING);
-	glFrontFace(GL_CCW);
-	glDisable(GL_CULL_FACE);
-	glClear(GL_STENCIL_BUFFER_BIT);
-	glEnable(GL_CULL_FACE);
+	//glFrontFace(GL_CCW);
+	//glDisable(GL_CULL_FACE);
+	//glClear(GL_STENCIL_BUFFER_BIT);
+	//glEnable(GL_CULL_FACE);
 	
-}
+
 }
 
 void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, const btVector3& color,int	debugMode,const btVector3& worldBoundsMin,const btVector3& worldBoundsMax, btMatrix3x3* basis)
@@ -1141,6 +1133,7 @@ GL_ShapeDrawer::GL_ShapeDrawer()
 	m_textureenabled		=	false;
 	m_textureinitialized	=	false;
 	m_skyboxinitialized	=	false;
+	//glEnable(GL_SEA)
 }
 
 GL_ShapeDrawer::~GL_ShapeDrawer()

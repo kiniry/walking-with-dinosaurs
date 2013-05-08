@@ -1212,7 +1212,7 @@ void	DemoApplication::renderscene(int pass)
 			case	0:	
 				
 				m_shapeDrawer->drawOpenGL(m,colObj->getCollisionShape(),btVector3 (1.f,1.f,1.f),getDebugMode(),aabbMin,aabbMax,&colObj->getWorldTransform().getBasis());
-				//m_shapeDrawer->drawSkybox();
+				m_shapeDrawer->drawSkybox();
 				break;
 			case	1:	
 				//m_shapeDrawer->drawSkybox();
