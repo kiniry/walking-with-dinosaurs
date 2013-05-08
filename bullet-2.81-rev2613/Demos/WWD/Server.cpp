@@ -1,6 +1,6 @@
 #include "Server.h"
 
-int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor){
+creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor){
 	std::vector<creature> creatures;
 
 	//create creatures
@@ -54,7 +54,9 @@ int pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vect
 	sendOrders(stop);
 
 	//close pipes
-	return 0;
+	cleanUp();
+
+	return creatures.at(0);
 }
 
 void startPrograms(){
@@ -88,7 +90,7 @@ void startPrograms(){
 	for(int i=0;i<pipes.size();i++){
 		std::stringstream commandArgs;
 		commandArgs<<i;
-		ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_SHOWMINIMIZED );
+		ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_MINIMIZE );			 //SW_HIDE
 	}
 }
 
@@ -165,7 +167,16 @@ int sendCreatures(std::vector<creature> Creatures){
 	for(int id=0;id<pipes.size();id++){
 		printf("writing creatures to %s\n", creatureFilePaths.at(id).c_str());
 		std::ofstream os;
-		os.open(creatureFilePaths.at(id),std::ios::out | std::ios::binary);
+		 os.open(creatureFilePaths.at(id),std::ios::out | std::ios::binary);
+		if(!os.good()){
+		printf("good()=%d" , os.good());
+		printf(" eof()=%d" , os.eof());
+		printf(" fail()=%d", os.fail());
+		printf(" badd()=%d\n", os.bad());
+			printf("error\n");
+			exit(-1);
+		}
+		
 		int noCreatures;
 
 		int min = Creatures.size()/pipes.size();
@@ -186,6 +197,10 @@ int sendCreatures(std::vector<creature> Creatures){
 			printf("creat nr %d : %f\n",j, Creatures.at(j).fitness);
 		}
 		if(!os.good()){
+		printf("good()=%d" , os.good());
+		printf(" eof()=%d" , os.eof());
+		printf(" fail()=%d", os.fail());
+		printf(" badd()=%d\n", os.bad());
 			printf("error\n");
 			exit(-1);
 		}
@@ -289,4 +304,14 @@ std::vector<creature> getResults(){
 
 	printf("\n");
 	return results;
+}
+
+void cleanUp(){
+
+creatureFilePaths.clear();
+
+pipes.clear();
+
+fullPipeNames.clear();
+
 }

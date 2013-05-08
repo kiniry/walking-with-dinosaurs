@@ -56,5 +56,7 @@ void DisableOpenGL(HWND hWnd, HDC hDC, HGLRC hRC);
 
 
 void console();
- void calcSizes(int height, int witdh);
+void calcSizes(int height, int witdh);
 void loadSaves();
+void loadDefault();
+void saveSaves(std::vector<save*> saves);
