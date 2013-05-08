@@ -41,8 +41,10 @@ protected:
 	btAlignedObjectArray<ShapeCache*>	m_shapecaches;
 	unsigned int						m_texturehandle;
 	unsigned int						m_texturehandle2;
+	std::vector<unsigned int>*			m_skyboxhandle;
 	bool								m_textureenabled;
 	bool								m_textureinitialized;
+	bool								m_skyboxinitialized;
 	
 
 	ShapeCache*							cache(btConvexShape*);
@@ -65,6 +67,7 @@ public:
 		static void		drawCylinder(float radius,float halfHeight, int upAxis);
 		void			drawSphere(btScalar r, int lats, int longs);
 		static void		drawCoordSystem();
+		void			drawSkybox();
 	
 
 

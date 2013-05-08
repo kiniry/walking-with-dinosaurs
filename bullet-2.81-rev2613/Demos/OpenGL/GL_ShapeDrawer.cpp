@@ -400,6 +400,139 @@ void renderSquareA(float x, float y, float z)
 
 inline void glDrawVector(const btVector3& v) { glVertex3d(v[0], v[1], v[2]); }
 
+void GL_ShapeDrawer::drawSkybox(){
+	glFrontFace(GL_CW);
+	glDisable(GL_LIGHTING);
+	//glPushMatrix(); 
+	//btglMultMatrix(m);
+	if(m_textureenabled&&(!m_skyboxinitialized))
+		{
+			std::vector<char*> names = std::vector<char*>();
+			m_skyboxhandle = new std::vector<unsigned int>();
+			//for(int i=0;i<6;i++){names.push_back("Textures\\scale.png");}
+			names.push_back("Textures\\front1h.jpg");	//defined front place
+			names.push_back("Textures\\left1h.jpg");	//defined left place
+			names.push_back("Textures\\top1h.jpg");		//defined top place
+			names.push_back("Textures\\right1h.jpg");	//defined right place
+			names.push_back("Textures\\back1h.jpg");	//defined back place
+			names.push_back("Textures\\bot1h.jpg");		//defined bottom place
+
+			for(int i=0;i<6;i++){
+				int x=0,y=0,n=0;
+				char* path = getTexturePath(names.at(i));
+				//char* path = getTexturePath("Textures\\back1h.jpg");
+				stbi_uc* theTex = stbi_load(path,&x,&y,&n,0);
+				delete path;
+
+				GLenum type = GL_RGB;
+				if(n==4){type=GL_RGBA;}
+				unsigned int texVal=0;
+				m_skyboxhandle->push_back(texVal);
+				glGenTextures(1,(GLuint*)&(m_skyboxhandle->at(i)));
+				glBindTexture(GL_TEXTURE_2D,m_skyboxhandle->at(i));
+				glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+				glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+				glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+				glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+				gluBuild2DMipmaps(GL_TEXTURE_2D,n,x,y,type,GL_UNSIGNED_BYTE,theTex);
+				delete theTex;
+			}
+		}
+
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+		glScalef(1.f,1.f,1.f);	//scale tex 2 down
+		glMatrixMode(GL_MODELVIEW);
+
+		m_skyboxinitialized=true;
+
+		glEnable(GL_COLOR_MATERIAL);
+		if(m_textureenabled) 
+		{
+			glEnable(GL_TEXTURE_2D);
+				//glBindTexture(GL_TEXTURE_2D,m_texturehandle);	//tex 1
+				//glBindTexture(GL_TEXTURE_2D,m_skyboxhandle->at(0));
+		} else
+		{
+			glDisable(GL_TEXTURE_2D);
+		}
+
+		glColor3f(1,1, 1);
+
+		bool useWireframeFallback = true;
+
+			int shapetype=BOX_SHAPE_PROXYTYPE;
+			switch (shapetype)
+			{
+				case BOX_SHAPE_PROXYTYPE:
+				{
+					//const btBoxShape* boxShape = static_cast<const btBoxShape*>(shape);
+					//btVector3 halfExtent = boxShape->getHalfExtentsWithMargin();
+					btVector3 halfExtent = btVector3(5000,5000,5000);
+					static int indices[36] = {
+						3,2,1,//0,1,2,
+						0,1,2,//3,2,1,
+						2,6,0,//4,0,6,
+						4,0,6,//2,6,0,
+						1,0,5,//5,1,4,
+						4,5,0,//0,4,1,
+						7,3,5,//3,1,7,
+						1,5,3,//5,7,1,
+						6,7,4,//5,4,7,
+						5,4,7,//6,7,4,
+						3,7,2,
+						6,2,7};
+
+					 btVector3 vertices[8]={	
+						btVector3(halfExtent[0],halfExtent[1],halfExtent[2]),
+						btVector3(-halfExtent[0],halfExtent[1],halfExtent[2]),
+						btVector3(halfExtent[0],-halfExtent[1],halfExtent[2]),	
+						btVector3(-halfExtent[0],-halfExtent[1],halfExtent[2]),	
+						btVector3(halfExtent[0],halfExtent[1],-halfExtent[2]),
+						btVector3(-halfExtent[0],halfExtent[1],-halfExtent[2]),	
+						btVector3(halfExtent[0],-halfExtent[1],-halfExtent[2]),	
+						btVector3(-halfExtent[0],-halfExtent[1],-halfExtent[2])};
+#if 1
+					
+					//int si=36;
+					int toggle = 1;
+					int i=0;
+					for(int j=1;j<7;j++){
+						glBindTexture(GL_TEXTURE_2D,m_skyboxhandle->at(j-1));
+						glBegin (GL_TRIANGLES);
+						for(i;i<6*j;i+=3)
+						{
+							const btVector3& v1 = vertices[indices[i]];;
+							const btVector3& v2 = vertices[indices[i+1]];
+							const btVector3& v3 = vertices[indices[i+2]];
+
+							btVector3 normal = (v3-v1).cross(v2-v1);
+							normal.normalize ();
+							glNormal3f(-normal.getX(),-normal.getY(),-normal.getZ());
+							glTexCoord2f(toggle,toggle);
+							glVertex3f (v1.x(), v1.y(), v1.z());
+							glTexCoord2f((1-toggle),toggle);
+							glVertex3f (v2.x(), v2.y(), v2.z());
+							glTexCoord2f(toggle,(1-toggle));
+							glVertex3f (v3.x(), v3.y(), v3.z());
+							toggle = 1-toggle;
+						}
+						glEnd();
+					}
+#endif
+
+					useWireframeFallback = false;
+					break;
+				}
+	
+	glEnable(GL_LIGHTING);
+	glFrontFace(GL_CCW);
+	glDisable(GL_CULL_FACE);
+	glClear(GL_STENCIL_BUFFER_BIT);
+	glEnable(GL_CULL_FACE);
+	
+}
+}
 
 void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, const btVector3& color,int	debugMode,const btVector3& worldBoundsMin,const btVector3& worldBoundsMax, btMatrix3x3* basis)
 {
@@ -498,21 +631,6 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 	{
 		if(m_textureenabled&&(!m_textureinitialized))
 		{
-			/*GLubyte*	image=new GLubyte[256*256*3];
-			for(int y=0;y<256;++y)
-			{
-				const int	t=y>>4;
-				GLubyte*	pi=image+y*256*3;
-				for(int x=0;x<256;++x)
-				{
-					const int		s=x>>4;
-					const GLubyte	b=180;					
-					GLubyte			c=b+((s+t&1)&1)*(255-b);
-					pi[0]=pi[1]=pi[2]=c;pi+=3;
-				}
-			}*/
-			
-
 			int x=0,y=0,n=0;
 			char* path = getTexturePath("Textures\\Grass2.png");
 			stbi_uc* theTex = stbi_load(path,&x,&y,&n,0);
@@ -600,9 +718,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 			glDisable(GL_TEXTURE_2D);
 		}
 
-
-		glColor3f(color.x(),color.y(), color.z());	//debug colors	
-		//glColor3f(0,1, 0);							//green... shades also green -.-' function used for several purposes
+		glColor3f(color.x(),color.y(), color.z());
 
 		bool useWireframeFallback = true;
 
@@ -1024,6 +1140,7 @@ GL_ShapeDrawer::GL_ShapeDrawer()
 	m_texturehandle			=	0;
 	m_textureenabled		=	false;
 	m_textureinitialized	=	false;
+	m_skyboxinitialized	=	false;
 }
 
 GL_ShapeDrawer::~GL_ShapeDrawer()
@@ -1039,6 +1156,12 @@ GL_ShapeDrawer::~GL_ShapeDrawer()
 	{
 		glDeleteTextures(1,(const GLuint*) &m_texturehandle);
 		glDeleteTextures(1,(const GLuint*) &m_texturehandle2);
+	}
+	if(m_skyboxinitialized){
+		for(int i=0;i<m_skyboxhandle->size();i++){
+			glDeleteTextures(1,(const GLuint*) &m_skyboxhandle->at(i));
+		}
+		delete m_skyboxhandle;
 	}
 }
 

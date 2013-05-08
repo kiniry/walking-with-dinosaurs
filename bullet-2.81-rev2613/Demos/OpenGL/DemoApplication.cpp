@@ -1209,9 +1209,19 @@ void	DemoApplication::renderscene(int pass)
 
 			switch(pass)
 			{
-			case	0:	m_shapeDrawer->drawOpenGL(m,colObj->getCollisionShape(),btVector3 (1.f,1.f,1.f),getDebugMode(),aabbMin,aabbMax,&colObj->getWorldTransform().getBasis());break;
-			case	1:	m_shapeDrawer->drawShadow(m,m_sundirection*rot,colObj->getCollisionShape(),aabbMin,aabbMax);break;
-			case	2:	m_shapeDrawer->drawOpenGL(m,colObj->getCollisionShape(),btVector3 (0.f,0.f,1.f)*btScalar(0.3),0,aabbMin,aabbMax,&colObj->getWorldTransform().getBasis());break;
+			case	0:	
+				
+				m_shapeDrawer->drawOpenGL(m,colObj->getCollisionShape(),btVector3 (1.f,1.f,1.f),getDebugMode(),aabbMin,aabbMax,&colObj->getWorldTransform().getBasis());
+				//m_shapeDrawer->drawSkybox();
+				break;
+			case	1:	
+				//m_shapeDrawer->drawSkybox();
+				m_shapeDrawer->drawShadow(m,m_sundirection*rot,colObj->getCollisionShape(),aabbMin,aabbMax);
+				break;
+			case	2:	
+				m_shapeDrawer->drawOpenGL(m,colObj->getCollisionShape(),btVector3 (0.f,0.f,1.f)*btScalar(0.3),0,aabbMin,aabbMax,&colObj->getWorldTransform().getBasis());
+				//m_shapeDrawer->drawSkybox();
+				break;
 			}
 		}
 	}
