@@ -63,6 +63,7 @@ std::string getDirectory(){
 	PathRemoveFileSpec(filePathAbs);
 	PathAddBackslash(filePathAbs);
 
+	directory.clear();
 	directory.append(filePathAbs);
 
 	printf("directory: %s\n",directory.c_str());

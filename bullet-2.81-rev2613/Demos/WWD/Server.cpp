@@ -90,7 +90,7 @@ void startPrograms(){
 	for(int i=0;i<pipes.size();i++){
 		std::stringstream commandArgs;
 		commandArgs<<i;
-		ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_MINIMIZE );			 //SW_HIDE
+		ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_HIDE );			 //SW_HIDE
 	}
 }
 

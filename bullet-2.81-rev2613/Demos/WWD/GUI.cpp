@@ -4,7 +4,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int cmdShow){
 	argv =CommandLineToArgvW(GetCommandLineW(),&argc);
 
-	//directory = getDirectory();
+	directory = getDirectory();
 
 	console();
 
@@ -503,7 +503,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				save* tmpCreature =new save();
 				tmpCreature->dna= result.dna;
 				tmpCreature->fitness=result.fitness;
-				tmpCreature->name="new Creature";
+				
+					
+				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NAMING), hwnd, namingControl,(LPARAM)&tmpCreature->name);
+					
+				printf("name %s\n", tmpCreature->name.c_str());
 
 				saves.push_back(tmpCreature);
 				SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)saves.at(saves.size()-1)->name.c_str());
@@ -515,6 +519,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				readDNA(&saves.at(saves.size()-1)->dna,WWDPhysics);
 				WWDPhysics->solveGroundConflicts();
 				WWDPhysics->reshape(simWidth,simHeight);
+
+
+
 			}
 			break;
 
@@ -708,4 +715,54 @@ void calcSizes(int height, int witdh){
 
 	simHeight=mainHeight-bAreaHeight;
 	simWidth=mainWidth-listWidth;
+}
+
+BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
+	static std::string* result;
+	switch(Message){	
+	
+	case WM_INITDIALOG:
+		result= (std::string*) lParam;
+
+		break;
+	case WM_CLOSE:
+		EndDialog(hwnd, 0);
+		break;
+	case WM_COMMAND:
+		switch(LOWORD(wParam))
+		{
+		case IDOK:
+			{
+
+
+				HWND hwndPop = GetDlgItem(hwnd, IDC_NAMING_EDIT);
+
+				_ASSERTE(hwndPop != NULL);
+
+				int length=0;
+
+				length = GetWindowTextLength(hwndPop);
+				TCHAR * text;
+				if(length > 0){
+					text = new TCHAR[length + 1];
+					GetWindowText(hwndPop,text,length+1);
+				}else{
+					text = "new Creature";
+				}
+				*result=text;
+				printf("name %s", result->c_str());
+				EndDialog(hwnd,0); 
+				break;
+			}
+		case IDCANCEL:
+			MessageBox(hwnd, "Bye!", "This is also a message", 
+				MB_OK | MB_ICONEXCLAMATION);
+			EndDialog(hwnd, 0);
+			break;
+		}
+		break;
+	default:
+		return FALSE;
+	}
+	return TRUE;
 }
