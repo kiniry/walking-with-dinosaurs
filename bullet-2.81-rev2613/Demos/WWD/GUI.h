@@ -26,8 +26,8 @@
 static bool sOpenGLInitialized = false;
 static int quitRequest = 0;
 
-#define	menuHeight 50
-#define borders 10
+#define	menuHeight 62
+#define border 20
 int mainHeight, mainWidth;
 int listHeight, listWidth;
 int simHeight, simWidth;
@@ -35,7 +35,7 @@ int bAreaHeight, bAreaWidth;
 
 HWND blank;
 HWND hWndList;
-
+HWND hWnd;
 LPWSTR *argv;
 int argc;
 

@@ -550,7 +550,7 @@ void	DemoApplication::shootBox(const btVector3& destination)
 
 	if (m_dynamicsWorld)
 	{
-		float mass = 1.f;
+		float mass = 1.f*200;
 		btTransform startTransform;
 		startTransform.setIdentity();
 		btVector3 camPos = getCameraPosition();
@@ -558,7 +558,7 @@ void	DemoApplication::shootBox(const btVector3& destination)
 
 		setShootBoxShape ();
 
-		btRigidBody* body = this->localCreateRigidBody(mass, startTransform,m_shootBoxShape,0,0);
+		btRigidBody* body = this->localCreateRigidBody(mass, startTransform,m_shootBoxShape,3,1|2);
 		body->setUserPointer((void*)-1);
 		
 		body->setLinearFactor(btVector3(1,1,1));

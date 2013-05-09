@@ -11,7 +11,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	loadSaves();
 
 	WNDCLASSEX wc;
-	HWND hWnd;
+	
 	HDC hDC;
 	HGLRC hRC;
 	MSG msg;
@@ -48,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// create main window
 	hWnd = CreateWindowEx( WS_EX_CLIENTEDGE,
 		"main", "Walking With Dinosaurs",
-		WS_CAPTION | WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX |WS_CLIPCHILDREN,
+		WS_THICKFRAME | WS_CAPTION | WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX |WS_CLIPCHILDREN |WS_MAXIMIZEBOX,
 		0, 0, 1024, 768,
 		NULL, NULL, hInstance, NULL );
 	// create main window
@@ -72,7 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-	calcSizes(768-menuHeight,1024);
+	calcSizes(768-menuHeight,1024-border);
 
 	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,listWidth,bAreaHeight,simWidth,simHeight, hWnd,(HMENU)IDC_SIM, GetModuleHandle(NULL), NULL);
 
@@ -158,7 +158,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 // Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
-
 	switch (message)
 	{
 	case WM_SYSKEYDOWN:
@@ -184,7 +183,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 	case WM_SIZE:													// Size Action Has Taken Place
 
-		switch (wParam)												// Evaluate Size Action
+		switch (wParam)											// Evaluate Size Action
 		{
 		case SIZE_MINIMIZED:									// Was Window Minimized?
 			return 0;												// Return
@@ -207,7 +206,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 			//resize
 		case SIZE_RESTORED:// Was Window Restored?
-			/*{
+			if(hwnd == hWnd) 
+			{
 			int Width = LOWORD (lParam);
 			int Height = HIWORD (lParam);
 			calcSizes(HIWORD (lParam),LOWORD (lParam));
@@ -216,9 +216,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 			MoveWindow(blank,listWidth,bAreaHeight,simWidth,simHeight,true);
 
 			if (sOpenGLInitialized){
-			WWDPhysics->reshape(simWidth,simHeight);
+				WWDPhysics->reshape(simWidth,simHeight);
 			}
-			}	*/
+			}	
 			return 0;												// Return
 		}
 		break;
@@ -392,8 +392,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 		switch(LOWORD(wParam)){
 		case IDC_LISTBOX:
 			{
-				switch (HIWORD(wParam))
-				{
+				switch (HIWORD(wParam)){
 				case LBN_SELCHANGE:
 					{
 						HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
@@ -503,10 +502,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				save* tmpCreature =new save();
 				tmpCreature->dna= result.dna;
 				tmpCreature->fitness=result.fitness;
-				
-					
+
 				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NAMING), hwnd, namingControl,(LPARAM)&tmpCreature->name);
-					
+
 				printf("name %s\n", tmpCreature->name.c_str());
 
 				saves.push_back(tmpCreature);
@@ -520,15 +518,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				WWDPhysics->solveGroundConflicts();
 				WWDPhysics->reshape(simWidth,simHeight);
 
-
-
 			}
 			break;
 
 		case ID_FILE_SAVE40003:
 
 			saveSaves(saves);
-			break;
 			break;
 
 		case ID_FILE_EXIT:
@@ -584,7 +579,6 @@ void DisableOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 }
 
 void loadSaves(){
-
 	std::stringstream filename;
 	filename << directory<< "GenPool.dino";
 
@@ -703,7 +697,6 @@ void console(){
 }
 
 void calcSizes(int height, int witdh){
-
 	mainHeight=height;
 	mainWidth= witdh;
 
@@ -719,8 +712,7 @@ void calcSizes(int height, int witdh){
 
 BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	static std::string* result;
-	switch(Message){	
-	
+	switch(Message){
 	case WM_INITDIALOG:
 		result= (std::string*) lParam;
 
@@ -733,8 +725,6 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 		{
 		case IDOK:
 			{
-
-
 				HWND hwndPop = GetDlgItem(hwnd, IDC_NAMING_EDIT);
 
 				_ASSERTE(hwndPop != NULL);
@@ -751,11 +741,11 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 				}
 				*result=text;
 				printf("name %s", result->c_str());
-				EndDialog(hwnd,0); 
+				EndDialog(hwnd,0);
 				break;
 			}
 		case IDCANCEL:
-			MessageBox(hwnd, "Bye!", "This is also a message", 
+			MessageBox(hwnd, "Bye!", "This is also a message",
 				MB_OK | MB_ICONEXCLAMATION);
 			EndDialog(hwnd, 0);
 			break;
