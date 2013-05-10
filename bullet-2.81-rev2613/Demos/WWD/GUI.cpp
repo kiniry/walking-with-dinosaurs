@@ -404,7 +404,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 						WWDPhysics = new Physics();
 
-						readDNA(&saves.at(0)->dna,WWDPhysics);
+						readDNA(&saves.at(index)->dna,WWDPhysics);
 						WWDPhysics->solveGroundConflicts();
 						WWDPhysics->reshape(simWidth,simHeight);
 
@@ -595,8 +595,6 @@ void loadSaves(){
 	int noCreatures;
 	is.read((char*)&noCreatures, sizeof(int));
 
-	printf("creatures to be read %d\n",	 noCreatures);
-
 	for(int i=0;i<noCreatures;i++){
 		save* tmpCreature =new save();
 
@@ -614,7 +612,6 @@ void loadSaves(){
 
 		//read fitness
 		is.read((char*)&tmpCreature->fitness, sizeof(float));
-		printf("fitness nr %d: %f\n",i, tmpCreature->fitness);
 		saves.push_back(tmpCreature);
 	}
 	if(!is.good()){
@@ -667,7 +664,6 @@ void saveSaves(std::vector<save*> saves){
 		os.write((const char*)&size, sizeof(int));
 
 		os.write((const char*)&saves.at(j)->dna[0], sizeof(int)*size);
-		printf("fitness nr %d: %f\n",j, saves.at(j)->fitness);
 		os.write((const char*)&saves.at(j)->fitness, sizeof(float));
 	}
 	if(!os.good()){
@@ -676,7 +672,6 @@ void saveSaves(std::vector<save*> saves){
 	}
 	os.flush();
 	os.close();
-	printf("sending done\n\n");
 }
 
 void console(){
