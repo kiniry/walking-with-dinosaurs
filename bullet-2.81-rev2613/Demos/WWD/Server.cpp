@@ -84,7 +84,11 @@ void startPrograms(){
 	for(int i=0;i<pipes.size();i++){
 		std::stringstream commandArgs;
 		commandArgs<<i;
-		ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_HIDE );			 //SW_HIDE
+		int error=(int) ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_HIDE );
+		if(error < 32){
+			printf("Error: faild to start Client\n");
+			exit(-1);
+		}
 	}
 }
 
@@ -133,7 +137,6 @@ int setupServer(int pop, int cores){
 			wprintf(L"Unable to create named pipe w/err 0x%08lx\n", dwError);
 			return -1;
 		}
-
 	}
 	return 0;
 }
@@ -157,16 +160,16 @@ int waitForClients(){
 int sendCreatures(std::vector<creature> Creatures){
 	for(int id=0;id<pipes.size();id++){
 		std::ofstream os;
-		 os.open(creatureFilePaths.at(id),std::ios::out | std::ios::binary);
+		os.open(creatureFilePaths.at(id),std::ios::out | std::ios::binary);
 		if(!os.good()){
-		printf("good()=%d" , os.good());
-		printf(" eof()=%d" , os.eof());
-		printf(" fail()=%d", os.fail());
-		printf(" badd()=%d\n", os.bad());
+			printf("good()=%d" , os.good());
+			printf(" eof()=%d" , os.eof());
+			printf(" fail()=%d", os.fail());
+			printf(" badd()=%d\n", os.bad());
 			printf("error\n");
 			exit(-1);
 		}
-		
+
 		int noCreatures;
 
 		int min = Creatures.size()/pipes.size();
@@ -184,21 +187,18 @@ int sendCreatures(std::vector<creature> Creatures){
 			os.write((const char*)&size, sizeof(int));
 			os.write((const char*)&Creatures.at(j).dna[0], sizeof(int)*size);
 			os.write((const char*)&Creatures.at(j).fitness, sizeof(float));
-
 		}
 		if(!os.good()){
-		printf("good()=%d" , os.good());
-		printf(" eof()=%d" , os.eof());
-		printf(" fail()=%d", os.fail());
-		printf(" badd()=%d\n", os.bad());
+			printf("good()=%d" , os.good());
+			printf(" eof()=%d" , os.eof());
+			printf(" fail()=%d", os.fail());
+			printf(" badd()=%d\n", os.bad());
 			printf("error\n");
 			exit(-1);
 		}
 		os.flush();
 		os.close();
 	}
-
-
 
 	return 0;
 }
@@ -267,8 +267,6 @@ void receiveAcknowledges(){
 				wprintf(L"ReadFile from pipe failed w/err 0x%08lx\n", dwError);
 				exit(-1);
 			}
-
-			
 		} while (!fFinishRead); // Repeat loop if ERROR_MORE_DATA
 
 		if (wcscmp(chRequest, L"DONE")!=0){
@@ -276,28 +274,26 @@ void receiveAcknowledges(){
 			exit(-1);
 		}
 	}
-
 }
 
 std::vector<creature> getResults(){
-
 	std::vector<creature> results;
 
 	for(int	i =0;i<pipes.size();i++){
 		std::vector<creature> tmp =	 getCreatures(creatureFilePaths.at(i));
 		results.insert(results.end(), tmp.begin(), tmp.end());
-
 	}
 
 	return results;
 }
 
 void cleanUp(){
+	for(int i=0;i<creatureFilePaths.size();i++){
+		remove(creatureFilePaths.at(i).c_str());
+	}
+	creatureFilePaths.clear();
 
-creatureFilePaths.clear();
+	pipes.clear();
 
-pipes.clear();
-
-fullPipeNames.clear();
-
+	fullPipeNames.clear();
 }

@@ -193,9 +193,9 @@ void Physics::runSimulation(){
 	calcSize();
 	solveGroundConflicts();
 	//if(!isLegal()){
-	//			fitness = -999999;
+	//			fitness = dead;
 	//}else{
-		while(totaltime<10000){ //10 s = 10000 ms
+	while(totaltime<simulationTime){ 
 			simulationLoopStep(1/1000.f);
 		}
 	//}
@@ -239,6 +239,7 @@ void	Physics::initPhysics(){
 	totaltime=0;
 	currentBoxIndex=0;
 	currentJointIndex=0;
+	noBoxes =0;
 
 	setTexturing(true);
 	setShadows(true);
@@ -284,6 +285,13 @@ void	Physics::initPhysics(){
 
 //creates a box with side lengths x,y,z
 int Physics::createBox(int x1, int y1, int z1){
+
+	noBoxes++;
+	if(noBoxes>maxBoxes){
+		fitness= -999999;
+		totaltime=simulationTime;
+	}
+
 	// max 10 & min 0.05
 	if(x1==0){x1=95;}
 	if(y1==0){y1=95;}
@@ -787,10 +795,17 @@ void Physics::removeCreatures(){
 void Physics::testPhysics(){
 	int box2 = createBox(95,895,395);
 
+
+	for(int i=0; i<4;i++){
+
 	int box3 = createBox(195,245,595);
 
 	createJoint(box2, box3, GENERIC6DOF,0, 50, 5, 50, 50, 1, 0,0,0);
+	}
 
+	solveGroundConflicts();
+	runSimulation();
+	printf("fitness %f\n", fitness);
 	/*
 	int box4 = createBox(195,195,595);
 	createJoint(box3, box4, GENERIC6DOF,50, 50, 2, 50, 50,0, 0,0,0);

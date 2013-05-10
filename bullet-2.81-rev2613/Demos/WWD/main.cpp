@@ -19,6 +19,11 @@ int main(int argc,char** argv)
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
 	//return pipeServerMain(numCores,populationSize,nrOfGenerations,ancestor);
+	Physics* wwd = new Physics();
+	
+	wwd->testPhysics();
+	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",wwd);
+
 	return WWD(argc,argv);
 	return debug(argc,argv);
 

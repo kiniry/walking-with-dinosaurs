@@ -65,12 +65,15 @@ struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallbac
 
 #define PI 3.1415926
 
+#define maxBoxes 10
+#define simulationTime 10000 //10 s = 10000 ms
+
 #define BIT(x) (1<<(x))		//snippet from wikipedia http://www.bulletphysics.org/mediawiki-1.5.8/index.php?title=Collision_Filtering
 
 enum collisiontypes {		//definition of the collision groups
-    COL_NOTHING = 0,		//Collide with nothing
-    COL_GROUND = BIT(0),	//Ground collision group
-    COL_BOX = BIT(1),		//Boxes collision group
+	COL_NOTHING = 0,		//Collide with nothing
+	COL_GROUND = BIT(0),	//Ground collision group
+	COL_BOX = BIT(1),		//Boxes collision group
 };
 
 enum{pressure, angle, light};
@@ -85,98 +88,94 @@ struct btCollisionAlgorithmCreateFunc;
 class btDefaultCollisionConfiguration;
 
 class Physics : public PlatformDemoApplication{
-	private:
-		std::vector<int> ancestor;
-		float fitness;
-		float heighstPoint;
-		float lowestPoint;
-		float height;
+private:
+	int noBoxes;
+	std::vector<int> ancestor;
+	float fitness;
+	float heighstPoint;
+	float lowestPoint;
+	float height;
 
-		int currentBoxIndex,currentJointIndex;
+	int currentBoxIndex,currentJointIndex;
 
-		//keep the collision shapes, for deletion/cleanup
-		btAlignedObjectArray<btCollisionShape*>	m_collisionShapes;
+	//keep the collision shapes, for deletion/cleanup
+	btAlignedObjectArray<btCollisionShape*>	m_collisionShapes;
 
-		btBroadphaseInterface*	m_broadphase;
+	btBroadphaseInterface*	m_broadphase;
 
-		btCollisionDispatcher*	m_dispatcher;
+	btCollisionDispatcher*	m_dispatcher;
 
-		btConstraintSolver*	m_solver;
+	btConstraintSolver*	m_solver;
 
-		btDefaultCollisionConfiguration* m_collisionConfiguration;
+	btDefaultCollisionConfiguration* m_collisionConfiguration;
 
-		void	initPhysics();
+	void	initPhysics();
 
-		void	exitPhysics();
+	void	exitPhysics();
 
-		struct UserPointerStruct{
-			int sensorIndex;
-			float CrossSectionalStrength;
-		};
+	struct UserPointerStruct{
+		int sensorIndex;
+		float CrossSectionalStrength;
+	};
 
-		
+	bool isLegal();
 
+	int setEffect(int jointIndex, float valueX,float valueY,float valueZ);
+	void simulationLoopStep(float stepSize);
 
+	btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
+	btQuaternion getLocalRotation(int myS, int opS);
+	btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
+	inline float getCrossSectionHinge(int s,btVector3* Halfsize);
+	float getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int preY, int postS, btVector3* halfside2, int postX, int postY);
+	inline float sign(float input);
+	float getBoxHalfHeight(btCollisionObject* object);
 
+public:
+	enum boxes{ground=-2};
+	enum fitnessTest{jump, move};
 
-		bool isLegal();
+	virtual void displayCallback();
+	virtual void clientResetScene();
+	virtual void clientMoveAndDisplay();
+	NeuralNetwork* theNet;
 
-		int setEffect(int jointIndex, float valueX,float valueY,float valueZ);
-		void simulationLoopStep(float stepSize);
+	std::vector<NeuralNetwork*> subnets;
+	std::vector<float> sensors;
+	std::vector<int> effectorNNindex;
 
-		btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
-		btQuaternion getLocalRotation(int myS, int opS);
-		btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
-		inline float getCrossSectionHinge(int s,btVector3* Halfsize);
-		float getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int preY, int postS, btVector3* halfside2, int postX, int postY);
-		inline float sign(float input);
-		float getBoxHalfHeight(btCollisionObject* object);
+	float getFitness(){
+		return fitness;
+	}
 
-	public:
-		enum boxes{ground=-2};
-		enum fitnessTest{jump, move};
+	void calcFitness(int test);
 
-		virtual void displayCallback();
-		virtual void clientResetScene();
-		virtual void clientMoveAndDisplay();
-		NeuralNetwork* theNet;
+	Physics(std::vector<int> Ancestor){
+		ancestor=Ancestor;
+		initPhysics();
+	}
+	Physics(){
+		initPhysics();
+	}
+	std::vector<int> getAncestor(){
+		return ancestor;
+	}
 
-		std::vector<NeuralNetwork*> subnets;
-		std::vector<float> sensors;
-		std::vector<int> effectorNNindex;
+	void runSimulation();
 
-		float getFitness(){
-			return fitness;
-		}
+	virtual ~Physics(){
+		exitPhysics();
+	}
 
-		void calcFitness(int test);
+	int createBox(int x,int y,int z);
+	int createSensor(int box, int type);
+	int createJoint(		int box1, int box2, int type,
+		int preX, int preY, int preS,
+		int postX, int postY, int postS,
+		int dofX, int dofY, int dofZ);
 
-		Physics(std::vector<int> Ancestor){
-			ancestor=Ancestor;
-			initPhysics();
-		}
-		Physics(){
-			initPhysics();
-		}
-		std::vector<int> getAncestor(){
-			return ancestor;
-		}
-
-		void runSimulation();
-
-		virtual ~Physics(){
-			exitPhysics();
-		}
-
-		int createBox(int x,int y,int z);
-		int createSensor(int box, int type);
-		int createJoint(		int box1, int box2, int type,
-								int preX, int preY, int preS,
-								int postX, int postY, int postS,
-								int dofX, int dofY, int dofZ);
-
-		void testPhysics();
-		void calcSize();
-		void solveGroundConflicts();
-		void removeCreatures();
+	void testPhysics();
+	void calcSize();
+	void solveGroundConflicts();
+	void removeCreatures();
 };

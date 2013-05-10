@@ -12,10 +12,6 @@
 
 #define NULL 0
 
-#define Gsucces 0
-#define Gfail -1
-
-#define maxBlocks 30
 
 #define toFloat(X) X/100.f
 

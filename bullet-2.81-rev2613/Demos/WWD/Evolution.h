@@ -13,9 +13,11 @@
 #include <vector>
 #include <algorithm>
 #include "MTree.h"
+#include <limits>
 
 //results in a range  of values from
 #define maxDNAValue 10000
+#define dead -999999
 #define randomDnaValue rand()%maxDNAValue
 
 #define expectedDiviation 1.5

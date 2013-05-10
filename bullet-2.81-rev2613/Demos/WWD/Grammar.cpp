@@ -8,15 +8,11 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 	int blocks = 0;
 	std::vector<int>* tempNeural = new std::vector<int>;
 
-	try{
+	
 		int part = world->createBox(getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA));
 		blocks++;
 		index = index+3;
 		index=B(index, DNA, world, &blocks, part, tempNeural);
-
-	}catch (int e){
-		return e;
-	}
 
 	//hoved NN
 	//NN - define inputs
@@ -34,21 +30,17 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 	}
 	delete tempNeural;
 
-	return Gsucces;
+	return 0;
 }
 
 int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural){
-	if(*blocks >= maxBlocks){
-		throw Gfail;
-	}
-
 
 	int attachedCount = getDNA(index,DNA)%6;
 	index++; //the information how many boxes are attached - belongs with the previous box
 	for(int i=0;i<attachedCount;i++){
 		index = J(index, DNA, world, blocks, part, tempNeural);
 	}
-	
+
 	return index;
 }
 
@@ -66,7 +58,7 @@ int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, 
 	int j_index = world->createJoint(part1, part2, getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA), getDNA(index+9,DNA));
 	index+=13;
 	tempNeural->push_back(index);
-	
+
 	index = B(index, DNA, world, blocks, part2, tempNeural);
 	return index;
 }
@@ -148,7 +140,7 @@ int NN(int index, std::vector<int>* DNA, std::vector<NeuralNode*> inputs, Physic
 //function for calculating subnet size
 int NN(int index, std::vector<int> *DNA,partNode* body){
 	int amountOfLayers=0;
-	
+
 	int chooseValue = getDNA(index,DNA)%100;
 	index++;
 	if(chooseValue<15){
@@ -169,7 +161,6 @@ int NN(int index, std::vector<int> *DNA,partNode* body){
 		else{aLayerNode->setEnd(DNA->size());}
 	}
 
-	
 	return index;
 }
 
@@ -192,7 +183,7 @@ int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, 
 		usedChance+=dChance;			//this case is procced if chooseValue is in the interval usedChance..usedChance+dChance
 		if(chooseValue < usedChance){nrOfNodes = inputAmount+i;break;}
 	}
-	
+
 	for(int i=0;i<nrOfNodes;i++){
 		NNNode* aNode = new NNNode(index);
 		node->addChild(aNode);
@@ -205,7 +196,6 @@ int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, 
 	return index;
 }
 
-
 /**
 *Function to create MTree
 */
@@ -215,14 +205,12 @@ MTree* getMTree(std::vector<int> *DNA){
 	MTree* result = new MTree();
 
 	try{
-
 		partNode* body = new partNode(index); //part0 begins here
 		result->setBody(body);
 
 		blocks++;
 		index = index+3;
 		index=treeB(index, DNA, &blocks, body);
-
 	}catch (MTree* e){
 		return e;
 	}
@@ -234,9 +222,7 @@ MTree* getMTree(std::vector<int> *DNA){
 }
 
 int treeB(int index, std::vector<int> *DNA, int *blocks, partNode* body){
-	if(*blocks >= maxBlocks){
-		throw Gfail;
-	}
+
 	int attachedCount=getDNA(index,DNA)%6;
 	index++;
 	for(int i=0;i<attachedCount;i++){
@@ -249,24 +235,23 @@ int treeB(int index, std::vector<int> *DNA, int *blocks, partNode* body){
 }
 
 int treeJ(int index, std::vector<int> *DNA, int *blocks, partNode* body){
-
 	index = NN(index,DNA,body);
 	index+=3; //effektors
 
 	//partTreeBox begins here from index+10 (x,y,z)
 	partNode* nextBody = new partNode(index+10);
 	body->addChild(nextBody);
-	
+
 	//for the normal joint vars
 	index+=13;
-	
+
 	index = treeB(index, DNA, blocks,nextBody); //nextBody will end at the end of this B() function
 	return index;
 }
 
 int treeNN(int index, std::vector<int> *DNA,MTree* mainTree){
 	int amountOfLayers=0;
-	
+
 	int chooseValue = getDNA(index,DNA)%100;
 	index++;
 	if(chooseValue<15){
