@@ -1,7 +1,7 @@
 #include "pipe.h"
 
 std::vector<creature> getCreatures(std::string filename){
-	printf("reading creatures from %s\n", filename.c_str());
+
 	std::vector<creature> creatures;
 
 	std::ifstream is;
@@ -10,7 +10,7 @@ std::vector<creature> getCreatures(std::string filename){
 	int noCreatures;
 	is.read((char*)&noCreatures, sizeof(int));
 
-	printf("creatures to be read %d\n",	 noCreatures);
+
 
 	for(int i=0;i<noCreatures;i++){
 		creature* tmpCreature =new creature();
@@ -23,7 +23,7 @@ std::vector<creature> getCreatures(std::string filename){
 
 		//read fitness
 		is.read((char*)&tmpCreature->fitness, sizeof(float));
-		printf("fitness nr %d: %f\n",i, tmpCreature->fitness);
+
 		creatures.push_back(*tmpCreature);
 	}
 	if(!is.good()){
@@ -31,7 +31,7 @@ std::vector<creature> getCreatures(std::string filename){
 		exit(-1);
 	}
 	is.close();
-	printf("\n");
+
 	return creatures;
 }
 
@@ -66,7 +66,6 @@ std::string getDirectory(){
 	directory.clear();
 	directory.append(filePathAbs);
 
-	printf("directory: %s\n",directory.c_str());
 
 	return directory;
 }
