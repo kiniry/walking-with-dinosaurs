@@ -1,6 +1,5 @@
 #include "GUI.h"
-//#pragma comment(lib, "comctl32.lib")
-//#pragma comment(linker,"/manifestdependency:\"type='win32 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 // WinMain
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int cmdShow){
 	argv =CommandLineToArgvW(GetCommandLineW(),&argc);
@@ -160,12 +159,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 // Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 	
-	//init CC
-/*	INITCOMMONCONTROLSEX InitCtrlEx;
-	InitCtrlEx.dwSize = sizeof(INITCOMMONCONTROLSEX);
-	InitCtrlEx.dwICC  = ICC_PROGRESS_CLASS;
-	InitCommonControlsEx(&InitCtrlEx);
-*/	//
 	switch (message)
 	{
 	case WM_SYSKEYDOWN:

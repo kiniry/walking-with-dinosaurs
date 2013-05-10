@@ -138,6 +138,7 @@ public:
 	virtual void displayCallback();
 	virtual void clientResetScene();
 	virtual void clientMoveAndDisplay();
+	virtual void showInfo(int& xOffset,int& yStart, int yIncr);
 	NeuralNetwork* theNet;
 
 	std::vector<NeuralNetwork*> subnets;

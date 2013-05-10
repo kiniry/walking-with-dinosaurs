@@ -1,6 +1,5 @@
 #include "Physics.h"
 
-
 float Physics::getBoxHalfHeight(btCollisionObject* object){
 	btRigidBody* body = (btRigidBody*) object;
 	btBoxShape* box = (btBoxShape*) body->getCollisionShape();;
@@ -13,7 +12,7 @@ float Physics::getBoxHalfHeight(btCollisionObject* object){
 	btVector3 z = btVector3(0,0,sides.getZ());
 
 	return abs(rotate(&x, &rot).getY())+abs(rotate(&y, &rot).getY())+abs(rotate(&z, &rot).getY());
-	}
+}
 
 void Physics::calcSize(){
 	btCollisionObjectArray objs = m_dynamicsWorld->getCollisionObjectArray();
@@ -34,10 +33,10 @@ void Physics::calcSize(){
 }
 
 bool Physics::isLegal(){
-		btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
+	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 
-		MyContactResultCallback result;
-		result.m_connected=false;
+	MyContactResultCallback result;
+	result.m_connected=false;
 
 	for (int i = 1; i < objects.size(); i++){
 		for (int j = i+1; j < objects.size(); j++){
@@ -65,33 +64,34 @@ void Physics::solveGroundConflicts(){
 	objects.at(0)->getWorldTransform().setOrigin(origin);
 	btDefaultMotionState* myMotionState = (btDefaultMotionState*)(((btRigidBody*)objects.at(0))->getMotionState());
 	myMotionState->setWorldTransform(objects.at(0)->getWorldTransform());
+
 	/*
 	bool conflicts = true;
 	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 	MyContactResultCallback result;
 
 	while(conflicts){
-		result.m_connected=false;
-		conflicts=false;
+	result.m_connected=false;
+	conflicts=false;
 
-		for (int j = 1; j < objects.size(); j++){
-			m_dynamicsWorld->contactPairTest(objects.at(0),objects.at(j),result);
+	for (int j = 1; j < objects.size(); j++){
+	m_dynamicsWorld->contactPairTest(objects.at(0),objects.at(j),result);
 
-			if(result.m_connected == true){
-				btVector3 oldOrigin = objects.at(0)->getWorldTransform().getOrigin();
-				oldOrigin.setY(oldOrigin.y()-1);
-				objects.at(0)->getWorldTransform().setOrigin(oldOrigin);
-				btDefaultMotionState* myMotionState = (btDefaultMotionState*)(((btRigidBody*)objects.at(0))->getMotionState());
-				myMotionState->setWorldTransform(objects.at(0)->getWorldTransform());
+	if(result.m_connected == true){
+	btVector3 oldOrigin = objects.at(0)->getWorldTransform().getOrigin();
+	oldOrigin.setY(oldOrigin.y()-1);
+	objects.at(0)->getWorldTransform().setOrigin(oldOrigin);
+	btDefaultMotionState* myMotionState = (btDefaultMotionState*)(((btRigidBody*)objects.at(0))->getMotionState());
+	myMotionState->setWorldTransform(objects.at(0)->getWorldTransform());
 
-				conflicts=true;
-				break;
-			}
-		}
-		setCameraTargetPosition(objects.at(1)->getWorldTransform().getOrigin()); //drunk compiler
-		btVector3 cam = getCameraPosition();
-		cam.setY(getCameraTargetPosition().y());
-		setCameraPosition(cam);
+	conflicts=true;
+	break;
+	}
+	}
+	setCameraTargetPosition(objects.at(1)->getWorldTransform().getOrigin()); //drunk compiler
+	btVector3 cam = getCameraPosition();
+	cam.setY(getCameraTargetPosition().y());
+	setCameraPosition(cam);
 	}
 	*/
 }
@@ -99,17 +99,17 @@ void Physics::solveGroundConflicts(){
 void Physics::simulationLoopStep(float stepSize){
 	totaltime += stepSize*1000;
 	if(m_dynamicsWorld->getNumCollisionObjects()>1){
-	if(theNet!=NULL){
+		if(theNet!=NULL){
 			theNet->computeNetwork();
 			for(int i=0;i< (int) subnets.size();i++){
 				subnets.at(i)->computeNetwork();
 			}
 		}
- 
+
 		//fitness test
-	
+
 		calcFitness(move);
-	
+
 		for(int i=0;i< (int) effectorNNindex.size();i=i+3){
 			setEffect(i/3,
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
@@ -117,76 +117,76 @@ void Physics::simulationLoopStep(float stepSize){
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
 				);
 		}
+	}
+	//fixed step... 1ms
+	m_dynamicsWorld->stepSimulation(stepSize);
+
+	for(int i=0; i < (int) sensors.size();i++){
+		sensors.at(i)=0;
+	}
+
+	//collision detection
+	//one per btPersistentManifold for each collision
+	int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
+
+	for (int i=0;i<numManifolds;i++)
+	{
+		btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+		int box1 = (int)contactManifold->getBody0()->getUserPointer();
+		int box2 = (int)contactManifold->getBody1()->getUserPointer();
+
+		if(box1 >= 0){
+			sensors.at(box1)=1;
 		}
-	 	//fixed step... 1ms
-		m_dynamicsWorld->stepSimulation(stepSize);
-
-		for(int i=0; i < (int) sensors.size();i++){
-			sensors.at(i)=0;
+		if(box2 >= 0){
+			sensors.at(box2)=1;
 		}
+	}
 
-		//collision detection
-		//one per btPersistentManifold for each collision
-		int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
+	//angel sensor
+	for(int i = 0; i < m_dynamicsWorld->getNumConstraints(); i++){
+		btHingeConstraint* constraint;
+		btGeneric6DofConstraint* constraint1;
+		float x,y,z;
 
-		for (int i=0;i<numManifolds;i++)
-		{
-			btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-			int box1 = (int)contactManifold->getBody0()->getUserPointer();
-			int box2 = (int)contactManifold->getBody1()->getUserPointer();
+		//pointer == -1 if its not a sensor
+		if(((int)(m_dynamicsWorld->getConstraint(i)->getUserConstraintPtr()))>=0)
+			switch((m_dynamicsWorld->getConstraint(i))->getConstraintType()){
+			case HINGE_CONSTRAINT_TYPE:
+				constraint = (btHingeConstraint*) m_dynamicsWorld->getConstraint(i);
+				sensors.at( ((UserPointerStruct*)(constraint->getUserConstraintPtr()))->sensorIndex );
+				x = constraint->getHingeAngle();
 
-			if(box1 >= 0){
-				sensors.at(box1)=1;
-			}
-			if(box2 >= 0){
-				sensors.at(box2)=1;
-			}
+				sensors.at(((UserPointerStruct*)constraint->getUserConstraintPtr())->sensorIndex)=x;
+
+				break;
+			case D6_CONSTRAINT_TYPE:
+				constraint1 = (btGeneric6DofConstraint*) m_dynamicsWorld->getConstraint(i);
+
+				x = constraint1->getRotationalLimitMotor(0)->m_currentPosition;
+				y = constraint1->getRotationalLimitMotor(1)->m_currentPosition;
+				z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
+
+				sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex)=x;
+				sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex+1)=y;
+				sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex+2)=z;
+
+				break;
 		}
+	}
 
-		//angel sensor
-		for(int i = 0; i < m_dynamicsWorld->getNumConstraints(); i++){
-			btHingeConstraint* constraint;
-			btGeneric6DofConstraint* constraint1;
-			float x,y,z;
-
-			//pointer == -1 if its not a sensor
-			if(((int)(m_dynamicsWorld->getConstraint(i)->getUserConstraintPtr()))>=0)
-				switch((m_dynamicsWorld->getConstraint(i))->getConstraintType()){
-				case HINGE_CONSTRAINT_TYPE:
-					constraint = (btHingeConstraint*) m_dynamicsWorld->getConstraint(i);
-					sensors.at( ((UserPointerStruct*)(constraint->getUserConstraintPtr()))->sensorIndex );
-					x = constraint->getHingeAngle();
-
-					sensors.at(((UserPointerStruct*)constraint->getUserConstraintPtr())->sensorIndex)=x;
-
-					break;
-				case D6_CONSTRAINT_TYPE:
-					constraint1 = (btGeneric6DofConstraint*) m_dynamicsWorld->getConstraint(i);
-
-					x = constraint1->getRotationalLimitMotor(0)->m_currentPosition;
-					y = constraint1->getRotationalLimitMotor(1)->m_currentPosition;
-					z = constraint1->getRotationalLimitMotor(2)->m_currentPosition;
-
-					sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex)=x;
-					sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex+1)=y;
-					sensors.at(((UserPointerStruct*)constraint1->getUserConstraintPtr())->sensorIndex+2)=z;
-
-					break;
-			}
-		}
-
-		/*if(m_dynamicsWorld->getNumConstraints()>0){
-		for(int i=m_dynamicsWorld->getNumConstraints()-1;i>=0;i--){
-			btTypedConstraint* con = m_dynamicsWorld->getConstraint(i);
-			con->enableFeedback(true);
-			if(con->getAppliedImpulse()>m_dynamicsWorld->getConstraint(i)->getBreakingImpulseThreshold()){
-				m_dynamicsWorld->removeConstraint(m_dynamicsWorld->getConstraint(i));
-			}
-			else{
-				con->enableFeedback(false);
-			}
-		}
-		}*/
+	/*if(m_dynamicsWorld->getNumConstraints()>0){
+	for(int i=m_dynamicsWorld->getNumConstraints()-1;i>=0;i--){
+	btTypedConstraint* con = m_dynamicsWorld->getConstraint(i);
+	con->enableFeedback(true);
+	if(con->getAppliedImpulse()>m_dynamicsWorld->getConstraint(i)->getBreakingImpulseThreshold()){
+	m_dynamicsWorld->removeConstraint(m_dynamicsWorld->getConstraint(i));
+	}
+	else{
+	con->enableFeedback(false);
+	}
+	}
+	}*/
 }
 
 void Physics::runSimulation(){
@@ -195,9 +195,9 @@ void Physics::runSimulation(){
 	//if(!isLegal()){
 	//			fitness = dead;
 	//}else{
-	while(totaltime<simulationTime){ 
-			simulationLoopStep(1/1000.f);
-		}
+	while(totaltime<simulationTime){
+		simulationLoopStep(1/1000.f);
+	}
 	//}
 }
 
@@ -233,6 +233,24 @@ void Physics::displayCallback(void) {
 
 	glFlush();
 	swapBuffers();
+}
+
+void Physics::showInfo(int& xOffset,int& yStart, int yIncr){
+	char blockTime[128];
+
+	double totalTime = 0;
+
+	sprintf(blockTime,"--- Total running time: %lu ms ---", totaltime );
+	displayProfileString(xOffset,yStart,blockTime);
+	yStart += yIncr;
+
+	sprintf(blockTime,"--- Current fitness value: %f ---", fitness );
+	displayProfileString(xOffset,yStart,blockTime);
+	yStart += yIncr;
+
+	sprintf(blockTime,"-------------------------------------------------");
+	displayProfileString(xOffset,yStart,blockTime);
+	yStart += yIncr;
 }
 
 void	Physics::initPhysics(){
@@ -285,7 +303,6 @@ void	Physics::initPhysics(){
 
 //creates a box with side lengths x,y,z
 int Physics::createBox(int x1, int y1, int z1){
-
 	noBoxes++;
 	if(noBoxes>maxBoxes){
 		fitness= -999999;
@@ -358,8 +375,8 @@ int Physics::setEffect(int jointIndex, float valueX,float valueY,float valueZ){
 		if(valueX>userPointer || valueX<-userPointer){
 			valueX = userPointer;
 		}/*else if(valueX<-userPointer){
-			valueX = -userPointer;
-		}*/
+		 valueX = -userPointer;
+		 }*/
 		((btHingeConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->enableAngularMotor(true,theSign*btScalar(MAXDWORD),btScalar(abs(valueX)));
 		return HINGE;
 		break;
@@ -398,135 +415,134 @@ inline float Physics::sign(float input){
 }
 
 int Physics::createJoint(	int box1, int box2,	int type,
-							int preX, int preY, int preS,
-							int postX, int postY, int postS,
-							int dofX, int dofY, int dofZ){
+	int preX, int preY, int preS,
+	int postX, int postY, int postS,
+	int dofX, int dofY, int dofZ){
+		//default value
+		if(preX==0){preX=50;}
+		if(preY==0){preY=50;}
+		if(postX==0){postX=50;}
+		if(postY==0){postY=50;}
 
-								//default value
-								if(preX==0){preX=50;}
-								if(preY==0){preY=50;}
-								if(postX==0){postX=50;}
-								if(postY==0){postY=50;}
+		preX=preX%99+1;
+		preY=preY%99+1;
+		preS=preS%6;
+		postX=postX%99+1;
+		postY=postY%99+1;
+		postS=postS%6;
+		type=type%2;
 
-								preX=preX%99+1;
-								preY=preY%99+1;
-								preS=preS%6;
-								postX=postX%99+1;
-								postY=postY%99+1;
-								postS=postS%6;
-								type=type%2;
+		//tjek input in debug mode
+		btAssert(preX>0 && preX<100);
+		btAssert(preY>0 && preY<100);
+		btAssert(preS>-1 && preS<6);
 
-								//tjek input in debug mode
-								btAssert(preX>0 && preX<100);
-								btAssert(preY>0 && preY<100);
-								btAssert(preS>-1 && preS<6);
+		btAssert(postX>0 && postX<100);
+		btAssert(postY>0 && postY<100);
+		btAssert(postS>-1 && postS<6);
 
-								btAssert(postX>0 && postX<100);
-								btAssert(postY>0 && postY<100);
-								btAssert(postS>-1 && postS<6);
+		//Get box pointers
+		btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
+		btRigidBody* Box2 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box2);
 
-								//Get box pointers
-								btRigidBody* Box1 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box1);
-								btRigidBody* Box2 = (btRigidBody*) m_dynamicsWorld->getCollisionObjectArray().at(box2);
+		//Define the local transform on the shapes regarding to the joint.
+		btTransform localBox1, localBox2;
+		localBox1.setIdentity();
+		localBox2.setIdentity();
 
-								//Define the local transform on the shapes regarding to the joint.
-								btTransform localBox1, localBox2;
-								localBox1.setIdentity();
-								localBox2.setIdentity();
+		//box1
+		btVector3 halfside1 = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithMargin();
+		btVector3 center1 =Box1->getWorldTransform().getOrigin();
+		btQuaternion rotation1 =Box1->getWorldTransform().getRotation();
 
-								//box1
-								btVector3 halfside1 = ((btBoxShape*)Box1->getCollisionShape())->getHalfExtentsWithMargin();
-								btVector3 center1 =Box1->getWorldTransform().getOrigin();
-								btQuaternion rotation1 =Box1->getWorldTransform().getRotation();
+		btVector3 connection1 = getLocalJointPosition(preX,preY,preS,&halfside1);
 
-								btVector3 connection1 = getLocalJointPosition(preX,preY,preS,&halfside1);
+		//translate joint
+		localBox1.setOrigin(connection1);
+		localBox1.setRotation(rotation1.inverse());
 
-								//translate joint
-								localBox1.setOrigin(connection1);
-								localBox1.setRotation(rotation1.inverse());
+		//box2
+		btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithMargin();
+		btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
 
-								//box2
-								btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithMargin();
-								btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
+		btQuaternion rotation2 = getLocalRotation(preS, postS);
+		rotation2*=rotation1;
 
-								btQuaternion rotation2 = getLocalRotation(preS, postS);
-								rotation2*=rotation1;
+		btVector3 center2 = center1+rotate(&connection1,&rotation1.inverse())-rotate(&connection2,&rotation2);
 
-								btVector3 center2 = center1+rotate(&connection1,&rotation1.inverse())-rotate(&connection2,&rotation2);
+		//rotate and translate box
+		btTransform trans2;
+		trans2.setIdentity();
+		//trans2.setRotation(rotation2);
+		trans2.setRotation(rotation2.inverse());
+		trans2.setOrigin(center2);
+		Box2->setCenterOfMassTransform(trans2);
 
-								//rotate and translate box
-								btTransform trans2;
-								trans2.setIdentity();
-								//trans2.setRotation(rotation2);
-								trans2.setRotation(rotation2.inverse());
-								trans2.setOrigin(center2);
-								Box2->setCenterOfMassTransform(trans2);
+		btDefaultMotionState* myMotionState = (btDefaultMotionState*)((Box2)->getMotionState());
+		myMotionState->setWorldTransform(Box2->getWorldTransform());
 
-								btDefaultMotionState* myMotionState = (btDefaultMotionState*)((Box2)->getMotionState());
-								myMotionState->setWorldTransform(Box2->getWorldTransform());
+		//rotate and translate joint
+		localBox2.setRotation(rotation2);
 
-								//rotate and translate joint
-								localBox2.setRotation(rotation2);
+		localBox2.setOrigin(connection2);
 
-								localBox2.setOrigin(connection2);
+		//setup contraint/joint
+		btHingeConstraint* hingeC;
+		btGeneric6DofConstraint* gen6C;
+		int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
+		// int DOFx = dofX %170+10;	int DOFy = dofY%170+10;	int DOFz = dofZ %170+10;
+		float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
+		// printf("%f %f %f\n", DOFxR,DOFyR,DOFzR);
+		UserPointerStruct* theStruct = new UserPointerStruct();
+		btScalar mass1=1/Box1->getInvMass();
+		btScalar mass2=1/Box2->getInvMass();
 
-								//setup contraint/joint
-								btHingeConstraint* hingeC;
-								btGeneric6DofConstraint* gen6C;
-								int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
-								// int DOFx = dofX %170+10;	int DOFy = dofY%170+10;	int DOFz = dofZ %170+10;
-								float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
-								// printf("%f %f %f\n", DOFxR,DOFyR,DOFzR);
-								UserPointerStruct* theStruct = new UserPointerStruct();
-								btScalar mass1=1/Box1->getInvMass();
-								btScalar mass2=1/Box2->getInvMass();
+		switch(type){
+		case HINGE:
+			hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
 
-								switch(type){
-								case HINGE:
-									hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
+			hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
 
-									hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
+			sensors.push_back(0);
+			theStruct->sensorIndex=sensors.size()-1;
+			//uses the gen6d which makes it possible that the max force is to small
+			theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
+			hingeC->setUserConstraintPtr(theStruct);
 
-									sensors.push_back(0);
-									theStruct->sensorIndex=sensors.size()-1;
-									//uses the gen6d which makes it possible that the max force is to small
-									theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
-									hingeC->setUserConstraintPtr(theStruct);
+			hingeC->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
 
-									hingeC->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
+			m_dynamicsWorld->addConstraint(hingeC,true);
 
-									m_dynamicsWorld->addConstraint(hingeC,true);
+			break;
+		case GENERIC6DOF:
+			gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
+			gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist)
+			gen6C->setLimit(1,0,0);
+			gen6C->setLimit(2,0,0);
+			gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
+			gen6C->setLimit(4,-DOFyR/2,DOFyR/2);
+			gen6C->setLimit(5,-DOFzR/2,DOFzR/2);
+			//gen6C->getTranslationalLimitMotor()->m_restitution=0.0000000;
+			//if(box2!=3)
 
-									break;
-								case GENERIC6DOF:
-									gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
-									gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist)
-									gen6C->setLimit(1,0,0);
-									gen6C->setLimit(2,0,0);
-									gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
-									gen6C->setLimit(4,-DOFyR/2,DOFyR/2);
-									gen6C->setLimit(5,-DOFzR/2,DOFzR/2);
-									//gen6C->getTranslationalLimitMotor()->m_restitution=0.0000000;
-									//if(box2!=3)
+			sensors.push_back(0);
+			sensors.push_back(0);
+			sensors.push_back(0);
 
-									sensors.push_back(0);
-									sensors.push_back(0);
-									sensors.push_back(0);
+			theStruct->sensorIndex=sensors.size()-3;
+			theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
+			gen6C->setUserConstraintPtr(theStruct);
 
-									theStruct->sensorIndex=sensors.size()-3;
-									theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
-									gen6C->setUserConstraintPtr(theStruct);
+			gen6C->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
+			m_dynamicsWorld->addConstraint(gen6C,true);
 
-									gen6C->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
-									m_dynamicsWorld->addConstraint(gen6C,true);
+			break;
+		}
 
-									break;
-								}
+		int returnVal = currentJointIndex;
+		currentJointIndex++;
 
-								int returnVal = currentJointIndex;
-								currentJointIndex++;
-
-								return returnVal;
+		return returnVal;
 }
 
 //calculates the contact area between the boxes and scals the max force accordingly
@@ -714,17 +730,17 @@ void	Physics::exitPhysics(){
 		subnets.pop_back();
 	}
 	if(theNet!=NULL){
-	theNet->killFirstLayer();
-	delete theNet;
+		theNet->killFirstLayer();
+		delete theNet;
 	}
-	 
+
 	//delete contraints
 	while(m_dynamicsWorld->getNumConstraints()>0){
 		btTypedConstraint* deathPointer = m_dynamicsWorld->getConstraint(0);
 		m_dynamicsWorld->removeConstraint(deathPointer);
 		delete deathPointer;
 	}
-	      
+
 	//remove the rigidbodies from the dynamics world and delete them
 	for (int i=m_dynamicsWorld->getNumCollisionObjects()-1; i>=0 ;i--){
 		btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray().at(i);
@@ -741,7 +757,7 @@ void	Physics::exitPhysics(){
 	for (int j=0;j<m_collisionShapes.size();j++){
 		btCollisionShape* shape = m_collisionShapes[j];
 		delete shape;
-	}	
+	}
 	m_collisionShapes.clear();
 
 	delete m_dynamicsWorld;
@@ -752,7 +768,7 @@ void	Physics::exitPhysics(){
 
 	delete m_dispatcher;
 
-	delete m_collisionConfiguration;   
+	delete m_collisionConfiguration;
 }
 
 void Physics::removeCreatures(){
@@ -788,19 +804,15 @@ void Physics::removeCreatures(){
 		btCollisionShape* shape = m_collisionShapes[j];
 		delete shape;
 	}
-
-
 }
 
 void Physics::testPhysics(){
 	int box2 = createBox(95,895,395);
 
-
 	for(int i=0; i<4;i++){
+		int box3 = createBox(195,245,595);
 
-	int box3 = createBox(195,245,595);
-
-	createJoint(box2, box3, GENERIC6DOF,0, 50, 5, 50, 50, 1, 0,0,0);
+		createJoint(box2, box3, GENERIC6DOF,0, 50, 5, 50, 50, 1, 0,0,0);
 	}
 
 	solveGroundConflicts();
@@ -817,18 +829,18 @@ void Physics::testPhysics(){
 	createJoint(box, box5, GENERIC6DOF,50, 50,5, 50, 50, 0, 0,0,0);
 
 	if(!isLegal()){
-		printf("fail!\n");
+	printf("fail!\n");
 	}else{
-		printf("legal\n");
+	printf("legal\n");
 	}
 
- /*	createSensor(box2, pressure);
+	/*	createSensor(box2, pressure);
 
 	//NN test
 	std::vector<NeuralNode*> inputs;
 
 	for(int i=0;i< (int) sensors.size();i++){
-		inputs.push_back(new NeuralNode(&sensors.at(i)));
+	inputs.push_back(new NeuralNode(&sensors.at(i)));
 	}
 
 	inputs.push_back(new NeuralNode(1));
@@ -836,7 +848,7 @@ void Physics::testPhysics(){
 	testPoint = new float;
 	*testPoint = 5;
 	inc = 0;
-inputs.push_back(new NeuralNode(testPoint));
+	inputs.push_back(new NeuralNode(testPoint));
 	theNet = new NeuralNetwork(inputs);
 	theNet->insertNode(SUM,7,1,3,1);
 	theNet->insertNode(SIN,0,1);
@@ -847,51 +859,43 @@ inputs.push_back(new NeuralNode(testPoint));
 }
 
 void Physics::calcFitness(int test){
-
 	switch(test){
-
 	case move:
 		{
-		btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
-		if(height<4){
-			fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));
-		}else{
-			fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;
-		}
+			btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
+			if(height<4){
+				fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));
+			}else{
+				fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;
+			}
 		}
 		break;
 
 	case jump:
 		{
-		static float startHeight =  m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin().getY();
+			static float startHeight =  m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin().getY();
 
-		//fix ground collision
-		//collision detection
-		//one per btPersistentManifold for each collision
-		int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
+			//fix ground collision
+			//collision detection
+			//one per btPersistentManifold for each collision
+			int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
 
-		for (int i=0;i<numManifolds;i++){
+			for (int i=0;i<numManifolds;i++){
+				btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+				int box1 = (int)contactManifold->getBody0()->getUserPointer();
+				int box2 = (int)contactManifold->getBody1()->getUserPointer();
 
-			btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-			int box1 = (int)contactManifold->getBody0()->getUserPointer();
-			int box2 = (int)contactManifold->getBody1()->getUserPointer();
-
-			if(box1 == ground || box1 == ground){
-				return;
+				if(box1 == ground || box1 == ground){
+					return;
+				}
 			}
 
-		}
-
-		fitness = max(fitness,  m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin().getY()-startHeight);
+			fitness = max(fitness,  m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin().getY()-startHeight);
 		}
 		break;
 
-
 	default:
 
-	printf("unkown fitness test\n");
-
+		printf("unkown fitness test\n");
 	}
-
-
 }

@@ -1068,7 +1068,7 @@ void DemoApplication::displayProfileString(int xOffset,int yStart,char* message)
 }
 
 
-void DemoApplication::showProfileInfo(int& xOffset,int& yStart, int yIncr)
+void DemoApplication::showInfo(int& xOffset,int& yStart, int yIncr)
 {
 #ifndef BT_NO_PROFILE
 
@@ -1093,21 +1093,16 @@ void DemoApplication::showProfileInfo(int& xOffset,int& yStart, int yIncr)
 		double parent_time = m_profileIterator->Is_Root() ? time_since_reset : m_profileIterator->Get_Current_Parent_Total_Time();
 
 		{
-			/*sprintf(blockTime,"--- Profiling: %s (total running time: %.3f ms) ---",	m_profileIterator->Get_Current_Parent_Name(), parent_time );
+			sprintf(blockTime,"--- Profiling: %s (total running time: %.3f ms) ---",	m_profileIterator->Get_Current_Parent_Name(), parent_time );
 			displayProfileString(xOffset,yStart,blockTime);
 			yStart += yIncr;
-
 			sprintf(blockTime,"press (1,2...) to display child timings, or 0 for parent" );
-			displayProfileString(xOffset,yStart,blockTime);
-			yStart += yIncr;
-			*/
-			sprintf(blockTime,"--- Profiling: %s (total running time: %lu ms) ---",	m_profileIterator->Get_Current_Parent_Name(), totaltime );
 			displayProfileString(xOffset,yStart,blockTime);
 			yStart += yIncr;
 
 		}
 
- /*
+
 		double accumulated_time = 0.f;
 
 		for (int i = 0; !m_profileIterator->Is_Done(); m_profileIterator->Next())
@@ -1127,12 +1122,12 @@ void DemoApplication::showProfileInfo(int& xOffset,int& yStart, int yIncr)
 		sprintf(blockTime,"%s (%.3f %%) :: %.3f ms", "Unaccounted",
 			// (min(0, time_since_reset - totalTime) / time_since_reset) * 100);
 			parent_time > SIMD_EPSILON ? ((parent_time - accumulated_time) / parent_time) * 100 : 0.f, parent_time - accumulated_time);
-			  
+
 		displayProfileString(xOffset,yStart,blockTime);
 		yStart += yIncr;
 
 
-		 */
+
 		sprintf(blockTime,"-------------------------------------------------");
 		displayProfileString(xOffset,yStart,blockTime);
 		yStart += yIncr;
@@ -1296,7 +1291,9 @@ void DemoApplication::renderme()
 		{
 			setOrthographicProjection();
 
-			showProfileInfo(xOffset,yStart,yIncr);
+
+			showInfo(xOffset,yStart,yIncr);
+			//showProfileInfo(xOffset,yStart,yIncr);
 
 #ifdef USE_QUICKPROF
 

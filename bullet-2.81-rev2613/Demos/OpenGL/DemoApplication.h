@@ -230,15 +230,15 @@ public:
 
 	virtual void mouseFunc(int button, int state, int x, int y);
 
-	virtual void	mouseMotionFunc(int x,int y);
+	virtual void mouseMotionFunc(int x,int y);
 	
 	virtual void displayCallback();
 
-	virtual 	void renderme();
+	virtual void renderme();
 
-	virtual		void swapBuffers() = 0;
+	virtual void swapBuffers() = 0;
 
-	virtual		void	updateModifierKeys() = 0;
+	virtual void updateModifierKeys() = 0;
 
 	void stepLeft();
 	void stepRight();
@@ -259,6 +259,7 @@ public:
 	
 	unsigned long totaltime;
 
+	virtual void showInfo(int& xOffset,int& yStart, int yIncr);
 };
 
 #endif //DEMO_APPLICATION_H
