@@ -166,7 +166,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 	InitCtrlEx.dwICC  = ICC_PROGRESS_CLASS;
 	InitCommonControlsEx(&InitCtrlEx);
 */	//
-	
 	switch (message)
 	{
 	case WM_SYSKEYDOWN:
@@ -517,12 +516,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 				//delete args;
 				///
+				noGenerations=noG;
 				argumentList* aList = new argumentList();
 				aList->nC=numCores;
 				aList->p=pop;
 				aList->nG=noG;
 				aList->iI=itemIndex;
 				aList->theResult = new creature();
+				roundCount = new int;*roundCount=0;
 							/*
 							void* args = malloc( sizeof(int) * 10 );
 							*((int*)args) = numCores;
@@ -530,11 +531,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 							*(((int*)args)+sizeof(int)*2) = noG;
 							//*(((int*)args)+sizeof(int)*3) = itemIndex;
 							*/
-				
 				HANDLE threadHandle = (HANDLE) _beginthreadex(0,0,&runServer,(void*)aList,0,0);
 				//creature* theResult = (creature*) runServer((void*)aList);
-
+				
+				UINT_PTR time = SetTimer(0,0,10,(TIMERPROC)&update);
 				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PROGRESS), hwnd, progressControll,(LPARAM)&noG);
+				KillTimer(0,time);
 				//creature result= pipeServerMain(numCores,pop,noG,saves.at(itemIndex)->dna);
 
 				save* tmpCreature =new save();
@@ -543,6 +545,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				tmpCreature->dna= aList->theResult->dna;
 				tmpCreature->fitness=aList->theResult->fitness;
 
+				delete roundCount;
 				delete aList->theResult;
 				delete aList;
 
@@ -799,13 +802,28 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 	switch(Message){
 	case WM_INITDIALOG:{
 		int nrGens =*((int*)lParam);
-		printf("thevalue %d\n",nrGens); //works
-		SendMessage(GetDlgItem(hwnd,IDC_PROGRESSBAR), PBM_SETRANGE, 0, MAKELPARAM(0, nrGens));
+		//printf("thevalue %d\n",nrGens); //works
+		progress = GetDlgItem(hwnd,IDC_PROGRESSBAR);
+		okButton = GetDlgItem(hwnd,IDOK);
+		progressText = GetDlgItem(hwnd,IDC_STATIC2);
+		SendMessage(progress, PBM_SETRANGE, 0, MAKELPARAM(0, nrGens));
 		break;}
+	case WM_COMMAND:{
+		switch(LOWORD(wParam))
+		{
+		case IDOK:
+			{
+				EndDialog(hwnd,0);
+				break;
+			}
+		}
+		break;
+		}
 	case WM_CLOSE:{
-		EndDialog(hwnd, 0);
+		printf("hell no :)");
 		break;}
 	default:
+		//SendMessage(progress,PBM_SETPOS,*roundCount,0);
 		return FALSE;
 	}
 	return TRUE;
@@ -814,7 +832,20 @@ unsigned int _stdcall runServer(void* args){
 	
 	argumentList* aList = (argumentList*) args;
 
-	*aList->theResult = pipeServerMain(aList->nC,aList->p,aList->nG,saves.at(aList->iI)->dna);
+	*aList->theResult = pipeServerMain(aList->nC,aList->p,aList->nG,saves.at(aList->iI)->dna,roundCount);
 	
 	return 1;
+}
+
+VOID CALLBACK update(){
+	if(progress!=0){
+		SendMessage(progress,PBM_SETPOS,*roundCount,0);
+
+		std::stringstream aStream;
+		aStream <<"Current Progress: "<< *roundCount<<" out of "<<noGenerations;
+		SetWindowText(progressText,aStream.str().c_str());
+		if(*roundCount>=noGenerations){
+			ShowWindow(okButton,SW_SHOW);
+		}
+	}
 }

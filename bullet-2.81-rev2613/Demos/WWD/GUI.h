@@ -1,7 +1,12 @@
 #pragma once
 
+//magic "enable windows visual style" command
+#pragma comment(linker,"\"/manifestdependency:type='win32' \
+name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
+
 #include <windows.h>
-#include <commctrl.h>
 
 #include "Grammar.h"
 
@@ -42,6 +47,12 @@ HWND hWnd;
 LPWSTR *argv;
 int argc;
 
+HWND progress;
+HWND okButton;
+HWND progressText;
+int* roundCount;
+int noGenerations;
+VOID CALLBACK update();
 struct argumentList{
 	int nC;
 	int p;

@@ -1,8 +1,7 @@
 #include "Server.h"
 
-creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor){
+creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor, int* roundNrPointer){
 	std::vector<creature> creatures;
-
 	//create creatures
 	creatures.push_back(creature());
 	creatures.at(0).dna=ancestor;
@@ -42,7 +41,7 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 		for(int j=0;j< (int) (creatures.size()/5.+0.5);j++){
 			printf("nr %d %f\n",j,creatures.at(j).fitness);
 		}
-
+		*roundNrPointer = i+1;
 		printf("end of round %d \n",i);
 	}
 	sendOrders(stop);
