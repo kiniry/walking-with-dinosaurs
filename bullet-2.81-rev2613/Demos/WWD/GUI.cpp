@@ -10,6 +10,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	console();
 
 	loadSaves();
+	int height=768,width =1024;
+	calcSizes(768-menuHeight,1024-border);
 
 	WNDCLASSEX wc;
 	
@@ -32,7 +34,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//look of the cursor
 	wc.hCursor = LoadCursor( NULL, IDC_ARROW );
 	//background color
-	wc.hbrBackground = (HBRUSH)GetStockObject( LTGRAY_BRUSH );
+	wc.hbrBackground = (HBRUSH)GetSysColorBrush(COLOR_3DFACE);
 	//menu bar
 	wc.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
 	wc.lpszClassName = "main";
@@ -41,8 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
 	wc.hIconSm		 = (HICON)LoadImage(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 16, 16, 0);
 	if(!RegisterClassEx(&wc)){
-		MessageBox(NULL, "Window Registration Failed!", "Error!",
-			MB_ICONEXCLAMATION | MB_OK);
+		MessageBox(NULL, "Window Registration Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
 		return 0;
 	}
 
@@ -50,7 +51,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	hWnd = CreateWindowEx( WS_EX_CLIENTEDGE,
 		"main", "Walking With Dinosaurs",
 		WS_THICKFRAME | WS_CAPTION | WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX |WS_CLIPCHILDREN |WS_MAXIMIZEBOX,
-		0, 0, 1024, 768,
+		GetSystemMetrics(SM_CXMAXIMIZED)/2-SM_CXFIXEDFRAME/2-width/2-listWidth, GetSystemMetrics(SM_CYMAXIMIZED)/2-SM_CYFIXEDFRAME/2-height/2, 1024, 768,
 		NULL, NULL, hInstance, NULL );
 	// create main window
 
@@ -68,12 +69,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = "blank";
 	if(!RegisterClassEx(&wc)){
-		MessageBox(NULL, "Window Registration Failed!", "Error!",
-			MB_ICONEXCLAMATION | MB_OK);
+		MessageBox(NULL, "Window Registration Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
 		return 0;
 	}
 
-	calcSizes(768-menuHeight,1024-border);
+
 
 	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,listWidth,bAreaHeight,simWidth,simHeight, hWnd,(HMENU)IDC_SIM, GetModuleHandle(NULL), NULL);
 
@@ -425,9 +425,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						// Get actual text in buffer
 						SendMessage(hwndList, LB_GETTEXT, (WPARAM) index, (LPARAM) textBuffer );
 
-						// Show it
-						MessageBox(NULL, textBuffer, TEXT("Selected Creature:"), MB_OK);
-
 						// Free text
 						delete [] textBuffer;
 
@@ -480,9 +477,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						pop+=res;
 					}
 				}else{
-					MessageBox(NULL, "No populastion size selected", TEXT("ERROR"), MB_OK);
+					MessageBox(NULL, "No populastion size selected", TEXT("ERROR"), MB_OK | MB_ICONERROR);
 					return 0;
 				}
+				if(pop<10){
+				 MessageBox(NULL, "the Populasion size is to small", TEXT("ERROR"), MB_OK | MB_ICONERROR);
+					return 0;
+				}
+
 
 				int noG = 0;
 				HWND hwndNoG = GetDlgItem(hwnd, IDC_NOG_EDIT);
@@ -501,21 +503,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						noG+=res;
 					}
 				}else{
-					MessageBox(NULL, "No number of generations selected", TEXT("ERROR"), MB_OK);
+					MessageBox(NULL, "No number of generations selected", TEXT("ERROR"), MB_OK | MB_ICONERROR);
 					return 0;
 				}
 
-				///PBM INSERTION IMMINENT
-				//void* args = malloc(sizeof(HWND*)+sizeof(int*));
-				//7*((HWND*)args) = hwnd;
-				//*((int*)((HWND*)args+sizeof(HWND*))) = noG;
-				
-				//_beginthreadex(0,0,&runProgress,args,0,0);
-				//runProgress(args);
-				//DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PROGRESS), hwnd, progressControll,(LPARAM)&noG);
-
-				//delete args;
-				///
 				noGenerations=noG;
 				argumentList* aList = new argumentList();
 				aList->nC=numCores;
@@ -524,24 +515,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				aList->iI=itemIndex;
 				aList->theResult = new creature();
 				roundCount = new int;*roundCount=0;
-							/*
-							void* args = malloc( sizeof(int) * 10 );
-							*((int*)args) = numCores;
-							*(((int*)args)+sizeof(int)*1) = pop;
-							*(((int*)args)+sizeof(int)*2) = noG;
-							//*(((int*)args)+sizeof(int)*3) = itemIndex;
-							*/
+
 				HANDLE threadHandle = (HANDLE) _beginthreadex(0,0,&runServer,(void*)aList,0,0);
-				//creature* theResult = (creature*) runServer((void*)aList);
 				
 				UINT_PTR time = SetTimer(0,0,10,(TIMERPROC)&update);
 				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PROGRESS), hwnd, progressControll,(LPARAM)&noG);
 				KillTimer(0,time);
-				//creature result= pipeServerMain(numCores,pop,noG,saves.at(itemIndex)->dna);
+
 
 				save* tmpCreature =new save();
-				//tmpCreature->dna= result.dna;
-				//tmpCreature->fitness=result.fitness;
 				tmpCreature->dna= aList->theResult->dna;
 				tmpCreature->fitness=aList->theResult->fitness;
 
