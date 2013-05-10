@@ -20,7 +20,7 @@
 #define dead -999999
 #define randomDnaValue rand()%maxDNAValue
 
-#define expectedDiviation 1.5
+#define expectedDiviation 30
 
 struct creature{
 	std::vector<int> dna;
@@ -31,7 +31,7 @@ struct creature{
 static double totalDiviation =0;
 static double timesDiviation =0;
 
-void normalizeFitness(std::vector<creature> creatures);
+void normalizeFitness(std::vector<creature> *creatures);
 
 
 double statistik(std::vector<creature> creatures);

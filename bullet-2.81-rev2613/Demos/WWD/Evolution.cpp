@@ -9,12 +9,11 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 
 	std::sort(creatures.begin(), creatures.end(), compareCreatures);
 
-	normalizeFitness(creatures);
-
 	double deviation=statistik(creatures);
 
 	int survivors = (int) ((creatures.size()/100.f)*((float)survivalRatio)+0.5);
 	int cullAmount = (int) ((creatures.size()/100.f)*((float)cullRatio)+0.5);
+
 
 	printf("\nsurvivors %d\n", survivors);
 	printf("\nculled creatures %d\n", cullAmount);
@@ -29,12 +28,11 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		fitnessSumElites += (float) (creatures.at(i).fitness>0.001?creatures.at(i).fitness:0.001);
 	}
 
-	if((int)creatures.size()>survivors){
-		for(int i =survivors; i<((((int)creatures.size())-survivors)-cullAmount); i++){
-			breeders.push_back(creatures.at(i));
-			fitnessSumBreeders += (float) (creatures.at(i).fitness>0.001?creatures.at(i).fitness:0.001);
-		}
+	for(int i =survivors; i<(((int)creatures.size())-survivors-cullAmount); i++){
+		breeders.push_back(creatures.at(i));
+		fitnessSumBreeders += (float) (creatures.at(i).fitness>0.001?creatures.at(i).fitness:0.001);
 	}
+
 	for(int i =0; i<(int) creatures.size()-survivors;i++){
 		creature creat;
 		creat.fitness=0;
@@ -151,10 +149,14 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 }
 
 double statistik(std::vector<creature> creatures){
-	double max=0, min=0, median=0, mean=0, deviation=0;
+	float max=0, min=0, median=0, mean=0, deviation=0;
 
 	max =creatures.at(0).fitness;
 	min = creatures.at(creatures.size()-1).fitness;
+
+
+	normalizeFitness(&creatures);
+
 
 	for(int i = 0; i<(int)creatures.size(); i++){
 		mean+=creatures.at(i).fitness;
@@ -170,6 +172,9 @@ double statistik(std::vector<creature> creatures){
 		median= creatures.at((int)(creatures.size()/2.+0.5)-1).fitness;
 	}
 
+
+
+	//should dead creatures be used for the deviration
 	if(creatures.size()>1){
 		for(int i = 0; i<(int)creatures.size(); i++){
 			deviation+=pow(creatures.at(i).fitness-mean,2);
@@ -187,16 +192,35 @@ double statistik(std::vector<creature> creatures){
 	return deviation;
 }
 
-void normalizeFitness(std::vector<creature> creatures){
-	double sum = 0;
-	for(int i =0; i<(int)creatures.size();i++){
-		if(	creatures.at(i).fitness<=0){
-			creatures.at(i).fitness=0.0001;
+void normalizeFitness(std::vector<creature> *creatures){
+	float min = 0;
+
+
+	for(int i =creatures->size()-1; i>=0;i--){
+		if(	creatures->at(i).fitness>dead+0.00001){
+			min=creatures->at(i).fitness;
+			break;
 		}
-		sum+=creatures.at(i).fitness;
 	}
 
-	for(int i =0; i<(int)creatures.size();i++){
-		creatures.at(i).fitness=(float)creatures.at(i).fitness/sum*100.;
+
+
+
+	double max = creatures->at(0).fitness-min;
+	for(int i =0; i<(int)creatures->size();i++){
+		if(	creatures->at(i).fitness+0.00001>dead && creatures->at(i).fitness-0.00001<dead){
+			creatures->at(i).fitness=0.000001;
+		}else{
+			creatures->at(i).fitness-=min;
+			float tmp =creatures->at(i).fitness;
+
+			creatures->at(i).fitness=(float)(creatures->at(i).fitness)/max*100.+0.00001;
+
+		}
+
+	}
+
+	for(int i =0; i<(int)creatures->size();i++){
+
 	}
 }
