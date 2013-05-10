@@ -1,5 +1,6 @@
 #include "GUI.h"
-
+//#pragma comment(lib, "comctl32.lib")
+//#pragma comment(linker,"/manifestdependency:\"type='win32 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 // WinMain
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int cmdShow){
 	argv =CommandLineToArgvW(GetCommandLineW(),&argc);
@@ -158,6 +159,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 // Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
+	
+	//init CC
+/*	INITCOMMONCONTROLSEX InitCtrlEx;
+	InitCtrlEx.dwSize = sizeof(INITCOMMONCONTROLSEX);
+	InitCtrlEx.dwICC  = ICC_PROGRESS_CLASS;
+	InitCommonControlsEx(&InitCtrlEx);
+*/	//
+	
 	switch (message)
 	{
 	case WM_SYSKEYDOWN:
@@ -497,11 +506,45 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 					return 0;
 				}
 
-				creature result= pipeServerMain(numCores,pop,noG,saves.at(itemIndex)->dna);
+				///PBM INSERTION IMMINENT
+				//void* args = malloc(sizeof(HWND*)+sizeof(int*));
+				//7*((HWND*)args) = hwnd;
+				//*((int*)((HWND*)args+sizeof(HWND*))) = noG;
+				
+				//_beginthreadex(0,0,&runProgress,args,0,0);
+				//runProgress(args);
+				//DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PROGRESS), hwnd, progressControll,(LPARAM)&noG);
+
+				//delete args;
+				///
+				argumentList* aList = new argumentList();
+				aList->nC=numCores;
+				aList->p=pop;
+				aList->nG=noG;
+				aList->iI=itemIndex;
+				aList->theResult = new creature();
+							/*
+							void* args = malloc( sizeof(int) * 10 );
+							*((int*)args) = numCores;
+							*(((int*)args)+sizeof(int)*1) = pop;
+							*(((int*)args)+sizeof(int)*2) = noG;
+							//*(((int*)args)+sizeof(int)*3) = itemIndex;
+							*/
+				
+				HANDLE threadHandle = (HANDLE) _beginthreadex(0,0,&runServer,(void*)aList,0,0);
+				//creature* theResult = (creature*) runServer((void*)aList);
+
+				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PROGRESS), hwnd, progressControll,(LPARAM)&noG);
+				//creature result= pipeServerMain(numCores,pop,noG,saves.at(itemIndex)->dna);
 
 				save* tmpCreature =new save();
-				tmpCreature->dna= result.dna;
-				tmpCreature->fitness=result.fitness;
+				//tmpCreature->dna= result.dna;
+				//tmpCreature->fitness=result.fitness;
+				tmpCreature->dna= aList->theResult->dna;
+				tmpCreature->fitness=aList->theResult->fitness;
+
+				delete aList->theResult;
+				delete aList;
 
 				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NAMING), hwnd, namingControl,(LPARAM)&tmpCreature->name);
 
@@ -750,4 +793,28 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 		return FALSE;
 	}
 	return TRUE;
+}
+
+BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
+	switch(Message){
+	case WM_INITDIALOG:{
+		int nrGens =*((int*)lParam);
+		printf("thevalue %d\n",nrGens); //works
+		SendMessage(GetDlgItem(hwnd,IDC_PROGRESSBAR), PBM_SETRANGE, 0, MAKELPARAM(0, nrGens));
+		break;}
+	case WM_CLOSE:{
+		EndDialog(hwnd, 0);
+		break;}
+	default:
+		return FALSE;
+	}
+	return TRUE;
+}
+unsigned int _stdcall runServer(void* args){
+	
+	argumentList* aList = (argumentList*) args;
+
+	*aList->theResult = pipeServerMain(aList->nC,aList->p,aList->nG,saves.at(aList->iI)->dna);
+	
+	return 1;
 }

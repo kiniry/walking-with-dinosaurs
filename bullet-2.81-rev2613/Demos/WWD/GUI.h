@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include <commctrl.h>
 
 #include "Grammar.h"
 
@@ -13,6 +14,8 @@
 #include <fcntl.h>
 
 #include "resource.h"
+
+#include <process.h>
 
 #define IDC_LISTBOX 993
 #define IDC_SIM 994
@@ -39,6 +42,14 @@ HWND hWnd;
 LPWSTR *argv;
 int argc;
 
+struct argumentList{
+	int nC;
+	int p;
+	int nG;
+	int iI;
+	creature* theResult;
+};
+
 struct save{
 	std::string name;
 	std::vector<int> dna;
@@ -52,6 +63,8 @@ static Physics* WWDPhysics = new Physics();
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
+unsigned int _stdcall runServer(void* args);
 void EnableOpenGL(HWND hWnd, HDC * hDC, HGLRC * hRC);
 void DisableOpenGL(HWND hWnd, HDC hDC, HGLRC hRC);
 
