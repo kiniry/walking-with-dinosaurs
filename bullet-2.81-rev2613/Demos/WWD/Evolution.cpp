@@ -49,12 +49,13 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 		}else{
 		creat.dna = mutate(crossOver2(dna,dna2),deviation);
 		}*/
-		creature breed = getWorthyCreature(fitnessSumBreeders,breeders);
-		creature seed = getWorthyCreature(fitnessSumElites,elites);
+		creature breed = getWorthyCreature(fitnessSumBreeders,&breeders);
+		creature seed = getWorthyCreature(fitnessSumElites,&elites);
 
 		creat.dna = breed.treePointer->crossBreed(breed.dna,seed.dna,seed.treePointer);
 		creat.dna = mutate(creat.dna,deviation);
 		result.push_back(creat);
+		printf("i %d\n",i);
 	}
 
 	//cleanup
@@ -65,28 +66,35 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 	return result;
 }
 
-creature getWorthyCreature(float fitnessSum, std::vector<creature> creatures){
+creature getWorthyCreature(float fitnessSum, std::vector<creature> *creatures){
+	int random = rand()%creatures->size();
+	return creatures->at(random);
+
+}
+
+
+creature getWorthyCreatureFail(float fitnessSum, std::vector<creature> *creatures){
 	int Sum = (int)(fitnessSum*1000.f);
 	if(Sum<1){
-		int random = rand()%creatures.size();
-		return creatures.at(random);//if the sum of all the fitness is zero return a random instead... they are all useless
+		int random = rand()%creatures->size();
+		return creatures->at(random);//if the sum of all the fitness is zero return a random instead... they are all useless
 	}
 	int random = (rand()*100)%Sum;	//Random number generator doesn't give high enough values so we multiply with 100 to be sure
 	//we are in the range
 	float val = 0;
 	int i=0;
-	for(i;i<(int)creatures.size();i++){
-		val+=(creatures.at(i).fitness>0.001?creatures.at(i).fitness*1000.f:1.f);
+	for(i;i<(int)creatures->size();i++){
+		val+=(creatures->at(i).fitness>0.001?creatures->at(i).fitness*1000.f:1.f);
 		if(val>random){
 			break;
 		}
 	}
-	if(i>= (int)creatures.size()){
+	if(i>= (int)creatures->size()){
 		printf("FAIL... how irritating");
-		return creatures.at(creatures.size()-1);
+		return creatures->at(creatures->size()-1);
 	}
 	//printf(" %d ",i);
-	return creatures.at(i);
+	return creatures->at(i);
 }
 
 std::vector<int> mutate(const std::vector<int> dna, double deviation){

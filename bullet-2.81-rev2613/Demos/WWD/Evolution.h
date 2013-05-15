@@ -47,7 +47,7 @@ std::vector<int> crossOver1(std::vector<int> dna1, std::vector<int> dna2);
 
 std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2);
 
-creature getWorthyCreature(float fitnessSum, std::vector<creature> creatures);
+creature getWorthyCreature(float fitnessSum, std::vector<creature> *creatures);
 
 const int survivalRatio = 20; //how many elite creatures are there?
 const int cullRatio = 50; //how many creatures must die?

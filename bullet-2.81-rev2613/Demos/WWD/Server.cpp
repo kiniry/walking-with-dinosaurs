@@ -83,7 +83,7 @@ void startPrograms(){
 	for(int i=0;i<pipes.size();i++){
 		std::stringstream commandArgs;
 		commandArgs<<i;
-		int error=(int) ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_HIDE );
+		int error=(int) ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_HIDE);
 		if(error < 32){
 			printf("Error: faild to start Client\n");
 			exit(-1);

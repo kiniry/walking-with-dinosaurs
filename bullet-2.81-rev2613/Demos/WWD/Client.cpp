@@ -13,7 +13,7 @@ int pipeClientMain(int argc,char* argv[]){
 		pipeSim(&creatures);
 
 		//send results back
-		sendResult(creatures);
+		sendResult(&creatures);
 
 		//send Done message
 		sendAcknowledge();
@@ -145,7 +145,7 @@ void sendAcknowledge(){
 	printf("\n");
 }
 
-void sendResult(std::vector<creature> creatures){
+void sendResult(std::vector<creature> *creatures){
 	printf("Sending results\n");
 
 	std::stringstream filename;
@@ -153,17 +153,17 @@ void sendResult(std::vector<creature> creatures){
 	std::ofstream os;
 	os.open(filename.str(),std::ios::out | std::ios::binary);
 
-	int noCreatures =creatures.size();
+	int noCreatures =creatures->size();
 
 	os.write((const char*)&noCreatures, sizeof(int));
 
-	for(int j =0; j< (int)creatures.size();j++){
-		int size = creatures.at(j).dna.size();
+	for(int j =0; j< (int)creatures->size();j++){
+		int size = creatures->at(j).dna.size();
 		os.write((const char*)&size, sizeof(int));
 
-		os.write((const char*)&creatures.at(j).dna[0], sizeof(int)*size);
-		printf("fitness nr %d: %f\n",j, creatures.at(j).fitness);
-		os.write((const char*)&creatures.at(j).fitness, sizeof(float));
+		os.write((const char*)&creatures->at(j).dna[0], sizeof(int)*size);
+		printf("fitness nr %d: %f\n",j, creatures->at(j).fitness);
+		os.write((const char*)&creatures->at(j).fitness, sizeof(float));
 	}
 	if(!os.good()){
 		printf("error\n");
