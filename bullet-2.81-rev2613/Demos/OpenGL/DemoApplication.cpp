@@ -87,7 +87,7 @@ m_singleStep(false),
 m_idle(false),
 
 m_enableshadows(false),
-m_sundirection(btVector3(1,-2,1)*1000),
+m_sundirection(btVector3(-20,-200,-100)*1000),
 m_defaultContactProcessingThreshold(BT_LARGE_FLOAT)
 {
 #ifndef BT_NO_PROFILE
