@@ -313,13 +313,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 			break;
 		}
 
-	case WM_CONTEXTMENU:{
+	case WM_CONTEXTMENU:
+		{
 		POINT p;
-		HMENU popupMenu = CreatePopupMenu();
-		InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RUN_BUTTON,"Run");
 		GetCursorPos(&p);
-		TrackPopupMenu(popupMenu,TPM_BOTTOMALIGN|TPM_LEFTALIGN,p.x,p.y,0,hwnd,NULL);
+		ScreenToClient(hWndList,&p);
+		int index = SendMessage(hWndList,LB_ITEMFROMPOINT,0, MAKELPARAM(p.x,p.y));
 
+		int noElements = SendMessage(hWndList,LB_GETCOUNT,0,0);
+		if(0<=index && index <noElements){
+			//add rename and delete
+			HMENU popupMenu = CreatePopupMenu();
+			InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RUN_BUTTON,"Run");
+			GetCursorPos(&p);
+			TrackPopupMenu(popupMenu,TPM_BOTTOMALIGN|TPM_LEFTALIGN,p.x,p.y,0,hwnd,NULL);
+
+		}
+
+		
 		break;}
 
 	case WM_CLOSE:
