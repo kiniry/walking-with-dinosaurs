@@ -14,7 +14,7 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 int setupServer(int pop, int cores);
 void startPrograms();
 int waitForClients();
-int sendCreatures(std::vector<creature> creatures);
+int sendCreatures(std::vector<creature>* creatures);
 int sendOrders(int i);
 void receiveAcknowledges();
 std::vector<creature> getResults();

@@ -34,12 +34,13 @@ static double timesDiviation =0;
 void normalizeFitness(std::vector<creature> *creatures);
 
 
-double statistik(std::vector<creature> creatures);
+double statistik(std::vector<creature>* creatures);
 
 static bool compareCreatures(const creature &a, const creature &b){
 	return a.fitness > b.fitness;
 }
-std::vector<creature> evolve(std::vector<creature> creatures);
+//std::vector<creature> evolve(std::vector<creature>* creatures);
+void evolve(std::vector<creature>* creatures);
 
 std::vector<int> mutate(const std::vector<int>  dna, double deviation);
 

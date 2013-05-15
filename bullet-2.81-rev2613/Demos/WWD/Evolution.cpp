@@ -1,7 +1,7 @@
 #include "Evolution.h"
 #include <time.h>
 
-std::vector<creature> evolve(std::vector<creature> creatures){
+void evolve(std::vector<creature>* creatures){
 		//seeds random generator
 	srand(time(0));
 	float fitnessSumElites = 0;
@@ -10,33 +10,33 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 	std::vector<creature> elites;
 	std::vector<creature> breeders;
 
-	std::sort(creatures.begin(), creatures.end(), compareCreatures);
+	std::sort(creatures->begin(), creatures->end(), compareCreatures);
 
 	double deviation=statistik(creatures);
 
-	int survivors = (int) ((creatures.size()/100.f)*((float)survivalRatio)+0.5);
-	int cullAmount = (int) ((creatures.size()/100.f)*((float)cullRatio)+0.5);
+	int survivors = (int) ((creatures->size()/100.f)*((float)survivalRatio)+0.5);
+	int cullAmount = (int) ((creatures->size()/100.f)*((float)cullRatio)+0.5);
 
 
 	printf("\nsurvivors %d\n", survivors);
 	printf("\nculled creatures %d\n", cullAmount);
 
-	if(survivors == 0 && creatures.size() != 0){
+	if(survivors == 0 && creatures->size() != 0){
 		survivors =1;
 	}
 
 	for(int i =0; i<(int)survivors; i++){
-		result.push_back(creatures.at(i));
-		elites.push_back(creatures.at(i));
-		fitnessSumElites += (float) (creatures.at(i).fitness>0.001?creatures.at(i).fitness:0.001);
+		result.push_back(creatures->at(i));
+		elites.push_back(creatures->at(i));
+		fitnessSumElites += (float) (creatures->at(i).fitness>0.001?creatures->at(i).fitness:0.001);
 	}
 
-	for(int i =survivors; i<(((int)creatures.size())-survivors-cullAmount); i++){
-		breeders.push_back(creatures.at(i));
-		fitnessSumBreeders += (float) (creatures.at(i).fitness>0.001?creatures.at(i).fitness:0.001);
+	for(int i =survivors; i<(((int)creatures->size())-survivors-cullAmount); i++){
+		breeders.push_back(creatures->at(i));
+		fitnessSumBreeders += (float) (creatures->at(i).fitness>0.001?creatures->at(i).fitness:0.001);
 	}
 
-	for(int i =0; i<(int) creatures.size()-survivors;i++){
+	for(int i =0; i<(int) creatures->size()-survivors;i++){
 		creature creat;
 		creat.fitness=0;
 
@@ -59,11 +59,12 @@ std::vector<creature> evolve(std::vector<creature> creatures){
 	}
 
 	//cleanup
-	for(int i=0;i<(int)creatures.size();i++){
-		delete creatures.at(i).treePointer;
+	for(int i=0;i<(int)creatures->size();i++){
+		delete creatures->at(i).treePointer;
 	}
 
-	return result;
+	//return result;
+	*creatures = result;
 }
 
 creature getWorthyCreature(float fitnessSum, std::vector<creature> *creatures){
@@ -159,38 +160,38 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 	return newCreature;
 }
 
-double statistik(std::vector<creature> creatures){
+double statistik(std::vector<creature>* creatures){
 	float max=0, min=0, median=0, mean=0, deviation=0;
 
-	max =creatures.at(0).fitness;
-	min = creatures.at(creatures.size()-1).fitness;
+	max =creatures->at(0).fitness;
+	min = creatures->at(creatures->size()-1).fitness;
 
 
-	normalizeFitness(&creatures);
+	normalizeFitness(creatures);
 
 
-	for(int i = 0; i<(int)creatures.size(); i++){
-		mean+=creatures.at(i).fitness;
+	for(int i = 0; i<(int)creatures->size(); i++){
+		mean+=creatures->at(i).fitness;
 	}
-	mean/=creatures.size();
+	mean/=creatures->size();
 
-	if(creatures.size()%2 ==0){
-		float tmp1 =creatures.at((int)(creatures.size()/2.+0.5)).fitness;
-		float tmp2 =creatures.at((int)(creatures.size()/2.+0.5)-1).fitness;
+	if(creatures->size()%2 ==0){
+		float tmp1 =creatures->at((int)(creatures->size()/2.+0.5)).fitness;
+		float tmp2 =creatures->at((int)(creatures->size()/2.+0.5)-1).fitness;
 
 		median = (tmp2-tmp1)/2.+tmp1;
 	}else{
-		median= creatures.at((int)(creatures.size()/2.+0.5)-1).fitness;
+		median= creatures->at((int)(creatures->size()/2.+0.5)-1).fitness;
 	}
 
 
 
 	//should dead creatures be used for the deviration
-	if(creatures.size()>1){
-		for(int i = 0; i<(int)creatures.size(); i++){
-			deviation+=pow(creatures.at(i).fitness-mean,2);
+	if(creatures->size()>1){
+		for(int i = 0; i<(int)creatures->size(); i++){
+			deviation+=pow(creatures->at(i).fitness-mean,2);
 		}
-		deviation=deviation/((float)(creatures.size()-1));
+		deviation=deviation/((float)(creatures->size()-1));
 		deviation=sqrt(deviation);
 	}else{
 		deviation=0;

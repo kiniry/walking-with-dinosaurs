@@ -117,16 +117,16 @@ int WWD(int argc,char** argv){
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
 
-	std::vector<creature> creatures;
+	std::vector<creature>* creatures = new std::vector<creature>();
 
 	//Creates one ancestor and the rest is mutation of the ancestor
-	creatures.push_back(creature());
-	creatures.at(0).dna=ancestor;
-	creatures.at(0).fitness=0;
+	creatures->push_back(creature());
+	creatures->at(0).dna=ancestor;
+	creatures->at(0).fitness=0;
 	for(int i=1; i<populationSize;i++){
-		creatures.push_back(creature());
-		creatures.at(i).dna=mutate(ancestor,2);
-		creatures.at(i).fitness=0;
+		creatures->push_back(creature());
+		creatures->at(i).dna=mutate(ancestor,2);
+		creatures->at(i).fitness=0;
 	}
 
 	for(int i=0;i<nrOfGenerations;i++){
@@ -136,15 +136,15 @@ int WWD(int argc,char** argv){
 			//#pragma omp for schedule(dynamic)
 			for(int j =0; j<populationSize; j++){
 				//init world
-				Physics* WWDPhysics = new Physics(creatures.at(j).dna);
+				Physics* WWDPhysics = new Physics(creatures->at(j).dna);
 
 				//init creature
-				readDNA(&creatures.at(j).dna,WWDPhysics);
+				readDNA(&creatures->at(j).dna,WWDPhysics);
 
 				//run sim
 				WWDPhysics->runSimulation();
-				creatures.at(j).fitness = WWDPhysics->getFitness();
-				creatures.at(j).treePointer = getMTree(&creatures.at(j).dna);
+				creatures->at(j).fitness = WWDPhysics->getFitness();
+				creatures->at(j).treePointer = getMTree(&creatures->at(j).dna);
 				delete WWDPhysics;
 			}
 
@@ -167,26 +167,26 @@ int WWD(int argc,char** argv){
 
 			//mutate
 			//#pragma omp single nowait
-			creatures=evolve(creatures); //Evolve cleans up the MTrees so no need for that here
+			evolve(creatures); //Evolve cleans up the MTrees so no need for that here
 			//print survivors sorted
 
 			//#pragma omp for ordered
-			for(int j=0;j< (int) (creatures.size()/5.f);j++){
-				printf("nr %d %f\n",j,creatures.at(j).fitness);
+			for(int j=0;j< (int) (creatures->size()/5.f);j++){
+				printf("nr %d %f\n",j,creatures->at(j).fitness);
 			}
 			//#pragma omp for ordered
 			printf("round %d \n",i);
 		}
 	}
 
-	for (int i = 0; i < (int) creatures.at(0).dna.size(); i++){
-		printf("%d,", creatures.at(0).dna.at(i));
+	for (int i = 0; i < (int) creatures->at(0).dna.size(); i++){
+		printf("%d,", creatures->at(0).dna.at(i));
 	}
 
 	//Show end result if we want to...
-	Physics* WWDPhysics = new Physics(creatures.at(0).dna);
+	Physics* WWDPhysics = new Physics(creatures->at(0).dna);
 	//init creature
-	readDNA(&creatures.at(0).dna,WWDPhysics);
+	readDNA(&creatures->at(0).dna,WWDPhysics);
 	//default glut doesn't return from mainloop
 
 	WWDPhysics->calcSize();
