@@ -8,6 +8,7 @@ static char filePathAbs[MAX_PATH];
 static HANDLE pipe = INVALID_HANDLE_VALUE;
 
 static std::string creatureFilePath;
+static fitnessTest ftype;
 
 int pipeClientMain(int argc,char** argv);
 void setParameters(int argc,char** argv);

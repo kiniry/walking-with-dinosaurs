@@ -15,7 +15,7 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 	setupServer(populationSize, cores);
 
 	//star programs
-	startPrograms();
+	startPrograms(type);
 
 	waitForClients();
 	for(int i=1; i<populationSize;i++){
@@ -53,7 +53,7 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 	return result;
 }
 
-void startPrograms(){
+void startPrograms(fitnessTest type){
 	char fileName[MAX_PATH];
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 	GetModuleFileName(hInstance, fileName, MAX_PATH);
@@ -83,7 +83,7 @@ void startPrograms(){
 
 	for(int i=0;i<pipes.size();i++){
 		std::stringstream commandArgs;
-		commandArgs<<i;
+		commandArgs<<i<<" "<<type;
 		int error=(int) ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_HIDE);
 		if(error < 32){
 			printf("Error: faild to start Client\n");

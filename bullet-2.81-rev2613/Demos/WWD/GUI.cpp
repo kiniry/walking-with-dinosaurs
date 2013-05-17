@@ -563,7 +563,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				delete WWDPhysics;
 
 				WWDPhysics = new Physics();
-
+				WWDPhysics->setFitnesFunction(tmptest);
 				readDNA(&saves.at(saves.size()-1)->dna,WWDPhysics);
 				WWDPhysics->solveGroundConflicts();
 				WWDPhysics->reshape(simWidth,simHeight);

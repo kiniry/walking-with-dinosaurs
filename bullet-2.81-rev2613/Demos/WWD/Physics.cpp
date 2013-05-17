@@ -847,7 +847,12 @@ void Physics::calcFitness(fitnessTest test){
 
 	case jump:
 		{
-			static float startHeight =  m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin().getY();
+
+			//er der kontakt emd jorden
+			// hvis der ikke er så er det afstanden fra jord til nederste punkt
+
+
+			static float startHeight =  height;
 
 			//fix ground collision
 			//collision detection

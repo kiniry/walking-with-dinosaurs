@@ -27,13 +27,14 @@ int pipeClientMain(int argc,char* argv[]){
 
 void setParameters(int argc,char* argv[]){
 	//ID
-	if(argc!=2){
+	if(argc!=3){
 		printf("to few arguments expected 2, recieved %d\n",argc);
 		exit(-1);
 	}
-
+	ftype =static_cast<fitnessTest> (((int)*argv[2])-48);
 	ID=  argv[1];
 	printf("client %s started\n",ID.c_str());
+	printf("ftype: %d\n",ftype);
 
 	//Pipename
 	std::stringstream result;
@@ -111,6 +112,7 @@ void pipeSim(std::vector<creature> *creatures){
 	//run simulator
 	for(int i=0;i< (int) creatures->size();i++){
 		Physics* WWDPhysics = new Physics();
+		WWDPhysics->setFitnesFunction(ftype);
 		readDNA(&creatures->at(i).dna,WWDPhysics);
 		WWDPhysics->runSimulation(); //runs a physics simulation and save the fitness values
 		creatures->at(i).fitness = WWDPhysics->getFitness();

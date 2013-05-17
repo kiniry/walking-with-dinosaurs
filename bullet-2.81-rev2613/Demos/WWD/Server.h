@@ -12,7 +12,7 @@ static std::vector<std::string> creatureFilePaths;
 creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor, fitnessTest type, int* roundNrPointer);
 
 int setupServer(int pop, int cores);
-void startPrograms();
+void startPrograms(fitnessTest);
 int waitForClients();
 int sendCreatures(std::vector<creature>* creatures);
 int sendOrders(int i);
