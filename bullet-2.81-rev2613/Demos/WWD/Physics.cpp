@@ -738,6 +738,7 @@ void	Physics::exitPhysics(){
 	//delete contraints
 	while(m_dynamicsWorld->getNumConstraints()>0){
 		btTypedConstraint* deathPointer = m_dynamicsWorld->getConstraint(0);
+		delete deathPointer->getUserConstraintPtr();
 		m_dynamicsWorld->removeConstraint(deathPointer);
 		delete deathPointer;
 	}
@@ -746,6 +747,7 @@ void	Physics::exitPhysics(){
 	for (int i=m_dynamicsWorld->getNumCollisionObjects()-1; i>=0 ;i--){
 		btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray().at(i);
 		btRigidBody* body = btRigidBody::upcast(obj);
+		delete body->getUserPointer();
 		if (body && body->getMotionState())
 		{
 			delete body->getMotionState();
@@ -772,42 +774,6 @@ void	Physics::exitPhysics(){
 	delete m_collisionConfiguration;
 }
 
-void Physics::removeCreatures(){
-	//delete NNs
-	while(subnets.size()>0){
-		delete subnets.at(subnets.size()-1);
-		subnets.pop_back();
-	}
-	theNet->killFirstLayer();
-	delete theNet;
-
-	//delete contraints
-	while(m_dynamicsWorld->getNumConstraints()>1){
-		btTypedConstraint* deathPointer = m_dynamicsWorld->getConstraint(m_dynamicsWorld->getNumConstraints());
-		delete deathPointer->getUserConstraintPtr();
-		m_dynamicsWorld->removeConstraint(deathPointer);
-		delete deathPointer;
-	}
-
-	//remove the rigidbodies from the dynamics world and delete them
-	for (int i=m_dynamicsWorld->getNumCollisionObjects()-1; i>0 ;i--){
-		btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray().at(i);
-		btRigidBody* body = btRigidBody::upcast(obj);
-		delete body->getUserPointer();
-		if (body && body->getMotionState())
-		{
-			delete body->getMotionState();
-		}
-		m_dynamicsWorld->removeCollisionObject( obj );
-		delete obj;
-	}
-
-	//delete collision shapes
-	for (int j=1;j<m_collisionShapes.size();j++){
-		btCollisionShape* shape = m_collisionShapes[j];
-		delete shape;
-	}
-}
 
 void Physics::testPhysics(){
 	int box2 = createBox(95,895,395);

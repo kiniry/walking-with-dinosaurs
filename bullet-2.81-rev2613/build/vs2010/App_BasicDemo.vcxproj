@@ -143,7 +143,8 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='GUI_Release|Win32'">$(ProjectName)_$(PlatformToolset)_$(PlatformArchitecture)-bit_$(Configuration)</TargetName>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='GUI_Release|Win32'">obj\$(PlatformArchitecture)-bit\$(Configuration)\$(ProjectName)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Console_Release|Win32'">obj\$(PlatformArchitecture)-bit\$(Configuration)\$(ProjectName)\</IntDir>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|Win32'">C:\Users\Tugsav\Documents\GitHub\walking-with-dinosaurs\bullet-2.81-rev2613\src\Visual Leak Detector\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='GUI_Debug|Win32'">..\..\src\Visual Leak Detector\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Console_Debug|Win32'">..\..\src\Visual Leak Detector\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='GUI_Release|Win32'">
     <ClCompile>

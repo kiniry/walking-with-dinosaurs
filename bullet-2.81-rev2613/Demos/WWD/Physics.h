@@ -175,6 +175,5 @@ public:
 	void testPhysics();
 	void calcSize();
 	void solveGroundConflicts();
-	void removeCreatures();
 	fitnessTest testType;
 };
