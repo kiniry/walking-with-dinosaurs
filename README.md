@@ -6,5 +6,3 @@ TODO list:
 More fitness tests
 
 Progress counter
-
-mem leak 
