@@ -498,6 +498,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						int res =  (value* pow(10.,length-1-i)+0.5);
 						noG+=res;
 					}
+					delete text;
 				}else{
 					MessageBox(NULL, "No number of generations selected", TEXT("ERROR"), MB_OK | MB_ICONERROR);
 					return 0;
