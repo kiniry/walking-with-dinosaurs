@@ -113,8 +113,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	HWND hWndPop=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE |ES_NUMBER,	700, 20, 100, 18,
 		hWnd, (HMENU)IDC_POP_EDIT, GetModuleHandle(NULL),	NULL);
 
-	//ShowWindow(hWnd, cmdShow);
-	//UpdateWindow(hWnd);
 
 	// program main loop
 	while ( !quit )
@@ -154,6 +152,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	DestroyWindow( hWnd );
 
 	delete WWDPhysics;
+
+	for(int i =0;i<saves.size();i++){
+		delete saves.at(i);
+	}
 
 	return msg.wParam;
 }
