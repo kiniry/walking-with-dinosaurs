@@ -3,6 +3,10 @@
 //#include "MTreeNode.h"
 #include "partNode.h"
 #include "NNNode.h"
+
+#define IMPACTPERCENTAGEBREEDPART 80
+#define IMPACTPERCENTAGESEEDPART 50
+
 class MTree{
 private:
 	partNode* bodyPart;
@@ -25,4 +29,5 @@ public:
 	std::vector<int> crossBreed(std::vector<int> myDNA, std::vector<int> seedDNA, MTree* seed);
 	std::vector<int> NNcrossBreed(std::vector<int> myDNA, std::vector<int> seedDNA, std::vector<NNLayerNode*>* myNode, std::vector<NNLayerNode*>* seedNode);
 	inline MTreeNode* getRandomBodyNode(MTree* tree);
+	MTreeNode* ReduceImpact(MTreeNode* node,int choosePercentage);
 };
