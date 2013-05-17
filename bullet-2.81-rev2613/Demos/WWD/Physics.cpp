@@ -727,7 +727,11 @@ void	Physics::exitPhysics(){
 	/*	*/
 	//delete NNs
 	while(subnets.size()>0){
-		delete subnets.at(subnets.size()-1);
+		NeuralNetwork* aSubnet = subnets.at(subnets.size()-1);
+		if(aSubnet->hasOwnFirstLayer()){
+			aSubnet->killFirstLayer();
+		}
+		delete aSubnet;
 		subnets.pop_back();
 	}
 	if(theNet!=NULL){

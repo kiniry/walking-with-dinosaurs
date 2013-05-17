@@ -12,7 +12,7 @@ class NeuralNetwork
 	*/
 	std::vector<std::vector<NeuralNode*>> layers;
 
-	bool init,outputUndefined;
+	bool init,outputUndefined,OwnsItsFirstLayer;
 
 	int layerIndex;
 	int lastLayerIndex;
@@ -34,6 +34,7 @@ public:
 	void computeLayer();
 	void computeNetwork();
 	void killFirstLayer();
+	bool hasOwnFirstLayer(){return OwnsItsFirstLayer;}
 
 	float getOutput(int index);
 };
