@@ -574,6 +574,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 			int itemIndex = (int) SendMessage(hwndList, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
 
 			SendMessage(hwndList,LB_DELETESTRING,popupMenuSel,0);
+			delete saves.at(popupMenuSel);
 			saves.erase(saves.begin()+popupMenuSel,saves.begin()+popupMenuSel+1);
 			
 			if(itemIndex==popupMenuSel){

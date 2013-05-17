@@ -783,6 +783,7 @@ void Physics::removeCreatures(){
 	//delete contraints
 	while(m_dynamicsWorld->getNumConstraints()>1){
 		btTypedConstraint* deathPointer = m_dynamicsWorld->getConstraint(m_dynamicsWorld->getNumConstraints());
+		delete deathPointer->getUserConstraintPtr();
 		m_dynamicsWorld->removeConstraint(deathPointer);
 		delete deathPointer;
 	}
@@ -791,6 +792,7 @@ void Physics::removeCreatures(){
 	for (int i=m_dynamicsWorld->getNumCollisionObjects()-1; i>0 ;i--){
 		btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray().at(i);
 		btRigidBody* body = btRigidBody::upcast(obj);
+		delete body->getUserPointer();
 		if (body && body->getMotionState())
 		{
 			delete body->getMotionState();

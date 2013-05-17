@@ -25,6 +25,7 @@ std::vector<creature> getCreatures(std::string filename){
 		is.read((char*)&tmpCreature->fitness, sizeof(float));
 
 		creatures.push_back(*tmpCreature);
+		delete tmpCreature;
 	}
 	if(!is.good()){
 		printf("error\n");
