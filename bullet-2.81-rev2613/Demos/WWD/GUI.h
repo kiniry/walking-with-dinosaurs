@@ -21,7 +21,9 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include "resource.h"
 
 #include <process.h>
-
+#define IDC_RUN_MBUTTON 990
+#define IDC_RENAME_MBUTTON 991
+#define IDC_DELETE_MBUTTON 992
 #define IDC_LISTBOX 993
 #define IDC_SIM 994
 #define IDC_RUN_BUTTON 995
@@ -67,8 +69,9 @@ struct save{
 	float fitness;
 };
 std::vector<save*> saves; 
-static Physics* WWDPhysics = new Physics();
+static Physics* WWDPhysics;
 
+static int popupMenuSel =0;
 
 // Function Declarations
 

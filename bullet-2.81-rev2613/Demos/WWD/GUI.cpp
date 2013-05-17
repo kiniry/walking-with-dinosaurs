@@ -322,11 +322,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 		int noElements = SendMessage(hWndList,LB_GETCOUNT,0,0);
 		if(0<=index && index <noElements){
-			//add rename and delete
+			popupMenuSel=index;
+
 			HMENU popupMenu = CreatePopupMenu();
-			InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RUN_BUTTON,"Run");
+			InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RUN_MBUTTON,"Run");
+			InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RENAME_MBUTTON,"Rename");
+			InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_DELETE_MBUTTON,"Delete");
 			GetCursorPos(&p);
-			TrackPopupMenu(popupMenu,TPM_BOTTOMALIGN|TPM_LEFTALIGN,p.x,p.y,0,hwnd,NULL);
+			TrackPopupMenu(popupMenu,TPM_TOPALIGN|TPM_LEFTALIGN,p.x,p.y,0,hwnd,NULL);
 
 		}
 
@@ -421,21 +424,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						readDNA(&saves.at(index)->dna,WWDPhysics);
 						WWDPhysics->solveGroundConflicts();
 						WWDPhysics->reshape(simWidth,simHeight);
+						
 
-						// Get length of text in listbox
-						int textLen = (int) SendMessage(hwndList, LB_GETTEXTLEN, (WPARAM) index, 0);
-
-						// Allocate buffer to store text (consider +1 for end of string)
-						TCHAR * textBuffer = new TCHAR[textLen + 1];
-
-						// Get actual text in buffer
-						SendMessage(hwndList, LB_GETTEXT, (WPARAM) index, (LPARAM) textBuffer );
-
-						// Free text
-						delete [] textBuffer;
-
-						// Avoid dangling references
-						textBuffer = NULL;
 
 						return TRUE;
 					}
@@ -444,12 +434,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 			break;
 		case IDC_RUN_BUTTON:
 			{
-				HWND hwndList1 = GetDlgItem(hwnd, IDC_LISTBOX);
+				HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
 
-				_ASSERTE(hwndList1 != NULL);
+				_ASSERTE(hwndList != NULL);
 
 				// Get current selection index in listbox
-				int itemIndex = (int) SendMessage(hwndList1, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
+				int itemIndex = (int) SendMessage(hwndList, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
 				if (itemIndex == LB_ERR)
 				{
 					// No selection
@@ -539,8 +529,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NAMING), hwnd, namingControl,(LPARAM)&tmpCreature->name);
 
-				printf("name %s\n", tmpCreature->name.c_str());
-
 				saves.push_back(tmpCreature);
 				SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)saves.at(saves.size()-1)->name.c_str());
 				SendMessage(hWndList,LB_SETCURSEL,saves.size()-1,0);
@@ -555,6 +543,56 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 			}
 			break;
 
+		case IDC_RUN_MBUTTON:
+			{
+			HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
+			SendMessage(hwndList,LB_SETCURSEL,popupMenuSel,0);
+
+			SendMessage(hWnd,WM_COMMAND, MAKEWPARAM(IDC_RUN_BUTTON,0),0);
+
+			}
+
+			break;
+		case IDC_RENAME_MBUTTON:
+			{
+			DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NAMING), hwnd, namingControl,(LPARAM)&saves.at(popupMenuSel)->name);
+			HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
+			int itemIndex = (int) SendMessage(hwndList, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
+			for(int i =0; i<saves.size();i++){
+				SendMessage(hwndList,LB_DELETESTRING,0,0);
+			}
+			for(int i =0; i<saves.size();i++){
+				SendMessage(hwndList, LB_ADDSTRING, 0, (LPARAM)saves.at(i)->name.c_str());
+			}
+			
+			SendMessage(hwndList,LB_SETCURSEL,itemIndex,0);
+			}
+			break;
+		case IDC_DELETE_MBUTTON:
+			{
+			HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
+			int itemIndex = (int) SendMessage(hwndList, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
+
+			SendMessage(hwndList,LB_DELETESTRING,popupMenuSel,0);
+			saves.erase(saves.begin()+popupMenuSel,saves.begin()+popupMenuSel+1);
+			
+			if(itemIndex==popupMenuSel){
+			
+				if(saves.size() > 0){
+					SendMessage(hwndList,LB_SETCURSEL,itemIndex,0);
+					SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);			
+				}else{
+					delete WWDPhysics;
+					WWDPhysics=new Physics();
+					WWDPhysics->reshape(simWidth,simHeight);
+				}
+
+
+			}
+
+			}
+			break;
+			
 		case ID_FILE_SAVE40003:
 
 			saveSaves(saves);
@@ -662,7 +700,7 @@ void loadDefault(){
 
 	save* tmp = new save();
 	tmp->dna=ancestor;
-	tmp->name="test string";
+	tmp->name="string name";
 
 	saves.push_back(tmp);
 
