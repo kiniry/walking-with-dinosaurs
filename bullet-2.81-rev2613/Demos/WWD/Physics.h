@@ -158,6 +158,7 @@ public:
 	}
 
 	void setFitnesFunction(fitnessTest type){
+		fitness=0;
 		testType=type;
 	}
 

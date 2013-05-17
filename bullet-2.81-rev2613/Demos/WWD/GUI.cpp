@@ -423,9 +423,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 			switch (HIWORD(wParam)){
 				case CBN_SELCHANGE:
 					HWND hwndfit = GetDlgItem(hwnd, IDC_FITNESSTYPE_COMBOBOX);
-				
-				//TODO
-				printf("");		
+					int index = SendMessage(hwndfit, CB_GETCURSEL,0,0);
+					fitnessTest tmptest=(fitnessTest) SendMessage(hwndfit,CB_GETITEMDATA, index,0);
+					WWDPhysics->setFitnesFunction(tmptest);	
 				break;
 
 			}
@@ -445,7 +445,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						delete WWDPhysics;
 
 						WWDPhysics = new Physics();
-
+						SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_FITNESSTYPE_COMBOBOX,LBN_SELCHANGE),0);
 						readDNA(&saves.at(index)->dna,WWDPhysics);
 						WWDPhysics->solveGroundConflicts();
 						WWDPhysics->reshape(simWidth,simHeight);
@@ -526,13 +526,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 					return 0;
 				}
 
+
+				HWND hwndfit = GetDlgItem(hwnd, IDC_FITNESSTYPE_COMBOBOX);
+				int index = SendMessage(hwndfit, CB_GETCURSEL,0,0);
+				fitnessTest tmptest=(fitnessTest) SendMessage(hwndfit,CB_GETITEMDATA, index,0);
+
 				noGenerations=noG;
 				argumentList* aList = new argumentList();
 				aList->nC=numCores;
 				aList->p=pop;
 				aList->nG=noG;
 				aList->iI=itemIndex;
-				aList->type=move;
+				aList->type=tmptest;
 				aList->theResult = new creature();
 				roundCount = new int;*roundCount=0;
 
