@@ -5,7 +5,6 @@
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-
 #include <windows.h>
 #include "Visual Leak Detector\include\vld.h"
 
@@ -22,6 +21,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include "resource.h"
 
 #include <process.h>
+
+#define IDC_FITNESSTYPE_COMBOBOX 989
 #define IDC_RUN_MBUTTON 990
 #define IDC_RENAME_MBUTTON 991
 #define IDC_DELETE_MBUTTON 992
@@ -32,7 +33,6 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define IDC_NOG_STATIC 997
 #define IDC_POP_EDIT 998
 #define IDC_POP_STATIC 999
-
 
 static bool sOpenGLInitialized = false;
 static int quitRequest = 0;
@@ -61,6 +61,7 @@ struct argumentList{
 	int p;
 	int nG;
 	int iI;
+	fitnessTest type;
 	creature* theResult;
 };
 
@@ -69,7 +70,7 @@ struct save{
 	std::vector<int> dna;
 	float fitness;
 };
-std::vector<save*> saves; 
+std::vector<save*> saves;
 static Physics* WWDPhysics;
 
 static int popupMenuSel =0;
@@ -82,7 +83,6 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 unsigned int _stdcall runServer(void* args);
 void EnableOpenGL(HWND hWnd, HDC * hDC, HGLRC * hRC);
 void DisableOpenGL(HWND hWnd, HDC hDC, HGLRC hRC);
-
 
 void console();
 void calcSizes(int height, int witdh);

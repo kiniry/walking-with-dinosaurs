@@ -6,8 +6,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	directory = getDirectory();
 
-
-
 	console();
 
 	loadSaves();
@@ -15,7 +13,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	calcSizes(768-menuHeight,1024-border);
 
 	WNDCLASSEX wc;
-	
+
 	HDC hDC;
 	HGLRC hRC;
 	MSG msg;
@@ -74,8 +72,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-
-
 	blank = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("blank"), "", WS_CHILD | WS_VISIBLE ,listWidth,bAreaHeight,simWidth,simHeight, hWnd,(HMENU)IDC_SIM, GetModuleHandle(NULL), NULL);
 
 	EnableOpenGL( blank, &hDC, &hRC );
@@ -86,6 +82,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)saves.at(i)->name.c_str());
 	}
 	SendMessage(hWndList,LB_SETCURSEL,0,0);
+
+
+
+	HWND hwndCombo = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("combobox"), "", WS_CHILD | WS_VISIBLE| CBS_DROPDOWNLIST ,400, 0, 100, 24, hWnd,  (HMENU)IDC_FITNESSTYPE_COMBOBOX, GetModuleHandle(NULL), NULL);
+	
+	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Move");
+	SendMessage(hwndCombo,CB_SETITEMDATA, 0, move);
+	
+	SendMessage(hwndCombo,CB_ADDSTRING, 1, (LPARAM)"Jump");
+	SendMessage(hwndCombo,CB_SETITEMDATA, 1, jump);
+	
+	SendMessage(hwndCombo,CB_ADDSTRING, 2, (LPARAM)"None");
+	SendMessage(hwndCombo,CB_SETITEMDATA, 2, none);
+
+	SendMessage(hwndCombo,CB_SETCURSEL,0,0);
 
 	WWDPhysics = new Physics();
 
@@ -112,7 +123,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		hWnd, (HMENU)IDC_POP_STATIC, GetModuleHandle(NULL),	NULL);
 	HWND hWndPop=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE |ES_NUMBER,	700, 20, 100, 18,
 		hWnd, (HMENU)IDC_POP_EDIT, GetModuleHandle(NULL),	NULL);
-
 
 	// program main loop
 	while ( !quit )
@@ -162,7 +172,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 // Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
-	
 	switch (message)
 	{
 	case WM_SYSKEYDOWN:
@@ -211,19 +220,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 			//resize
 		case SIZE_RESTORED:// Was Window Restored?
-			if(hwnd == hWnd) 
+			if(hwnd == hWnd)
 			{
-			int Width = LOWORD (lParam);
-			int Height = HIWORD (lParam);
-			calcSizes(HIWORD (lParam),LOWORD (lParam));
+				int Width = LOWORD (lParam);
+				int Height = HIWORD (lParam);
+				calcSizes(HIWORD (lParam),LOWORD (lParam));
 
-			MoveWindow(hWndList,0,0,listWidth,listHeight,true);
-			MoveWindow(blank,listWidth,bAreaHeight,simWidth,simHeight,true);
+				MoveWindow(hWndList,0,0,listWidth,listHeight,true);
+				MoveWindow(blank,listWidth,bAreaHeight,simWidth,simHeight,true);
 
-			if (sOpenGLInitialized){
-				WWDPhysics->reshape(simWidth,simHeight);
+				if (sOpenGLInitialized){
+					WWDPhysics->reshape(simWidth,simHeight);
+				}
 			}
-			}	
 			return 0;												// Return
 		}
 		break;
@@ -317,26 +326,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 	case WM_CONTEXTMENU:
 		{
-		POINT p;
-		GetCursorPos(&p);
-		ScreenToClient(hWndList,&p);
-		int index = SendMessage(hWndList,LB_ITEMFROMPOINT,0, MAKELPARAM(p.x,p.y));
-
-		int noElements = SendMessage(hWndList,LB_GETCOUNT,0,0);
-		if(0<=index && index <noElements){
-			popupMenuSel=index;
-
-			HMENU popupMenu = CreatePopupMenu();
-			InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RUN_MBUTTON,"Run");
-			InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RENAME_MBUTTON,"Rename");
-			InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_DELETE_MBUTTON,"Delete");
+			POINT p;
 			GetCursorPos(&p);
-			TrackPopupMenu(popupMenu,TPM_TOPALIGN|TPM_LEFTALIGN,p.x,p.y,0,hwnd,NULL);
+			ScreenToClient(hWndList,&p);
+			int index = SendMessage(hWndList,LB_ITEMFROMPOINT,0, MAKELPARAM(p.x,p.y));
 
-		}
+			int noElements = SendMessage(hWndList,LB_GETCOUNT,0,0);
+			if(0<=index && index <noElements){
+				popupMenuSel=index;
 
-		
-		break;}
+				HMENU popupMenu = CreatePopupMenu();
+				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RUN_MBUTTON,"Run");
+				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RENAME_MBUTTON,"Rename");
+				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_DELETE_MBUTTON,"Delete");
+				GetCursorPos(&p);
+				TrackPopupMenu(popupMenu,TPM_TOPALIGN|TPM_LEFTALIGN,p.x,p.y,0,hwnd,NULL);
+			}
+
+			break;}
 
 	case WM_CLOSE:
 		PostQuitMessage( 0 );
@@ -409,6 +416,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 	case WM_COMMAND:
 		switch(LOWORD(wParam)){
+
+
+
+		case IDC_FITNESSTYPE_COMBOBOX:
+			switch (HIWORD(wParam)){
+				case CBN_SELCHANGE:
+					HWND hwndfit = GetDlgItem(hwnd, IDC_FITNESSTYPE_COMBOBOX);
+				
+				//TODO
+				printf("");		
+				break;
+
+			}
+
+		break;
+	
 		case IDC_LISTBOX:
 			{
 				switch (HIWORD(wParam)){
@@ -426,10 +449,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						readDNA(&saves.at(index)->dna,WWDPhysics);
 						WWDPhysics->solveGroundConflicts();
 						WWDPhysics->reshape(simWidth,simHeight);
-						
 
-
-						return TRUE;
 					}
 				}
 			}
@@ -474,15 +494,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						int res =  (value* pow(10.,length-1-i)+0.5);
 						pop+=res;
 					}
+					delete text;
 				}else{
 					MessageBox(NULL, "No populastion size selected", TEXT("ERROR"), MB_OK | MB_ICONERROR);
 					return 0;
 				}
 				if(pop<10){
-				 MessageBox(NULL, "the Populasion size is to small", TEXT("ERROR"), MB_OK | MB_ICONERROR);
+					MessageBox(NULL, "the Populasion size is to small", TEXT("ERROR"), MB_OK | MB_ICONERROR);
 					return 0;
 				}
-
 
 				int noG = 0;
 				HWND hwndNoG = GetDlgItem(hwnd, IDC_NOG_EDIT);
@@ -512,15 +532,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				aList->p=pop;
 				aList->nG=noG;
 				aList->iI=itemIndex;
+				aList->type=move;
 				aList->theResult = new creature();
 				roundCount = new int;*roundCount=0;
 
 				HANDLE threadHandle = (HANDLE) _beginthreadex(0,0,&runServer,(void*)aList,0,0);
-				
+
 				UINT_PTR time = SetTimer(0,0,10,(TIMERPROC)&update);
 				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PROGRESS), hwnd, progressControll,(LPARAM)&noG);
 				KillTimer(0,time);
-
 
 				save* tmpCreature =new save();
 				tmpCreature->dna= aList->theResult->dna;
@@ -542,61 +562,55 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				readDNA(&saves.at(saves.size()-1)->dna,WWDPhysics);
 				WWDPhysics->solveGroundConflicts();
 				WWDPhysics->reshape(simWidth,simHeight);
-
 			}
 			break;
 
 		case IDC_RUN_MBUTTON:
 			{
-			HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
-			SendMessage(hwndList,LB_SETCURSEL,popupMenuSel,0);
+				HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
+				SendMessage(hwndList,LB_SETCURSEL,popupMenuSel,0);
 
-			SendMessage(hWnd,WM_COMMAND, MAKEWPARAM(IDC_RUN_BUTTON,0),0);
-
+				SendMessage(hWnd,WM_COMMAND, MAKEWPARAM(IDC_RUN_BUTTON,0),0);
 			}
 
 			break;
 		case IDC_RENAME_MBUTTON:
 			{
-			DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NAMING), hwnd, namingControl,(LPARAM)&saves.at(popupMenuSel)->name);
-			HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
-			int itemIndex = (int) SendMessage(hwndList, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
-			for(int i =0; i<saves.size();i++){
-				SendMessage(hwndList,LB_DELETESTRING,0,0);
-			}
-			for(int i =0; i<saves.size();i++){
-				SendMessage(hwndList, LB_ADDSTRING, 0, (LPARAM)saves.at(i)->name.c_str());
-			}
-			
-			SendMessage(hwndList,LB_SETCURSEL,itemIndex,0);
+				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NAMING), hwnd, namingControl,(LPARAM)&saves.at(popupMenuSel)->name);
+				HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
+				int itemIndex = (int) SendMessage(hwndList, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
+				for(int i =0; i<saves.size();i++){
+					SendMessage(hwndList,LB_DELETESTRING,0,0);
+				}
+				for(int i =0; i<saves.size();i++){
+					SendMessage(hwndList, LB_ADDSTRING, 0, (LPARAM)saves.at(i)->name.c_str());
+				}
+
+				SendMessage(hwndList,LB_SETCURSEL,itemIndex,0);
 			}
 			break;
 		case IDC_DELETE_MBUTTON:
 			{
-			HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
-			int itemIndex = (int) SendMessage(hwndList, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
+				HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
+				int itemIndex = (int) SendMessage(hwndList, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
 
-			SendMessage(hwndList,LB_DELETESTRING,popupMenuSel,0);
-			delete saves.at(popupMenuSel);
-			saves.erase(saves.begin()+popupMenuSel,saves.begin()+popupMenuSel+1);
-			
-			if(itemIndex==popupMenuSel){
-			
-				if(saves.size() > 0){
-					SendMessage(hwndList,LB_SETCURSEL,itemIndex,0);
-					SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);			
-				}else{
-					delete WWDPhysics;
-					WWDPhysics=new Physics();
-					WWDPhysics->reshape(simWidth,simHeight);
+				SendMessage(hwndList,LB_DELETESTRING,popupMenuSel,0);
+				delete saves.at(popupMenuSel);
+				saves.erase(saves.begin()+popupMenuSel,saves.begin()+popupMenuSel+1);
+
+				if(itemIndex==popupMenuSel){
+					if(saves.size() > 0){
+						SendMessage(hwndList,LB_SETCURSEL,itemIndex,0);
+						SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);
+					}else{
+						delete WWDPhysics;
+						WWDPhysics=new Physics();
+						WWDPhysics->reshape(simWidth,simHeight);
+					}
 				}
-
-
-			}
-
 			}
 			break;
-			
+
 		case ID_FILE_SAVE40003:
 
 			saveSaves(saves);
@@ -811,6 +825,7 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 					text = "new Creature";
 				}
 				*result=text;
+				delete text;
 				printf("name %s", result->c_str());
 				EndDialog(hwnd,0);
 				break;
@@ -848,7 +863,7 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 			}
 		}
 		break;
-		}
+					}
 	case WM_CLOSE:{
 		printf("hell no :)");
 		break;}
@@ -859,11 +874,10 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 	return TRUE;
 }
 unsigned int _stdcall runServer(void* args){
-	
 	argumentList* aList = (argumentList*) args;
 
-	*aList->theResult = pipeServerMain(aList->nC,aList->p,aList->nG,saves.at(aList->iI)->dna,roundCount);
-	
+	*aList->theResult = pipeServerMain(aList->nC,aList->p,aList->nG,saves.at(aList->iI)->dna, aList->type,roundCount);
+
 	return 1;
 }
 

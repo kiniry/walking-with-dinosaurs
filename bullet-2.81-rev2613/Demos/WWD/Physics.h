@@ -87,6 +87,8 @@ class btConstraintSolver;
 struct btCollisionAlgorithmCreateFunc;
 class btDefaultCollisionConfiguration;
 
+enum fitnessTest{none,jump, move};
+
 class Physics : public PlatformDemoApplication{
 private:
 	int noBoxes;
@@ -133,7 +135,7 @@ private:
 public:
 
 	enum boxes{ground=-2};
-	enum fitnessTest{none,jump, move};
+	
 
 	virtual void displayCallback();
 	virtual void clientResetScene();
