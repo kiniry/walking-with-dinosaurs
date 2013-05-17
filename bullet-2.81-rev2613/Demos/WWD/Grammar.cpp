@@ -104,7 +104,6 @@ int NI(int index, std::vector<int> *DNA, NeuralNetwork* net){
 }
 
 int NN(int index, std::vector<int>* DNA, std::vector<NeuralNode*> inputs, Physics *world, bool isNotSubnet){
-	if(inputs.size()==0){inputs.push_back(new NeuralNode(0.f));} //default input if no sensors (subnets will allways have input.size>0)
 	NeuralNetwork* aNet = new NeuralNetwork(inputs);
 	int amountOfLayers=0;
 	if(isNotSubnet){
