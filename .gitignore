@@ -3,6 +3,7 @@
 #################
 *.idb
 *.lib
+!vld.lib
 *.exe
 *.dat
 *.dino
