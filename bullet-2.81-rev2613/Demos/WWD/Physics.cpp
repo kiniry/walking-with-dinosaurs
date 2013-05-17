@@ -108,7 +108,7 @@ void Physics::simulationLoopStep(float stepSize){
 
 		//fitness test
 
-		calcFitness(move);
+		calcFitness(testType);
 
 		for(int i=0;i< (int) effectorNNindex.size();i=i+3){
 			setEffect(i/3,
@@ -254,6 +254,7 @@ void Physics::showInfo(int& xOffset,int& yStart, int yIncr){
 }
 
 void	Physics::initPhysics(){
+	testType = move;
 	totaltime=0;
 	currentBoxIndex=0;
 	currentJointIndex=0;
@@ -860,7 +861,7 @@ void Physics::testPhysics(){
 	*/
 }
 
-void Physics::calcFitness(int test){
+void Physics::calcFitness(fitnessTest test){
 	switch(test){
 	case move:
 		{
@@ -895,9 +896,13 @@ void Physics::calcFitness(int test){
 			fitness = max(fitness,  m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin().getY()-startHeight);
 		}
 		break;
+	case none:
+		fitness=0;
+
+		break;
 
 	default:
-
+		
 		printf("unkown fitness test\n");
 	}
 }

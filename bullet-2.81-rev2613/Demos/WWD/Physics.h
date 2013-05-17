@@ -90,7 +90,6 @@ class btDefaultCollisionConfiguration;
 class Physics : public PlatformDemoApplication{
 private:
 	int noBoxes;
-	std::vector<int> ancestor;
 	float fitness;
 	float heighstPoint;
 	float lowestPoint;
@@ -132,8 +131,9 @@ private:
 	float getBoxHalfHeight(btCollisionObject* object);
 
 public:
+
 	enum boxes{ground=-2};
-	enum fitnessTest{jump, move};
+	enum fitnessTest{none,jump, move};
 
 	virtual void displayCallback();
 	virtual void clientResetScene();
@@ -149,17 +149,14 @@ public:
 		return fitness;
 	}
 
-	void calcFitness(int test);
+	void calcFitness(fitnessTest test);
 
-	Physics(std::vector<int> Ancestor){
-		ancestor=Ancestor;
-		initPhysics();
-	}
 	Physics(){
 		initPhysics();
 	}
-	std::vector<int> getAncestor(){
-		return ancestor;
+
+	void setFitnesFunction(fitnessTest type){
+		testType=type;
 	}
 
 	void runSimulation();
@@ -179,4 +176,5 @@ public:
 	void calcSize();
 	void solveGroundConflicts();
 	void removeCreatures();
+	fitnessTest testType;
 };

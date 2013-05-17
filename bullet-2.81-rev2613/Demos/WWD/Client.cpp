@@ -110,7 +110,7 @@ void pipeSim(std::vector<creature> *creatures){
 
 	//run simulator
 	for(int i=0;i< (int) creatures->size();i++){
-		Physics* WWDPhysics = new Physics(creatures->at(i).dna);
+		Physics* WWDPhysics = new Physics();
 		readDNA(&creatures->at(i).dna,WWDPhysics);
 		WWDPhysics->runSimulation(); //runs a physics simulation and save the fitness values
 		creatures->at(i).fitness = WWDPhysics->getFitness();

@@ -79,7 +79,7 @@ int debug(int argc,char** argv){
 	//	};
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
-	Physics* WWDPhysics = new Physics(ancestor);
+	Physics* WWDPhysics = new Physics();
 	//init creature
 	readDNA(&ancestor,WWDPhysics);
 	//WWDPhysics->testPhysics();
@@ -136,7 +136,7 @@ int WWD(int argc,char** argv){
 			//#pragma omp for schedule(dynamic)
 			for(int j =0; j<populationSize; j++){
 				//init world
-				Physics* WWDPhysics = new Physics(creatures->at(j).dna);
+				Physics* WWDPhysics = new Physics();
 
 				//init creature
 				readDNA(&creatures->at(j).dna,WWDPhysics);
@@ -184,7 +184,7 @@ int WWD(int argc,char** argv){
 	}
 
 	//Show end result if we want to...
-	Physics* WWDPhysics = new Physics(creatures->at(0).dna);
+	Physics* WWDPhysics = new Physics();
 	//init creature
 	readDNA(&creatures->at(0).dna,WWDPhysics);
 	//default glut doesn't return from mainloop
