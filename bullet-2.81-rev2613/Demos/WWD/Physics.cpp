@@ -747,7 +747,7 @@ void	Physics::exitPhysics(){
 	for (int i=m_dynamicsWorld->getNumCollisionObjects()-1; i>=0 ;i--){
 		btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray().at(i);
 		btRigidBody* body = btRigidBody::upcast(obj);
-		delete body->getUserPointer();
+		
 		if (body && body->getMotionState())
 		{
 			delete body->getMotionState();
@@ -759,6 +759,7 @@ void	Physics::exitPhysics(){
 	//delete collision shapes
 	for (int j=0;j<m_collisionShapes.size();j++){
 		btCollisionShape* shape = m_collisionShapes[j];
+		delete shape->getUserPointer2();
 		delete shape;
 	}
 	m_collisionShapes.clear();
