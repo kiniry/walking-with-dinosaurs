@@ -5,7 +5,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	argv =CommandLineToArgvW(GetCommandLineW(),&argc);
 
 	directory = getDirectory();
-
+	
 	console();
 
 	loadSaves();
@@ -467,9 +467,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 					// No selection
 					return 0;
 				}
-
-				//seeds random generator
-				srand(time(0));
 
 				//threads
 				SYSTEM_INFO sysinfo;

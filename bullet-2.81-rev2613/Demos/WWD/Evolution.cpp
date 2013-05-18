@@ -1,9 +1,8 @@
 #include "Evolution.h"
-#include <time.h>
+
 
 void evolve(std::vector<creature>* creatures){
-		//seeds random generator
-	srand(time(0));
+
 	float fitnessSumElites = 0;
 	float fitnessSumBreeders = 0;
 	std::vector<creature> result;

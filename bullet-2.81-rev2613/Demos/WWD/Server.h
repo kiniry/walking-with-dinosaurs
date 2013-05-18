@@ -3,7 +3,7 @@
 #define SERVERSET
 #include "pipe.h"
 #include <commctrl.h>
-
+#include <ctime>
 //server
 static std::vector<std::string> fullPipeNames;
 static std::vector<HANDLE> pipes;

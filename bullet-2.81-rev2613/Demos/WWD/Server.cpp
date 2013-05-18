@@ -1,6 +1,7 @@
 #include "Server.h"
 
 creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor,fitnessTest type, int* roundNrPointer){
+	std::srand(std::time(0));
 	std::vector<creature>* creatures = new std::vector<creature>();
 	//create creatures
 	creatures->push_back(creature());
