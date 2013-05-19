@@ -51,7 +51,9 @@ bool Physics::isLegal(){
 	}
 	return true;
 }
-
+/**
+* moves ground down to avoid collisions from the beging and things stuck in ground
+*/
 void Physics::solveGroundConflicts(){
 	if(height<0.024){
 		calcSize();

@@ -135,7 +135,6 @@ private:
 public:
 
 	enum boxes{ground=-2};
-	
 
 	virtual void displayCallback();
 	virtual void clientResetScene();
@@ -170,7 +169,7 @@ public:
 
 	int createBox(int x,int y,int z);
 	int createSensor(int box, int type);
-	int createJoint(		int box1, int box2, int type,
+	int createJoint(int box1, int box2, int type,
 		int preX, int preY, int preS,
 		int postX, int postY, int postS,
 		int dofX, int dofY, int dofZ);
