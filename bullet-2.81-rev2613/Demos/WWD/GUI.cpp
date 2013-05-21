@@ -113,6 +113,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	HWND hWndButton=CreateWindowEx(NULL,TEXT("BUTTON"),	"RUN", WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_DEFPUSHBUTTON,
 		150, 50, 100, 24,
 		hWnd, (HMENU)IDC_RUN_BUTTON, GetModuleHandle(NULL),	NULL);
+
+	HWND hWndResetButton=CreateWindowEx(NULL,TEXT("BUTTON"),	"Reset Simulation", WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_DEFPUSHBUTTON,
+		450, 50, 150, 24,
+		hWnd, (HMENU)IDC_RESET_BUTTON, GetModuleHandle(NULL),	NULL);
+
 	HGDIOBJ hfDefault=GetStockObject(DEFAULT_GUI_FONT);
 	SendMessage(hWndButton,WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE,0));
 
@@ -454,6 +459,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						WWDPhysics->reshape(simWidth,simHeight);
 
 					}
+				}
+			}
+			break;
+		case IDC_RESET_BUTTON:
+			{
+				if(saves.size()>0){
+					SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);
 				}
 			}
 			break;

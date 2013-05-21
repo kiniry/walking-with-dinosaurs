@@ -7,4 +7,4 @@ More fitness tests
 
 Progress counter
 
-fix random generator  max is 32767
+breaking....
