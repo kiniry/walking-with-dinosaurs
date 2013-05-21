@@ -84,7 +84,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SendMessage(hWndList,LB_SETCURSEL,0,0);
 
 
-
+	HWND hWndFitS=CreateWindowEx(NULL,TEXT("STATIC"),	"Fitness Test",WS_CHILD|WS_VISIBLE,	300, 5, 100, 18, hWnd, (HMENU)IDC_TEST_STATIC, GetModuleHandle(NULL),	NULL);
 	HWND hwndCombo = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("combobox"), "", WS_CHILD | WS_VISIBLE| CBS_DROPDOWNLIST ,400, 0, 100, 24, hWnd,  (HMENU)IDC_FITNESSTYPE_COMBOBOX, GetModuleHandle(NULL), NULL);
 	
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Move");
@@ -121,10 +121,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	HGDIOBJ hfDefault=GetStockObject(DEFAULT_GUI_FONT);
 	SendMessage(hWndButton,WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE,0));
 
-	HWND hWndNoG=CreateWindowEx(NULL,TEXT("STATIC"),"NoG",WS_CHILD|WS_VISIBLE,	150, 20, 100, 18,
+	HWND hWndNoG=CreateWindowEx(NULL,TEXT("STATIC"),"Number of Generations",WS_CHILD|WS_VISIBLE,	150, 20, 150, 18,
 		hWnd, (HMENU)IDC_NOG_STATIC, GetModuleHandle(NULL),	NULL);
 
-	HWND hWndNoGS=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE,	250, 20, 100, 18,
+	HWND hWndNoGS=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE,	320, 20, 100, 18,
 		hWnd, (HMENU)IDC_NOG_EDIT, GetModuleHandle(NULL),	NULL);
 
 	HWND hWndPopS=CreateWindowEx(NULL,TEXT("STATIC"),	"Population",WS_CHILD|WS_VISIBLE,	600, 20, 100, 18,
