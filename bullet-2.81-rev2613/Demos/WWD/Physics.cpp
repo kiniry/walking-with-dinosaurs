@@ -68,6 +68,20 @@ bool Physics::isLegal(){
 	}
 	return true;
 }
+
+void Physics::checkForDismemberment(){
+	bool enabled = true;
+	for(int i=0;i<m_dynamicsWorld->getNumConstraints();i++){
+		if(!m_dynamicsWorld->getConstraint(i)->isEnabled()){
+			enabled = false;
+			break;
+		}
+	}
+	if(!enabled){
+		fitness = -999999;
+	}
+}
+
 /**
 * moves ground down to avoid collisions from the beging and things stuck in ground
 */
@@ -220,6 +234,7 @@ void Physics::runSimulation(){
 			simulationLoopStep(1/1000.f);
 		}
 	}
+	checkForDismemberment();
 }
 
 void Physics::clientMoveAndDisplay()

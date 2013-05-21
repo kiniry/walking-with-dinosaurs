@@ -123,6 +123,7 @@ private:
 
 	bool isLegal();
 
+	void checkForDismemberment();
 	btVector3 calcPosition();
 	int setEffect(int jointIndex, float valueX,float valueY,float valueZ);
 	void simulationLoopStep(float stepSize);
