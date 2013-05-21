@@ -89,12 +89,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Move");
 	SendMessage(hwndCombo,CB_SETITEMDATA, 0, move);
+
+	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"OLDMove");
+	SendMessage(hwndCombo,CB_SETITEMDATA, 1, oldMove);
 	
 	SendMessage(hwndCombo,CB_ADDSTRING, 1, (LPARAM)"Jump");
-	SendMessage(hwndCombo,CB_SETITEMDATA, 1, jump);
+	SendMessage(hwndCombo,CB_SETITEMDATA, 2, jump);
 	
 	SendMessage(hwndCombo,CB_ADDSTRING, 2, (LPARAM)"None");
-	SendMessage(hwndCombo,CB_SETITEMDATA, 2, none);
+	SendMessage(hwndCombo,CB_SETITEMDATA, 3, none);
 
 	SendMessage(hwndCombo,CB_SETCURSEL,0,0);
 
@@ -823,11 +826,13 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 				if(length > 0){
 					text = new TCHAR[length + 1];
 					GetWindowText(hwndPop,text,length+1);
+					*result=text;
+				delete text;
 				}else{
 					text = "new Creature";
+					*result=text;
 				}
-				*result=text;
-				delete text;
+
 				printf("name %s", result->c_str());
 				EndDialog(hwnd,0);
 				break;

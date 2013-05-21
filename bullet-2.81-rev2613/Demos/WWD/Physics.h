@@ -55,12 +55,12 @@ struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallbac
 #define DensityHuman 1062
 
 //average strength human cross-sectional area 6.3 kg/cm2 http://link.springer.com/article/10.1007%2FBF00696087
-#define musclePercentage 0.30 //the ca percentage of muscle mass in a joint
-#define csa 6.3*100.f*100.f * musclePercentage
+#define musclePercentage 0.15 //the ca percentage of muscle mass in a joint
+#define muscleStregnth 6.3*100.f*100.f * musclePercentage
 
 //footprint size of the shoulder tendon is 25 x 11-22 mm http://www.shoulderdoc.co.uk/article.asp?article=672
 //mean load failure strength of the shoulder tendon is 273 N http://www.ncbi.nlm.nih.gov/pubmed/18182197
-#define tensilePercentage 0.0000001
+#define tensilePercentage 10.
 #define tensileStrength 661818 * tensilePercentage
 
 #define PI 3.1415926
@@ -87,7 +87,7 @@ class btConstraintSolver;
 struct btCollisionAlgorithmCreateFunc;
 class btDefaultCollisionConfiguration;
 
-enum fitnessTest{none,jump, move};
+enum fitnessTest{none,jump, move, oldMove};
 
 class Physics : public PlatformDemoApplication{
 private:

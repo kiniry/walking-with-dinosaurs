@@ -502,6 +502,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 		switch(type){
 		case HINGE:
+			{
 			hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
 
 			hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
@@ -509,15 +510,17 @@ int Physics::createJoint(	int box1, int box2,	int type,
 			sensors.push_back(0);
 			theStruct->sensorIndex=sensors.size()-1;
 			//uses the gen6d which makes it possible that the max force is to small
-			theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
+			float crossSection =getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
+			theStruct->CrossSectionalStrength=crossSection*muscleStregnth;
 			hingeC->setUserConstraintPtr(theStruct);
 
-			hingeC->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
+			hingeC->setBreakingImpulseThreshold(tensileStrength*crossSection);
 
 			m_dynamicsWorld->addConstraint(hingeC,true);
-
+			}
 			break;
 		case GENERIC6DOF:
+			{
 			gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
 			gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist)
 			gen6C->setLimit(1,0,0);
@@ -533,12 +536,13 @@ int Physics::createJoint(	int box1, int box2,	int type,
 			sensors.push_back(0);
 
 			theStruct->sensorIndex=sensors.size()-3;
-			theStruct->CrossSectionalStrength=getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
+			float crossSection =getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
+			theStruct->CrossSectionalStrength=crossSection*muscleStregnth;
 			gen6C->setUserConstraintPtr(theStruct);
 
-			gen6C->setBreakingImpulseThreshold(min(mass1,mass2)*tensileStrength*theStruct->CrossSectionalStrength/csa);
+			gen6C->setBreakingImpulseThreshold(tensileStrength*crossSection);
 			m_dynamicsWorld->addConstraint(gen6C,true);
-
+			}
 			break;
 		}
 
@@ -621,7 +625,7 @@ float Physics::getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int
 	//float areal =min(x*x2,min(y*y2,min(x2*y,min(x*y2,min(x*y,x2*y2)))))*4;
 	float areal =min(spaceLeftX*spaceLeftX2,min(spaceLeftY*spaceLeftY2,min(spaceLeftX2*spaceLeftY,min(spaceLeftX*spaceLeftY2,min(spaceLeftX*spaceLeftY,spaceLeftX2*spaceLeftY2)))))*4;
 	//printf("areal %f\n", areal);
-	return areal*csa;
+	return areal;
 }
 
 //rotates vector3 by a Quaternion
@@ -783,34 +787,25 @@ void	Physics::exitPhysics(){
 
 
 void Physics::testPhysics(){
-	int box2 = createBox(95,895,395);
+	int box3 = createBox(895,95,395);
 
-	for(int i=0; i<4;i++){
-		int box3 = createBox(195,245,595);
-
-		createJoint(box2, box3, GENERIC6DOF,0, 50, 5, 50, 50, 1, 0,0,0);
-	}
-
-	solveGroundConflicts();
-	runSimulation();
-	printf("fitness %f\n", fitness);
-	/*
-	int box4 = createBox(195,195,595);
-	createJoint(box3, box4, GENERIC6DOF,50, 50, 2, 50, 50,0, 0,0,0);
-
+	
+	int box4 = createBox(195,195,195);
+	createJoint(box3, box4, GENERIC6DOF,50, 50, 2, 50, 50,50, 0,0,0);
+/*
 	int box = createBox(85,385,185);
 	createJoint(box3, box, GENERIC6DOF,50, 50, 3, 50, 50, 3, 0,0,0);
 
 	int box5 = createBox(95,95,395);
 	createJoint(box, box5, GENERIC6DOF,50, 50,5, 50, 50, 0, 0,0,0);
-
+	*/
 	if(!isLegal()){
 	printf("fail!\n");
 	}else{
 	printf("legal\n");
 	}
 
-	/*	createSensor(box2, pressure);
+	//	createSensor(box2, pressure);
 
 	//NN test
 	std::vector<NeuralNode*> inputs;
@@ -821,9 +816,8 @@ void Physics::testPhysics(){
 
 	inputs.push_back(new NeuralNode(1));
 	inputs.push_back(new NeuralNode(-2));
-	testPoint = new float;
+	float* testPoint = new float;
 	*testPoint = 5;
-	inc = 0;
 	inputs.push_back(new NeuralNode(testPoint));
 	theNet = new NeuralNetwork(inputs);
 	theNet->insertNode(SUM,7,1,3,1);
@@ -831,12 +825,26 @@ void Physics::testPhysics(){
 	theNet->changeLayer();
 	theNet->insertNode(PRODUCT,0,1,2,1);
 	theNet->stopBuilding();
-	*/
+
+	solveGroundConflicts();
 }
 
 void Physics::calcFitness(fitnessTest test){
 	switch(test){
 	case move:
+		{
+			float tmpfitx=0;
+			float tmpfitz=0;
+			for(int i =1; i < m_dynamicsWorld->getCollisionObjectArray().size(); i++){
+
+			btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(i)->getWorldTransform().getOrigin();
+				tmpfitx+= origin.x();
+				tmpfitz+= origin.z();
+			}
+			fitness=sqrt(tmpfitx*tmpfitx+tmpfitz*tmpfitz)/m_dynamicsWorld->getCollisionObjectArray().size()-1;
+		}
+		break;
+		case oldMove:
 		{
 			btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
 			if(height<4){
@@ -846,7 +854,6 @@ void Physics::calcFitness(fitnessTest test){
 			}
 		}
 		break;
-
 	case jump:
 		{
 
