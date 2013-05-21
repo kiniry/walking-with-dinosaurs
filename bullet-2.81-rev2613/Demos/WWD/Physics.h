@@ -96,6 +96,8 @@ private:
 	float heighstPoint;
 	float lowestPoint;
 	float height;
+	float groundY;
+	btVector3 startPoint;
 
 	int currentBoxIndex,currentJointIndex;
 
@@ -121,9 +123,10 @@ private:
 
 	bool isLegal();
 
+	btVector3 calcPosition();
 	int setEffect(int jointIndex, float valueX,float valueY,float valueZ);
 	void simulationLoopStep(float stepSize);
-
+	void Physics::calcButtom();
 	btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
 	btQuaternion getLocalRotation(int myS, int opS);
 	btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
