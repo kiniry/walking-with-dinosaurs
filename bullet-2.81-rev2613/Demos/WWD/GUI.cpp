@@ -906,6 +906,8 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 		case IDCANCEL:
 			MessageBox(hwnd, "Bye!", "This is also a message",
 				MB_OK | MB_ICONEXCLAMATION);
+			TCHAR * text = "new Creature";
+			*result=text;
 			EndDialog(hwnd, 0);
 			break;
 		}
