@@ -84,8 +84,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SendMessage(hWndList,LB_SETCURSEL,0,0);
 
 
-	HWND hWndFitS=CreateWindowEx(NULL,TEXT("STATIC"),	"Fitness Test",WS_CHILD|WS_VISIBLE,	300, 5, 100, 18, hWnd, (HMENU)IDC_TEST_STATIC, GetModuleHandle(NULL),	NULL);
-	HWND hwndCombo = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("combobox"), "", WS_CHILD | WS_VISIBLE| CBS_DROPDOWNLIST ,400, 0, 100, 24, hWnd,  (HMENU)IDC_FITNESSTYPE_COMBOBOX, GetModuleHandle(NULL), NULL);
+	int row1=10,row2=35, row3 =60;
+	int col1 =160,col2=330,col3=600,col4=700;
+	HWND hWndFitS=CreateWindowEx(NULL,TEXT("STATIC"),	"Fitness Test",WS_CHILD|WS_VISIBLE,	col1, row1, 100, 18, hWnd, (HMENU)IDC_TEST_STATIC, GetModuleHandle(NULL),	NULL);
+	HWND hwndCombo = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("combobox"), "", WS_CHILD | WS_VISIBLE| CBS_DROPDOWNLIST ,col2, row1-5, 100, 24, hWnd,  (HMENU)IDC_FITNESSTYPE_COMBOBOX, GetModuleHandle(NULL), NULL);
 	
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Move");
 	SendMessage(hwndCombo,CB_SETITEMDATA, 0, move);
@@ -108,28 +110,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	WWDPhysics->solveGroundConflicts();
 	WWDPhysics->reshape(simWidth,simHeight);
 
-	//button
-	// Create a push button
+
 	HWND hWndButton=CreateWindowEx(NULL,TEXT("BUTTON"),	"RUN", WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_DEFPUSHBUTTON,
-		150, 50, 100, 24,
+		col1, row3, 100, 24,
 		hWnd, (HMENU)IDC_RUN_BUTTON, GetModuleHandle(NULL),	NULL);
 
 	HWND hWndResetButton=CreateWindowEx(NULL,TEXT("BUTTON"),	"Reset Simulation", WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_DEFPUSHBUTTON,
-		450, 50, 150, 24,
+		col3, row3, 150, 24,
 		hWnd, (HMENU)IDC_RESET_BUTTON, GetModuleHandle(NULL),	NULL);
 
 	HGDIOBJ hfDefault=GetStockObject(DEFAULT_GUI_FONT);
 	SendMessage(hWndButton,WM_SETFONT, (WPARAM)hfDefault, MAKELPARAM(FALSE,0));
 
-	HWND hWndNoG=CreateWindowEx(NULL,TEXT("STATIC"),"Number of Generations",WS_CHILD|WS_VISIBLE,	150, 20, 150, 18,
+	HWND hWndNoG=CreateWindowEx(NULL,TEXT("STATIC"),"Number of Generations",WS_CHILD|WS_VISIBLE,	col1, row2, 150, 18,
 		hWnd, (HMENU)IDC_NOG_STATIC, GetModuleHandle(NULL),	NULL);
 
-	HWND hWndNoGS=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE,	320, 20, 100, 18,
+	HWND hWndNoGS=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE,	col2, row2, 100, 18,
 		hWnd, (HMENU)IDC_NOG_EDIT, GetModuleHandle(NULL),	NULL);
 
-	HWND hWndPopS=CreateWindowEx(NULL,TEXT("STATIC"),	"Population",WS_CHILD|WS_VISIBLE,	600, 20, 100, 18,
+	HWND hWndPopS=CreateWindowEx(NULL,TEXT("STATIC"),	"Population",WS_CHILD|WS_VISIBLE,	col3, row2, 100, 18,
 		hWnd, (HMENU)IDC_POP_STATIC, GetModuleHandle(NULL),	NULL);
-	HWND hWndPop=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE |ES_NUMBER,	700, 20, 100, 18,
+	HWND hWndPop=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE |ES_NUMBER,	col4, row2, 100, 18,
 		hWnd, (HMENU)IDC_POP_EDIT, GetModuleHandle(NULL),	NULL);
 
 	// program main loop
