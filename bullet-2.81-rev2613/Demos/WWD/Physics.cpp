@@ -146,11 +146,19 @@ void Physics::simulationLoopStep(float stepSize){
 		calcFitness(testType);
 
 		for(int i=0;i< (int) effectorNNindex.size();i=i+3){
+#ifdef NNMAINONLY
+			setEffect(i/3,
+				theNet->getOutput(effectorNNindex.at(i)),
+				theNet->getOutput(effectorNNindex.at(i+1)),
+				theNet->getOutput(effectorNNindex.at(i+2))
+				);
+#else
 			setEffect(i/3,
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
 				);
+#endif
 		}
 	}
 	//fixed step... 1ms

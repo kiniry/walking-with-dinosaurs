@@ -2,7 +2,11 @@
 
 std::vector<int> MTree::crossBreed(std::vector<int> myDNA, std::vector<int> seedDNA, MTree* seed){
 	//30/70 chance of crossBreeding NN-main part or the body part
-	if(rand()%10<7){	//X-Breed body part
+	bool chooser = rand()%10<7;
+	#ifdef NNONLY
+		chooser=false;
+	#endif
+	if(chooser){	//X-Breed body part
 		int nrOfNodes = this->bodyPart->countNodes();
 		//MTreeNode* theNode = this->bodyPart->findNode(rand()%nrOfNodes);	//equal chances for all boxes to be chosen
 		MTreeNode* theNode = ReduceImpact(this->bodyPart->findNode(rand()%nrOfNodes),IMPACTPERCENTAGEBREEDPART);
@@ -31,6 +35,9 @@ std::vector<int> MTree::crossBreed(std::vector<int> myDNA, std::vector<int> seed
 		
 	}else{				//X-Breed NN-main part
 		MTreeNode* theOtherNode = getRandomBodyNode(seed);
+		#ifdef NNMAINONLY
+			theOtherNode=0;
+		#endif
 		while(theOtherNode != 0 && ((partNode*)theOtherNode)->NNChildren->size()==0){ //Guard against invalid X-breeds
 			theOtherNode = getRandomBodyNode(seed);
 		}

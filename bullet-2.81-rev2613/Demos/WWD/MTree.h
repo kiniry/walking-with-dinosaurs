@@ -6,6 +6,8 @@
 
 #define IMPACTPERCENTAGEBREEDPART 80
 #define IMPACTPERCENTAGESEEDPART 50
+//#define NNONLY
+//#define NNMAINONLY
 
 class MTree{
 private:
