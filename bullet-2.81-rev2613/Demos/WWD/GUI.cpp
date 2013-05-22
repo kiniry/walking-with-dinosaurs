@@ -959,7 +959,9 @@ VOID CALLBACK update(){
 
 		std::stringstream aStream;
 		aStream <<"Current Progress: "<< proInfo->rounds<<" out of "<<noGenerations<<"\n";
-		aStream <<"Current Progress: "<< proInfo->stats.mean<<" out of "<<noGenerations<<"\n";
+		aStream <<"min: "<<proInfo->stats.min<<" max: "<< proInfo->stats.max<<"\n";
+		aStream <<"mean: "<<proInfo->stats.mean<<" median: "<< proInfo->stats.median<<"\n";
+		aStream <<"deviation: "<<proInfo->stats.deviation<<"\n";
 		SetWindowText(progressText,aStream.str().c_str());
 		if(proInfo->rounds>=noGenerations){
 			ShowWindow(okButton,SW_SHOW);

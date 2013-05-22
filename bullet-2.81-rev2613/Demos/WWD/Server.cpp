@@ -39,9 +39,11 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 
 		//creatures=evolve(creatures); //evolve clean up the MTree's so no need for that
 		proInfo->stats=evolve(creatures);
+
 		for(int j=0;j< (int) (creatures->size()/5.+0.5);j++){
 			printf("nr %d %f\n",j,creatures->at(j).fitness);
 		}
+
 		proInfo->rounds = i+1;
 		printf("end of round %d \n",i);
 	}
