@@ -788,17 +788,17 @@ void loadDefault(){
 
 	saves.push_back(tmp);
 
-	int temp2[] = {8193,195,95,1,1,50,50,5,50,50,4,45,95,1,1,50,50,5,50,50,4,1,50,50,5,50,50,1,1,50
-,50,5,50,0,0,298,0,0,0,0,0,0,50,50,1,1,50,50,5,50,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,
-0,1,0,1,50,23,2,1,12,45,95,1,1,50,50,5,50,50,4,1,50,50,5,50,50,1,1,50,50,5,50,0,
-0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,1,50,23,2,1,12,45,95,1,1,50,50,5,50,50,4,1,50,
-50,5,50,50,1,1,50,50,5,50,0,0,0,0,0,0,0,0,0,50,50};
+	int temp2[] = {300, 350, 300, 2324, 4627, 1393, 457, 0, 0, 819, 0, 0, 0, 0, 5117, 5034, 1, 539,
+ 2160, 2, 9902, 0, 3, 100, 0, 4660, 388, 400, 100, 0, 0, 0, 0, 5316, 0, 8392, 7810, 0, 0, 0, 513, 3589, 1790, 25, 0, 5552, 0, 8695, 3, 9352, 1413, 10, 0, 6826,
+77, 0, 0, 0, 4710, 0, 0, 2400, 3678, 1641, 8007, 0, 4650, 1098, 1801, 0, 7649, 6549, 7241, 0, 0, 2598, 100, 1728, 150, 150, 1, 25, 3278, 0, 0, 0, 2, 0, 0, 8693,
+ 1, 0, 0, 400, 100, 0, 0, 0, 4710, 0, 0, 418, 3158, 1526, 9940, 7744, 200, 6899,
+ 2289, 0, 724, 0, 0, 573, 0, 8815, 3264};
 	int size2 = sizeof( temp2 ) / sizeof ( *temp2 );
 	std::vector<int> ancestor2 (temp2, temp2+size2);
 
 	save* tmp2 = new save();
 	tmp2->dna=ancestor2;
-	tmp2->name="AwsomeSaurus";
+	tmp2->name="highsomeSaurus";
 
 	saves.push_back(tmp2);
 }
@@ -922,7 +922,12 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 		//printf("thevalue %d\n",nrGens); //works
 		progress = GetDlgItem(hwnd,IDC_PROGRESSBAR);
 		okButton = GetDlgItem(hwnd,IDOK);
-		progressText = GetDlgItem(hwnd,IDC_STATIC2);
+		progressText = GetDlgItem(hwnd,IDC_STATIC_PROGRESS);
+		maxText = GetDlgItem(hwnd,IDC_STATIC_MAX);
+		meanText = GetDlgItem(hwnd,IDC_STATIC_MEAN);
+		minText = GetDlgItem(hwnd,IDC_STATIC_MIN);
+		medianText = GetDlgItem(hwnd,IDC_STATIC_MEDIAN);
+		deviationText = GetDlgItem(hwnd,IDC_STATIC_DEVIATION);
 		SendMessage(progress, PBM_SETRANGE, 0, MAKELPARAM(0, nrGens));
 		break;}
 	case WM_COMMAND:{
@@ -959,10 +964,29 @@ VOID CALLBACK update(){
 
 		std::stringstream aStream;
 		aStream <<"Current Progress: "<< proInfo->rounds<<" out of "<<noGenerations<<"\n";
-		aStream <<"min: "<<proInfo->stats.min<<" max: "<< proInfo->stats.max<<"\n";
-		aStream <<"mean: "<<proInfo->stats.mean<<" median: "<< proInfo->stats.median<<"\n";
-		aStream <<"deviation: "<<proInfo->stats.deviation<<"\n";
 		SetWindowText(progressText,aStream.str().c_str());
+
+		aStream.str("");
+		aStream <<proInfo->stats.min;
+		SetWindowText(minText,aStream.str().c_str());
+
+
+		aStream.str("");
+		aStream << proInfo->stats.max;
+		SetWindowText(maxText,aStream.str().c_str());
+		
+		aStream.str("");
+		aStream <<proInfo->stats.mean;
+		SetWindowText(meanText,aStream.str().c_str());
+		
+		aStream.str("");
+		aStream <<proInfo->stats.median;
+		SetWindowText(medianText,aStream.str().c_str());
+		
+		aStream.str("");
+		aStream <<proInfo->stats.deviation;
+		SetWindowText(deviationText,aStream.str().c_str());
+
 		if(proInfo->rounds>=noGenerations){
 			ShowWindow(okButton,SW_SHOW);
 		}

@@ -3,4 +3,4 @@ walking-with-dinosaurs
 
 TODO list:
 
-Progress counter
+optimize evolution
