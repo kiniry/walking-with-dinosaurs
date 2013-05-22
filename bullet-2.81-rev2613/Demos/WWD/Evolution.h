@@ -29,19 +29,27 @@ struct creature{
 	MTree* treePointer;
 };
 
+struct statistic{
+	float max;
+	float min;
+	float median;
+	float mean;
+	float deviation;
+
+};
 static double totalDiviation =0;
 static double timesDiviation =0;
 
-void normalizeFitness(std::vector<creature> *creatures);
+void normalizeFitness(std::vector<creature> *creatures, statistic* stats);
 
 
-double statistik(std::vector<creature>* creatures);
+double statistik(std::vector<creature>* creatures, statistic* stats);
 
 static bool compareCreatures(const creature &a, const creature &b){
 	return a.fitness > b.fitness;
 }
 //std::vector<creature> evolve(std::vector<creature>* creatures);
-void evolve(std::vector<creature>* creatures);
+statistic evolve(std::vector<creature>* creatures);
 
 std::vector<int> mutate(const std::vector<int>  dna, double deviation);
 

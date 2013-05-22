@@ -56,7 +56,6 @@ int argc;
 HWND progress;
 HWND okButton;
 HWND progressText;
-int* roundCount;
 int noGenerations;
 VOID CALLBACK update();
 struct argumentList{
@@ -68,6 +67,7 @@ struct argumentList{
 	creature* theResult;
 };
 
+
 struct save{
 	std::string name;
 	std::vector<int> dna;
@@ -75,7 +75,7 @@ struct save{
 };
 std::vector<save*> saves;
 static Physics* WWDPhysics;
-
+progressInfo* proInfo;
 static int popupMenuSel =0;
 
 // Function Declarations

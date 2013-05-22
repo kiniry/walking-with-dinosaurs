@@ -1,6 +1,6 @@
 #include "Server.h"
 
-creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor,fitnessTest type, int* roundNrPointer){
+creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor,fitnessTest type, progressInfo* proInfo ){
 	std::srand(std::time(0));
 	std::vector<creature>* creatures = new std::vector<creature>();
 	//create creatures
@@ -38,11 +38,11 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 		}
 
 		//creatures=evolve(creatures); //evolve clean up the MTree's so no need for that
-		evolve(creatures);
+		proInfo->stats=evolve(creatures);
 		for(int j=0;j< (int) (creatures->size()/5.+0.5);j++){
 			printf("nr %d %f\n",j,creatures->at(j).fitness);
 		}
-		*roundNrPointer = i+1;
+		proInfo->rounds = i+1;
 		printf("end of round %d \n",i);
 	}
 	sendOrders(stop);

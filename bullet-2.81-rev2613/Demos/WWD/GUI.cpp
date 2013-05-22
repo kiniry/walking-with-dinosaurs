@@ -552,7 +552,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				aList->iI=itemIndex;
 				aList->type=tmptest;
 				aList->theResult = new creature();
-				roundCount = new int;*roundCount=0;
+
+
+				proInfo = new progressInfo();
+
 
 				HANDLE threadHandle = (HANDLE) _beginthreadex(0,0,&runServer,(void*)aList,0,0);
 
@@ -564,7 +567,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				tmpCreature->dna= aList->theResult->dna;
 				tmpCreature->fitness=aList->theResult->fitness;
 
-				delete roundCount;
+				delete proInfo;
 				delete aList->theResult;
 				delete aList;
 
@@ -742,23 +745,60 @@ void loadSaves(){
 }
 
 void loadDefault(){
-	int temp[] = {1387,38,23,2,1924};
+	int temp[] = {300,350,300,			4,//nrAttachedToMain
+//leg1
+0,0,0,0,0,0,0,0,0,
+0,0,0,
+1,75,0,2,0,0,3,100,0,10,100,400,100,0,
+//leg2
+0,0,0,0,0,0,0,0,0,
+0,0,0,
+1,25,0,2,0,0,3,100,0,10,100,400,100,0,
+//Tail1
+0,0,0,0,0,0,0,0,0,
+0,0,0,
+1,0,0,5,0,0,0,100,100,5,150,150,400,1,
+//Tail2
+0,0,0,0,0,0,0,0,0,
+0,0,0,
+1,0,0,5,0,0,0,100,100,5,130,130,300,0,
+//UpperBody
+0,0,0,0,0,0,0,0,0,
+0,0,0,
+1,0,0,3,0,0,2,0,0,0,300,350,300,3,
+//Head
+0,0,0,0,0,0,0,0,0,
+0,0,0,
+1,0,0,3,0,0,2,20,20,20,230,230,230,0,
+//arm1
+0,0,0,0,0,0,0,0,0,
+0,0,0,
+1,25,40,0,0,0,5,50,50,50,70,70,200,0,
+//arm1
+0,0,0,0,0,0,0,0,0,
+0,0,0,
+1,75,40,0,0,0,5,50,50,50,70,70,200,0
+	};
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
 
 	save* tmp = new save();
 	tmp->dna=ancestor;
-	tmp->name="string name";
+	tmp->name="DefDino";
 
 	saves.push_back(tmp);
 
-	int temp2[] = {1387,38,23,2,1924};
+	int temp2[] = {8193,195,95,1,1,50,50,5,50,50,4,45,95,1,1,50,50,5,50,50,4,1,50,50,5,50,50,1,1,50
+,50,5,50,0,0,298,0,0,0,0,0,0,50,50,1,1,50,50,5,50,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,
+0,1,0,1,50,23,2,1,12,45,95,1,1,50,50,5,50,50,4,1,50,50,5,50,50,1,1,50,50,5,50,0,
+0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,1,50,23,2,1,12,45,95,1,1,50,50,5,50,50,4,1,50,
+50,5,50,50,1,1,50,50,5,50,0,0,0,0,0,0,0,0,0,50,50};
 	int size2 = sizeof( temp2 ) / sizeof ( *temp2 );
 	std::vector<int> ancestor2 (temp2, temp2+size2);
 
 	save* tmp2 = new save();
 	tmp2->dna=ancestor2;
-	tmp2->name="hula hula";
+	tmp2->name="AwsomeSaurus";
 
 	saves.push_back(tmp2);
 }
@@ -908,19 +948,20 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 unsigned int _stdcall runServer(void* args){
 	argumentList* aList = (argumentList*) args;
 
-	*aList->theResult = pipeServerMain(aList->nC,aList->p,aList->nG,saves.at(aList->iI)->dna, aList->type,roundCount);
+	*aList->theResult = pipeServerMain(aList->nC,aList->p,aList->nG,saves.at(aList->iI)->dna, aList->type,proInfo);
 
 	return 1;
 }
 
 VOID CALLBACK update(){
 	if(progress!=0){
-		SendMessage(progress,PBM_SETPOS,*roundCount,0);
+		SendMessage(progress,PBM_SETPOS,proInfo->rounds,0);
 
 		std::stringstream aStream;
-		aStream <<"Current Progress: "<< *roundCount<<" out of "<<noGenerations;
+		aStream <<"Current Progress: "<< proInfo->rounds<<" out of "<<noGenerations<<"\n";
+		aStream <<"Current Progress: "<< proInfo->stats.mean<<" out of "<<noGenerations<<"\n";
 		SetWindowText(progressText,aStream.str().c_str());
-		if(*roundCount>=noGenerations){
+		if(proInfo->rounds>=noGenerations){
 			ShowWindow(okButton,SW_SHOW);
 		}
 	}

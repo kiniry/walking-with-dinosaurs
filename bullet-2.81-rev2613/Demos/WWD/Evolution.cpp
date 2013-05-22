@@ -1,8 +1,8 @@
 #include "Evolution.h"
 
 
-void evolve(std::vector<creature>* creatures){
-
+statistic evolve(std::vector<creature>* creatures){
+	statistic stats = statistic();
 	float fitnessSumElites = 0;
 	float fitnessSumBreeders = 0;
 	std::vector<creature> result;
@@ -11,7 +11,7 @@ void evolve(std::vector<creature>* creatures){
 
 	std::sort(creatures->begin(), creatures->end(), compareCreatures);
 
-	double deviation=statistik(creatures);
+	double deviation=statistik(creatures, &stats);
 
 	int survivors = (int) ((creatures->size()/100.f)*((float)survivalRatio)+0.5);
 	int cullAmount = (int) ((creatures->size()/100.f)*((float)cullRatio)+0.5);
@@ -64,6 +64,8 @@ void evolve(std::vector<creature>* creatures){
 
 	//return result;
 	*creatures = result;
+
+	return stats;
 }
 
 creature getWorthyCreature(float fitnessSum, std::vector<creature> *creatures){
@@ -159,20 +161,21 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 	return newCreature;
 }
 
-double statistik(std::vector<creature>* creatures){
+double statistik(std::vector<creature>* creatures, statistic* stats){
 	float max=0, min=0, median=0, mean=0, deviation=0;
 
+	
 	max =creatures->at(0).fitness;
-	min = creatures->at(creatures->size()-1).fitness;
+	stats->max=max;
 
-
-	normalizeFitness(creatures);
+	normalizeFitness(creatures, stats);
 
 
 	for(int i = 0; i<(int)creatures->size(); i++){
 		mean+=creatures->at(i).fitness;
 	}
 	mean/=creatures->size();
+	stats->mean=mean;
 
 	if(creatures->size()%2 ==0){
 		float tmp1 =creatures->at((int)(creatures->size()/2.+0.5)).fitness;
@@ -182,7 +185,7 @@ double statistik(std::vector<creature>* creatures){
 	}else{
 		median= creatures->at((int)(creatures->size()/2.+0.5)-1).fitness;
 	}
-
+	stats->median=median;
 
 
 	//should dead creatures be used for the deviration
@@ -195,6 +198,7 @@ double statistik(std::vector<creature>* creatures){
 	}else{
 		deviation=0;
 	}
+	stats->deviation=deviation;
 	printf("\nmax %f, min %f, median %f, mean %f, deviation %f\n", max, min, median, mean, deviation);
 
 	timesDiviation+=1.;
@@ -203,9 +207,8 @@ double statistik(std::vector<creature>* creatures){
 	return deviation;
 }
 
-void normalizeFitness(std::vector<creature> *creatures){
+void normalizeFitness(std::vector<creature> *creatures, statistic* stats){
 	float min = 0;
-
 
 	for(int i =creatures->size()-1; i>=0;i--){
 		if(	creatures->at(i).fitness>dead+0.00001){
@@ -213,7 +216,7 @@ void normalizeFitness(std::vector<creature> *creatures){
 			break;
 		}
 	}
-
+	stats->min=min;
 
 
 
@@ -228,10 +231,6 @@ void normalizeFitness(std::vector<creature> *creatures){
 			creatures->at(i).fitness=(float)(creatures->at(i).fitness)/max*100.+0.00001;
 
 		}
-
-	}
-
-	for(int i =0; i<(int)creatures->size();i++){
 
 	}
 }
