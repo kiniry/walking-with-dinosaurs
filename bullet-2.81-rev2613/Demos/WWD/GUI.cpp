@@ -922,7 +922,12 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 		//printf("thevalue %d\n",nrGens); //works
 		progress = GetDlgItem(hwnd,IDC_PROGRESSBAR);
 		okButton = GetDlgItem(hwnd,IDOK);
-		progressText = GetDlgItem(hwnd,IDC_STATIC2);
+		progressText = GetDlgItem(hwnd,IDC_STATIC_PROGRESS);
+		maxText = GetDlgItem(hwnd,IDC_STATIC_MAX);
+		meanText = GetDlgItem(hwnd,IDC_STATIC_MEAN);
+		minText = GetDlgItem(hwnd,IDC_STATIC_MIN);
+		medianText = GetDlgItem(hwnd,IDC_STATIC_MEDIAN);
+		deviationText = GetDlgItem(hwnd,IDC_STATIC_DEVIATION);
 		SendMessage(progress, PBM_SETRANGE, 0, MAKELPARAM(0, nrGens));
 		break;}
 	case WM_COMMAND:{
@@ -959,10 +964,29 @@ VOID CALLBACK update(){
 
 		std::stringstream aStream;
 		aStream <<"Current Progress: "<< proInfo->rounds<<" out of "<<noGenerations<<"\n";
-		aStream <<"min: "<<proInfo->stats.min<<" max: "<< proInfo->stats.max<<"\n";
-		aStream <<"mean: "<<proInfo->stats.mean<<" median: "<< proInfo->stats.median<<"\n";
-		aStream <<"deviation: "<<proInfo->stats.deviation<<"\n";
 		SetWindowText(progressText,aStream.str().c_str());
+
+		aStream.str("");
+		aStream <<proInfo->stats.min;
+		SetWindowText(minText,aStream.str().c_str());
+
+
+		aStream.str("");
+		aStream << proInfo->stats.max;
+		SetWindowText(maxText,aStream.str().c_str());
+		
+		aStream.str("");
+		aStream <<proInfo->stats.mean;
+		SetWindowText(meanText,aStream.str().c_str());
+		
+		aStream.str("");
+		aStream <<proInfo->stats.median;
+		SetWindowText(medianText,aStream.str().c_str());
+		
+		aStream.str("");
+		aStream <<proInfo->stats.deviation;
+		SetWindowText(deviationText,aStream.str().c_str());
+
 		if(proInfo->rounds>=noGenerations){
 			ShowWindow(okButton,SW_SHOW);
 		}

@@ -56,6 +56,11 @@ int argc;
 HWND progress;
 HWND okButton;
 HWND progressText;
+HWND maxText;
+HWND minText;
+HWND meanText;
+HWND medianText;
+HWND deviationText;
 int noGenerations;
 VOID CALLBACK update();
 struct argumentList{
