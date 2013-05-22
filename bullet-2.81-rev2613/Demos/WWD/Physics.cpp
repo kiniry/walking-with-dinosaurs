@@ -547,7 +547,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 							 switch(type){
 							 case HINGE:
-								 {
+								/* {
 									 hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
 
 									 hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
@@ -563,16 +563,18 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 									 m_dynamicsWorld->addConstraint(hingeC,true);
 								 }
-								 break;
+								 break;*/
 							 case GENERIC6DOF:
 								 {
 									 gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
 									 gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist)
 									 gen6C->setLimit(1,0,0);
 									 gen6C->setLimit(2,0,0);
-									 gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
+									 gen6C->setAngularLowerLimit(btVector3(-DOFxR/2,-DOFyR/2,-DOFzR/2));
+									 gen6C->setAngularUpperLimit(btVector3(DOFxR/2,DOFyR/2,DOFzR/2));
+									 /*gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
 									 gen6C->setLimit(4,-DOFyR/2,DOFyR/2);
-									 gen6C->setLimit(5,-DOFzR/2,DOFzR/2);
+									 gen6C->setLimit(5,-DOFzR/2,DOFzR/2);*/
 									 //gen6C->getTranslationalLimitMotor()->m_restitution=0.0000000;
 									 //if(box2!=3)
 
@@ -889,12 +891,16 @@ void Physics::calcFitness(fitnessTest test){
 		break;
 	case oldMove:
 		{
-			btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
+			/*btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
 			if(height<4){
 				fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));
 			}else{
 				fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;
-			}
+			}*/
+			btVector3 tmpPos= calcPosition()-startPoint;
+
+
+			fitness= sqrt(tmpPos.getX()*tmpPos.getX()+tmpPos.getZ()*tmpPos.getZ())-height/2+10;
 		}
 		break;
 	case jump:
