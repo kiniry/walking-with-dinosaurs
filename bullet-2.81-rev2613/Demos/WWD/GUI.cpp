@@ -347,6 +347,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RUN_MBUTTON,"Run");
 				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RENAME_MBUTTON,"Rename");
 				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_DELETE_MBUTTON,"Delete");
+				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_SHOWDNA_MBUTTON,"Show DNA");
 				GetCursorPos(&p);
 				TrackPopupMenu(popupMenu,TPM_TOPALIGN|TPM_LEFTALIGN,p.x,p.y,0,hwnd,NULL);
 			}
@@ -627,7 +628,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				}
 			}
 			break;
+				case IDC_SHOWDNA_MBUTTON:
+			{
+				HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
+				
 
+				printf("DNA of %s\n",saves.at(popupMenuSel)->name.c_str());
+				for(int i=0; i<saves.at(popupMenuSel)->dna.size();i++){
+					printf("%d, ", saves.at(popupMenuSel)->dna.at(i));
+
+				}
+				printf("\n");
+			}
+			break;
 		case ID_FILE_SAVE40003:
 
 			saveSaves(saves);

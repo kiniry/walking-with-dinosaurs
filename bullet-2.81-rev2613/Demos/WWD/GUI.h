@@ -22,6 +22,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include <process.h>
 
+#define IDC_SHOWDNA_MBUTTON 986
 #define IDC_TEST_STATIC 987
 #define IDC_RESET_BUTTON 988
 #define IDC_FITNESSTYPE_COMBOBOX 989
