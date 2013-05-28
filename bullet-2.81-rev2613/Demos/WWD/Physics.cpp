@@ -588,7 +588,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 									 theStruct->CrossSectionalStrength=crossSection*muscleStregnth;
 									 gen6C->setUserConstraintPtr(theStruct);
 
-									 gen6C->setBreakingImpulseThreshold(tensileStrength*crossSection);
+									 //gen6C->setBreakingImpulseThreshold(tensileStrength*crossSection);
 									 m_dynamicsWorld->addConstraint(gen6C,true);
 								 }
 								 break;
