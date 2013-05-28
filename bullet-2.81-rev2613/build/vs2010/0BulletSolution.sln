@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WWD", "App_BasicDemo.vcxproj", "{7AD91C8D-2683-F548-8E9E-7306DD8B7BDA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B9BF5DC0-2647-5D47-BD70-A60EE7B06DFC} = {B9BF5DC0-2647-5D47-BD70-A60EE7B06DFC}
@@ -10,10 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WWD", "App_BasicDemo.vcxpro
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLSupport", "OpenGLSupport.vcxproj", "{B9BF5DC0-2647-5D47-BD70-A60EE7B06DFC}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HACD", "HACD.vcxproj", "{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConvexDecomposition", "ConvexDecomposition.vcxproj", "{4755EE0A-E630-C54B-ADD1-9757DF64103D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletFileLoader", "BulletFileLoader.vcxproj", "{8B70B933-39E4-0540-82C5-69D06F09449C}"
 EndProject
@@ -73,38 +69,6 @@ Global
 		{B9BF5DC0-2647-5D47-BD70-A60EE7B06DFC}.GUI_Release|Win32.Build.0 = GUI_Release|Win32
 		{B9BF5DC0-2647-5D47-BD70-A60EE7B06DFC}.GUI_Release|x64.ActiveCfg = GUI_Release|x64
 		{B9BF5DC0-2647-5D47-BD70-A60EE7B06DFC}.GUI_Release|x64.Build.0 = GUI_Release|x64
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.Console_Debug|Win32.ActiveCfg = Console_Debug|Win32
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.Console_Debug|Win32.Build.0 = Console_Debug|Win32
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.Console_Debug|x64.ActiveCfg = Console_Debug|x64
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.Console_Debug|x64.Build.0 = Console_Debug|x64
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.Console_Release|Win32.ActiveCfg = Console_Release|Win32
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.Console_Release|Win32.Build.0 = Console_Release|Win32
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.Console_Release|x64.ActiveCfg = Console_Release|x64
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.Console_Release|x64.Build.0 = Console_Release|x64
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.GUI_Debug|Win32.ActiveCfg = GUI_Debug|Win32
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.GUI_Debug|Win32.Build.0 = GUI_Debug|Win32
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.GUI_Debug|x64.ActiveCfg = GUI_Debug|x64
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.GUI_Debug|x64.Build.0 = GUI_Debug|x64
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.GUI_Release|Win32.ActiveCfg = GUI_Release|Win32
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.GUI_Release|Win32.Build.0 = GUI_Release|Win32
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.GUI_Release|x64.ActiveCfg = GUI_Release|x64
-		{5AC47B32-E5C3-704F-A41A-1ACF0B21ABEF}.GUI_Release|x64.Build.0 = GUI_Release|x64
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.Console_Debug|Win32.ActiveCfg = Console_Debug|Win32
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.Console_Debug|Win32.Build.0 = Console_Debug|Win32
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.Console_Debug|x64.ActiveCfg = Console_Debug|x64
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.Console_Debug|x64.Build.0 = Console_Debug|x64
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.Console_Release|Win32.ActiveCfg = Console_Release|Win32
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.Console_Release|Win32.Build.0 = Console_Release|Win32
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.Console_Release|x64.ActiveCfg = Console_Release|x64
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.Console_Release|x64.Build.0 = Console_Release|x64
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.GUI_Debug|Win32.ActiveCfg = GUI_Debug|Win32
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.GUI_Debug|Win32.Build.0 = GUI_Debug|Win32
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.GUI_Debug|x64.ActiveCfg = GUI_Debug|x64
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.GUI_Debug|x64.Build.0 = GUI_Debug|x64
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.GUI_Release|Win32.ActiveCfg = GUI_Release|Win32
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.GUI_Release|Win32.Build.0 = GUI_Release|Win32
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.GUI_Release|x64.ActiveCfg = GUI_Release|x64
-		{4755EE0A-E630-C54B-ADD1-9757DF64103D}.GUI_Release|x64.Build.0 = GUI_Release|x64
 		{8B70B933-39E4-0540-82C5-69D06F09449C}.Console_Debug|Win32.ActiveCfg = Console_Debug|Win32
 		{8B70B933-39E4-0540-82C5-69D06F09449C}.Console_Debug|Win32.Build.0 = Console_Debug|Win32
 		{8B70B933-39E4-0540-82C5-69D06F09449C}.Console_Debug|x64.ActiveCfg = Console_Debug|x64
