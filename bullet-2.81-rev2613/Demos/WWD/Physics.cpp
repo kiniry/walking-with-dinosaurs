@@ -537,9 +537,10 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 //setup contraint/joint
 							 btHingeConstraint* hingeC;
 							 btGeneric6DofConstraint* gen6C;
-							 int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
+							 //int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
+							 int DOFx = dofX %170;	int DOFy = dofY %170;	int DOFz = dofZ %170;
 							 // int DOFx = dofX %170+10;	int DOFy = dofY%170+10;	int DOFz = dofZ %170+10;
-							 float DOFxR = ((float)DOFx*2*PI)/360; float DOFyR = ((float)DOFy*2*PI)/360; float DOFzR = ((float)DOFz*2*PI)/360;
+							 float DOFxR = ((float)DOFx*2.f*PI)/360.f; float DOFyR = ((float)DOFy*2.f*PI)/360.f; float DOFzR = ((float)DOFz*2.f*PI)/360.f;
 							 // printf("%f %f %f\n", DOFxR,DOFyR,DOFzR);
 							 UserPointerStruct* theStruct = new UserPointerStruct();
 							 btScalar mass1=1/Box1->getInvMass();
@@ -879,6 +880,7 @@ void Physics::testPhysics(){
 
 
 void Physics::calcFitness(fitnessTest test){
+	if(height>=10){fitness==0;return;}
 	switch(test){
 	case move:
 		{
