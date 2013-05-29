@@ -157,8 +157,8 @@ inline float NeuralNode::product(){
 }
 
 inline float NeuralNode::divide(){
-	if(input2 == NULL){
-		input1->currentOutput * weight1;
+	if(input2 == NULL || input2->currentOutput*weight2==0){
+		return input1->currentOutput * weight1;
 	}else{
 		return	input1->currentOutput * weight1
 				/
