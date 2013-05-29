@@ -140,11 +140,6 @@ void Physics::simulationLoopStep(float stepSize){
 				subnets.at(i)->computeNetwork();
 			}
 		}
-
-		//fitness test
-
-		calcFitness(testType);
-
 		for(int i=0;i< (int) effectorNNindex.size();i=i+3){
 #ifdef NNMAINONLY
 			setEffect(i/3,
@@ -158,8 +153,13 @@ void Physics::simulationLoopStep(float stepSize){
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
 				);
+			printf("%f, %f, %f\n", subnets.at(i/3)->getOutput(effectorNNindex.at(i)), subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)), subnets.at(i/3)->getOutput(effectorNNindex.at(i+2)));
 #endif
 		}
+
+		//fitness test
+		calcFitness(testType);
+
 	}
 	//fixed step... 1ms
 	m_dynamicsWorld->stepSimulation(stepSize);
@@ -588,7 +588,7 @@ int Physics::createJoint(	int box1, int box2,	int type,
 									 theStruct->CrossSectionalStrength=crossSection*muscleStregnth;
 									 gen6C->setUserConstraintPtr(theStruct);
 
-									 //gen6C->setBreakingImpulseThreshold(tensileStrength*crossSection);
+									 gen6C->setBreakingImpulseThreshold(tensileStrength*crossSection);
 									 m_dynamicsWorld->addConstraint(gen6C,true);
 								 }
 								 break;

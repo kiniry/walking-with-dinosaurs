@@ -84,10 +84,14 @@ void startPrograms(fitnessTest type){
 	PathAddBackslash(filePathAbs);
 	PathAppend(filePathAbs,"Client.exe");
 
+	int show=SW_HIDE;
+	#ifdef _DEBUG
+	show=SW_MINIMIZE;
+	#endif
 	for(int i=0;i<pipes.size();i++){
 		std::stringstream commandArgs;
 		commandArgs<<i<<" "<<type;
-		int error=(int) ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, SW_HIDE);
+		int error=(int) ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, show);
 		if(error < 32){
 			printf("Error: faild to start Client\n");
 			exit(-1);

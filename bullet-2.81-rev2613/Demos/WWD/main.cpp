@@ -14,19 +14,9 @@ int main(int argc,char** argv)
 	printf("cores %d\n", numCores);
 
 #ifdef  _DEBUG
-	//return pipeClientMain(argc,argv);
-	const int temp[] = {1387,38,23,2,1924};
-	int size = sizeof( temp ) / sizeof ( *temp );
-	std::vector<int> ancestor (temp, temp+size);
-	//return pipeServerMain(numCores,populationSize,nrOfGenerations,ancestor);
-	Physics* wwd = new Physics();
 	
-	wwd->testPhysics();
-	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",wwd);
-
-	return WWD(argc,argv);
 	return debug(argc,argv);
-
+	return WWD(argc,argv);
 #else
 
 	const int temp[] = {1387,38,23,2,1924};
@@ -54,29 +44,11 @@ unsigned int __stdcall threadSim(void* data){
 
 int debug(int argc,char** argv){
 	test();
-	const int temp[] = {1387,38,23,2,1924};
-	//	const int temp[] = {
-	//Body
-	//		295,195,95,	//main box: h,w,d
-	//		1,		//1 box attached
-	//		1,/*Joint type*/		50,50,5,/*preXYS*/		50,50,4,/*postXYS*/	45,45,45,/*DofXYZ*/ //Create joint
-	//		295,195,95,	//attached box: h,w,d
-	//NN-Effector0-layer 0
-	//		1,	2,10,0,1,100,100,	//2-in-node: f=interpolate, in0=0,in1=1,w0=100,w1=100
-	//		0,	2,0,0,0,0,100,		//2-in-node: f=sum,in0=0,in1=1,w0=0,w1=100 (just sends in1 through unchanged) - No more nodes
-	//		1,0,1,	//NN-Effector: use outputs O0=1,O1=0,O2=1
-	//		0,		//no attached boxes
-	//NN-main-layer 0	(sensors not implemented yet)
-	//		1,	0,30,			//constant node 30
-	//		1,	0,62,			//constant node 62
-	//		2,	0,125,			//constant node 125 - change layer
-	//NN-main-layer 1
-	//		1,	2,0,0,1,50,23,	//2-in-node: f=sum in0=0 in1=1 w0=50 w1=23
-	//		2,	1,12,2,5,		//1-in node: f=cos in0=2 w0=5 - change layer
-	//NN-main-layer 2
-	//		1,	2,1,0,1,1,200,	//2-in node: f=product in0=0 in1=1, w0=1 w1=200
-	//		0,	2,0,0,1,1,1		//2-in node: f=sum in0=0 in1=1, w0=1 w1=1 - No more nodes
-	//	};
+	const int temp[] = {0, 7306, 77, 9859, 8996, 0, 7615, 0, 0, 1641, 8007, 0, 1666, 1098, 3253, 0, 5908, 6549, 7241, 8392, 2533, 8392, 7810, 150, 0, 8248, 1100, 0, 0, 0, 300, 350, 300
+, 2324, 4627, 1393, 457, 4736, 0, 819, 0, 289, 0, 0, 2872, 5034, 1, 539, 2160, 3399, 9902, 1094, 6143, 100, 0, 4660, 5670, 400, 1214, 0, 5202, 0, 6629, 5316, 0,
+ 8392, 7810, 1519, 4743, 0, 513, 3589, 1790, 25, 1433, 5552, 0, 8695, 3, 9352, 1413, 9324, 1, 25, 3278, 0, 0, 0, 6020, 0, 1071, 2400, 3678, 1641, 8007, 0, 4650,
+ 1098, 1801, 1211, 2465, 6549, 6435, 1471, 3032, 2598, 100, 3005, 9326, 150, 1,25, 3278, 0, 4710, 9276, 3266, 4386, 0, 0, 7340, 0, 0, 3559, 9407, 0, 4710, 6038
+, 3187, 9961, 7280, 1460, 7224, 7744, 200, 5723, 2289, 0, 3948, 9274, 0, 573, 0, 8815, 3264, 0, 3809, 0, 0, 0};
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
 	Physics* WWDPhysics = new Physics();

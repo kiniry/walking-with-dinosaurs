@@ -6,8 +6,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	directory = getDirectory();
 	
+#ifdef _DEBUG
 	console();
-
+#endif
 	loadSaves();
 	int height=768,width =1024;
 	calcSizes(768-menuHeight,1024-border);
