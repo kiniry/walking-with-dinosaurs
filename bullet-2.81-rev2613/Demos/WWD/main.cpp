@@ -18,7 +18,6 @@ int main(int argc,char** argv)
 	return debug(argc,argv);
 	return WWD(argc,argv);
 #else
-
 	const int temp[] = {1387,38,23,2,1924};
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);

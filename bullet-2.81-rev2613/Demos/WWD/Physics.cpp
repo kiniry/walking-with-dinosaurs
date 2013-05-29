@@ -153,7 +153,7 @@ void Physics::simulationLoopStep(float stepSize){
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
 				subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
 				);
-			printf("%f, %f, %f\n", subnets.at(i/3)->getOutput(effectorNNindex.at(i)), subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)), subnets.at(i/3)->getOutput(effectorNNindex.at(i+2)));
+			
 #endif
 		}
 
