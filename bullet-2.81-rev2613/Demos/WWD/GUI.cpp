@@ -30,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.cbWndExtra = 0;
 	wc.hInstance = hInstance;
 	//alt tab icon + windows linie icon
-	wc.hIcon = LoadIcon( NULL, IDI_APPLICATION );
+	wc.hIcon = LoadIcon( GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1) );
 	//look of the cursor
 	wc.hCursor = LoadCursor( NULL, IDC_ARROW );
 	//background color
