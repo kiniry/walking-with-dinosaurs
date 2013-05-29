@@ -839,7 +839,8 @@ void Physics::testPhysics(){
 
 
 	int box4 = createBox(195,195,195);
-	createJoint(box3, box4, GENERIC6DOF,50, 50, 2, 50, 50,50, 0,0,0);
+	createJoint(box3, box4, GENERIC6DOF,50, 50, 2, 50, 50,50, 30,30,30);
+
 	/*
 	int box = createBox(85,385,185);
 	createJoint(box3, box, GENERIC6DOF,50, 50, 3, 50, 50, 3, 0,0,0);
@@ -862,17 +863,26 @@ void Physics::testPhysics(){
 		inputs.push_back(new NeuralNode(&sensors.at(i)));
 	}
 
-	inputs.push_back(new NeuralNode(1));
-	inputs.push_back(new NeuralNode(-2));
+	inputs.push_back(new NeuralNode(1)); //index 3
+	inputs.push_back(new NeuralNode(-2)); //index 4
 	float* testPoint = new float;
 	*testPoint = 5;
-	inputs.push_back(new NeuralNode(testPoint));
+	inputs.push_back(new NeuralNode(testPoint)); //index 5
 	theNet = new NeuralNetwork(inputs);
-	theNet->insertNode(SUM,7,1,3,1);
-	theNet->insertNode(SIN,0,1);
+	theNet->insertNode(SUM,5,3,3,1);
+	theNet->insertNode(SIN,1,1);
 	theNet->changeLayer();
-	theNet->insertNode(PRODUCT,0,1,2,1);
+	theNet->insertNode(PRODUCT,0,1,2,2);
 	theNet->stopBuilding();
+
+	NeuralNetwork* aNet = new NeuralNetwork(theNet->getLastLayer());
+	aNet->insertNode(PRODUCT,0,0,10000,10000);
+	aNet->stopBuilding();
+	subnets.push_back(aNet);
+
+	effectorNNindex.push_back(0);
+	effectorNNindex.push_back(1);
+	effectorNNindex.push_back(2);
 
 	solveGroundConflicts();
 }

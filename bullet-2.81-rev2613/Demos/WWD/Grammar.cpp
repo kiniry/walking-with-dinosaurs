@@ -129,7 +129,7 @@ int NN(int index, std::vector<int>* DNA, std::vector<NeuralNode*> inputs, Physic
 		index = NNL(index,SUBNET_NET_WIDTH,DNA,aNet,falseNode,false);
 		delete falseNode;
 
-		aNet->changeLayer();
+		if(i!=amountOfLayers-1) aNet->changeLayer(); //Dont change on last layer (would create an empty layer)
 	}
 
 	aNet->stopBuilding();
@@ -183,6 +183,7 @@ int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, 
 		if(chooseValue < usedChance){nrOfNodes = inputAmount+i;break;}
 	}
 
+	if(nrOfNodes==0){nrOfNodes=1;} //there must allways be at least one
 	for(int i=0;i<nrOfNodes;i++){
 		NNNode* aNode = new NNNode(index);
 		node->addChild(aNode);

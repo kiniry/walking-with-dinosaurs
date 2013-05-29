@@ -130,6 +130,7 @@ void NeuralNetwork::computeNetwork()
 			layers.at(j).at(i)->compute();
 		}
 	}
+	outputUndefined=false;
 }
 
 std::vector<NeuralNode*> NeuralNetwork::getLastLayer(){
