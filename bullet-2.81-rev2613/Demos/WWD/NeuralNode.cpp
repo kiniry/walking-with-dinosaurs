@@ -288,6 +288,7 @@ inline float NeuralNode::myAtan(){
 }
 
 inline float NeuralNode::myLog(){
+	if(input1->currentOutput*weight1<=0){return input1->currentOutput*weight1;}
 	return log(input1->currentOutput*weight1);
 }
 
