@@ -162,11 +162,23 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 }
 
 double statistik(std::vector<creature>* creatures, statistic* stats){
-	float max=0, min=0, median=0, mean=0, deviation=0;
+	float max=0, min=0, median=0, mean=0, deviation=0, killed=0;
 
 	
 	max =creatures->at(0).fitness;
 	stats->max=max;
+
+	for(int i =0;i<(int)creatures->size();i++){
+		if(creatures->at(i).fitness!=dead){
+			min=creatures->at(i).fitness;
+
+			killed=i;
+			break;
+		}
+	
+	}
+	stats->killed=killed;
+	stats->min=min;
 
 	normalizeFitness(creatures, stats);
 

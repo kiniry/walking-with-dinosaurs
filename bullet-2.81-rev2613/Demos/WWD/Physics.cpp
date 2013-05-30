@@ -50,6 +50,14 @@ btVector3 Physics::calcPosition(){
 }
 
 bool Physics::isLegal(){
+	//check for height
+	calcSize();
+	if(height>=15){
+		return false;
+	}
+
+
+	//check for intern collisions
 	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 
 	MyContactResultCallback result;
@@ -895,9 +903,6 @@ void Physics::testPhysics(){
 void Physics::calcFitness(fitnessTest test){
 	
 	//er det her relevant
-	calcSize();
-
-	if(height>=10){fitness==0;return;}
 	switch(test){
 	case move:
 		{
@@ -947,7 +952,7 @@ float Physics::fitJump(){
 	
 			//er der kontakt emd jorden
 			// hvis der ikke er så er det afstanden fra jord til nederste punkt
-
+			calcSize();
 			
 			//fix ground collision
 			//collision detection

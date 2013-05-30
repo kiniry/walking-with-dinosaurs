@@ -945,6 +945,7 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 		meanText = GetDlgItem(hwnd,IDC_STATIC_MEAN);
 		minText = GetDlgItem(hwnd,IDC_STATIC_MIN);
 		medianText = GetDlgItem(hwnd,IDC_STATIC_MEDIAN);
+		killedText = GetDlgItem(hwnd,IDC_STATIC_KILLED);
 		deviationText = GetDlgItem(hwnd,IDC_STATIC_DEVIATION);
 		SendMessage(progress, PBM_SETRANGE, 0, MAKELPARAM(0, nrGens));
 		break;}
@@ -1000,6 +1001,10 @@ VOID CALLBACK update(){
 		aStream.str("");
 		aStream <<proInfo->stats.median;
 		SetWindowText(medianText,aStream.str().c_str());
+
+		aStream.str("");
+		aStream <<proInfo->stats.killed;
+		SetWindowText(killedText,aStream.str().c_str());
 		
 		aStream.str("");
 		aStream <<proInfo->stats.deviation;

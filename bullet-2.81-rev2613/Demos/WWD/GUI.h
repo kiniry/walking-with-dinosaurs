@@ -61,6 +61,7 @@ HWND minText;
 HWND meanText;
 HWND medianText;
 HWND deviationText;
+HWND killedText;
 int noGenerations;
 VOID CALLBACK update();
 struct argumentList{

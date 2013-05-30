@@ -35,6 +35,7 @@ struct statistic{
 	float median;
 	float mean;
 	float deviation;
+	int killed;
 
 };
 static double totalDiviation =0;
