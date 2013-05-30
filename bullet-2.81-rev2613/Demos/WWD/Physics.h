@@ -87,7 +87,7 @@ class btConstraintSolver;
 struct btCollisionAlgorithmCreateFunc;
 class btDefaultCollisionConfiguration;
 
-enum fitnessTest{none,jump, move, oldMove};
+enum fitnessTest{none,jump, move, oldMove, combi};
 
 class Physics : public PlatformDemoApplication{
 private:
@@ -135,7 +135,8 @@ private:
 	float getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int preY, int postS, btVector3* halfside2, int postX, int postY);
 	inline float sign(float input);
 	float getBoxHalfHeight(btCollisionObject* object);
-
+	float Physics::fitJump();
+	float Physics::fitMove();
 public:
 
 	enum boxes{ground=-2};

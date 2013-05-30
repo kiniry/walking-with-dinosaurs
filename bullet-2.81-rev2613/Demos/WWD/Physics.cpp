@@ -17,7 +17,7 @@ float Physics::getBoxHalfHeight(btCollisionObject* object){
 
 void Physics::calcSize(){
 	btCollisionObjectArray objs = m_dynamicsWorld->getCollisionObjectArray();
-	heighstPoint = 0;
+	heighstPoint = -99999;
 	lowestPoint = 99999;
 	height = 0;
 	for (int i = 1; i < objs.size(); i++){
@@ -303,6 +303,7 @@ void	Physics::initPhysics(){
 	currentBoxIndex=0;
 	currentJointIndex=0;
 	noBoxes =0;
+	fitness=0;
 
 	setTexturing(true);
 	setShadows(true);
@@ -796,7 +797,9 @@ void	Physics::exitPhysics(){
 	//delete contraints
 	while(m_dynamicsWorld->getNumConstraints()>0){
 		btTypedConstraint* deathPointer = m_dynamicsWorld->getConstraint(0);
+		if((int)deathPointer->getUserConstraintPtr()!=-1){
 		delete deathPointer->getUserConstraintPtr();
+		}
 		m_dynamicsWorld->removeConstraint(deathPointer);
 		delete deathPointer;
 	}
@@ -890,14 +893,16 @@ void Physics::testPhysics(){
 
 
 void Physics::calcFitness(fitnessTest test){
+	
+	//er det her relevant
+	calcSize();
+
 	if(height>=10){fitness==0;return;}
 	switch(test){
 	case move:
 		{
-			btVector3 tmpPos= calcPosition()-startPoint;
 
-
-			fitness= sqrt(tmpPos.getX()*tmpPos.getX()+tmpPos.getZ()*tmpPos.getZ());
+			fitness= fitMove();
 
 		}
 		break;
@@ -917,29 +922,14 @@ void Physics::calcFitness(fitnessTest test){
 		break;
 	case jump:
 		{
+			fitness=fitJump();
+		}
+		break;
+	case combi:
+		{
+			//dosnt work
 
-			//er der kontakt emd jorden
-			// hvis der ikke er så er det afstanden fra jord til nederste punkt
-
-
-
-			calcSize();
-			//fix ground collision
-			//collision detection
-			//one per btPersistentManifold for each collision
-			int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
-
-			for (int i=0;i<numManifolds;i++){
-				btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-				int box1 = (int)contactManifold->getBody0()->getUserPointer();
-				int box2 = (int)contactManifold->getBody1()->getUserPointer();
-
-				if(box1 == ground || box1 == ground){
-					return;
-				}
-			}
-
-			fitness = max(fitness,  lowestPoint-groundY);
+			fitness=(fitJump()+1)*fitMove();
 		}
 		break;
 	case none:
@@ -951,4 +941,38 @@ void Physics::calcFitness(fitnessTest test){
 
 		printf("unkown fitness test\n");
 	}
+}
+
+float Physics::fitJump(){
+	
+			//er der kontakt emd jorden
+			// hvis der ikke er så er det afstanden fra jord til nederste punkt
+
+			
+			//fix ground collision
+			//collision detection
+			//one per btPersistentManifold for each collision
+			int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
+
+			for (int i=0;i<numManifolds;i++){
+				btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+				int box1 = (int)contactManifold->getBody0()->getUserPointer();
+				int box2 = (int)contactManifold->getBody1()->getUserPointer();
+
+				if(box1 == ground || box1 == ground){
+					return fitness;
+				}
+			}
+
+			return max(fitness,  lowestPoint-groundY);
+}
+
+
+float Physics::fitMove(){
+
+
+	btVector3 tmpPos= calcPosition()-startPoint;
+
+	return sqrt(tmpPos.getX()*tmpPos.getX()+tmpPos.getZ()*tmpPos.getZ());
+
 }

@@ -96,11 +96,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"OLDMove");
 	SendMessage(hwndCombo,CB_SETITEMDATA, 1, oldMove);
 	
-	SendMessage(hwndCombo,CB_ADDSTRING, 1, (LPARAM)"Jump");
+	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Jump");
 	SendMessage(hwndCombo,CB_SETITEMDATA, 2, jump);
+
+	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Combi");
+	SendMessage(hwndCombo,CB_SETITEMDATA, 3, combi);
 	
-	SendMessage(hwndCombo,CB_ADDSTRING, 2, (LPARAM)"None");
-	SendMessage(hwndCombo,CB_SETITEMDATA, 3, none);
+	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"None");
+	SendMessage(hwndCombo,CB_SETITEMDATA, 4, none);
 
 	SendMessage(hwndCombo,CB_SETCURSEL,0,0);
 
@@ -803,6 +806,17 @@ void loadDefault(){
 	tmp2->name="highsomeSaurus";
 
 	saves.push_back(tmp2);
+
+	int temp3[] = {300, 350, 300};
+	int size3 = sizeof( temp3 ) / sizeof ( *temp3 );
+	std::vector<int> ancestor3 (temp3, temp3+size3);
+
+	save* tmp3 = new save();
+	tmp3->dna=ancestor3;
+	tmp3->name="block";
+
+	saves.push_back(tmp3);
+
 }
 
 void saveSaves(std::vector<save*> saves){

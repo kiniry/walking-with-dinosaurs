@@ -550,7 +550,7 @@ void	DemoApplication::shootBox(const btVector3& destination)
 
 	if (m_dynamicsWorld)
 	{
-		float mass = 1.f*200;
+		float mass = 1.f*1000.;
 		btTransform startTransform;
 		startTransform.setIdentity();
 		btVector3 camPos = getCameraPosition();
@@ -789,6 +789,8 @@ void DemoApplication::mouseFunc(int button, int state, int x, int y)
 									tr.setIdentity();
 									tr.setOrigin(localPivot);
 									btGeneric6DofConstraint* dof6 = new btGeneric6DofConstraint(*body, tr,false);
+									dof6->setUserConstraintPtr((void*)-1);
+
 									dof6->setLinearLowerLimit(btVector3(0,0,0));
 									dof6->setLinearUpperLimit(btVector3(0,0,0));
 									dof6->setAngularLowerLimit(btVector3(0,0,0));
