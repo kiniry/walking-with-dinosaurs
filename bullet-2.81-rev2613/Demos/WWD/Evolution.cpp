@@ -168,15 +168,16 @@ double statistik(std::vector<creature>* creatures, statistic* stats){
 	max =creatures->at(0).fitness;
 	stats->max=max;
 
-	for(int i =0;i<(int)creatures->size();i++){
-		if(creatures->at(i).fitness!=dead){
+	for(int i =(int)creatures->size()-1;i>=0;i--){
+		if(creatures->at(i).fitness>dead+0.0005){
 			min=creatures->at(i).fitness;
 
-			killed=i;
+			killed=creatures->size()-i;
 			break;
 		}
 	
 	}
+
 	stats->killed=killed;
 	stats->min=min;
 
