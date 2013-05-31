@@ -130,7 +130,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	HWND hWndNoG=CreateWindowEx(NULL,TEXT("STATIC"),"Number of Generations",WS_CHILD|WS_VISIBLE,	col1, row2, 150, 18,
 		hWnd, (HMENU)IDC_NOG_STATIC, GetModuleHandle(NULL),	NULL);
 
-	HWND hWndNoGS=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE,	col2, row2, 100, 18,
+	HWND hWndNoGS=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE|ES_NUMBER,	col2, row2, 100, 18,
 		hWnd, (HMENU)IDC_NOG_EDIT, GetModuleHandle(NULL),	NULL);
 
 	HWND hWndPopS=CreateWindowEx(NULL,TEXT("STATIC"),	"Population",WS_CHILD|WS_VISIBLE,	col3, row1, 100, 18,
