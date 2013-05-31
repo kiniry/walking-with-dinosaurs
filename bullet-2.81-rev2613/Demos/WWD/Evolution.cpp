@@ -101,20 +101,16 @@ creature getWorthyCreatureFail(float fitnessSum, std::vector<creature> *creature
 
 std::vector<int> mutate(const std::vector<int> dna, double deviation){
 	std::vector<int> newCreature = dna;
+	double forskel= expectedDiviation-deviation;
+	float chanceToMutate;
+	if(forskel<0){
+		chanceToMutate = 1/((float)dna.size())+1/((float)dna.size())*forskel/100.;
+	}else{
+		chanceToMutate = 1/((float)dna.size())*((float)dna.size())*forskel/100.;
+	}
 	for (int i = 0; i< (int) dna.size(); i++){
-		int chanceToMutate;
-
-		double forskel= expectedDiviation-deviation;
-
-		if(forskel>0){
-			int chance=(int)(dna.size()*forskel/deviation+0.5);
-			if(chance==dna.size()){chance--;}
-			chanceToMutate = rand()%(dna.size()-chance);
-		}else{
-			chanceToMutate = rand()%dna.size();
-		}
-
-		if(chanceToMutate==0){
+		float chance= (rand()%10000)/10000.;
+		if(chanceToMutate>chance){
 			newCreature.at(i)=randomDnaValue;
 		}
 	}
