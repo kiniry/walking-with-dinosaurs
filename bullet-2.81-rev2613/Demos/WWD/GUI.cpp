@@ -1003,7 +1003,7 @@ VOID CALLBACK update(){
 		SetWindowText(medianText,aStream.str().c_str());
 
 		aStream.str("");
-		aStream <<proInfo->stats.killed;
+		aStream <<proInfo->stats.killed<<"%";
 		SetWindowText(killedText,aStream.str().c_str());
 		
 		aStream.str("");
