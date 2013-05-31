@@ -250,12 +250,29 @@ void Physics::simulationLoopStep(float stepSize){
 	}*/
 }
 
+void Physics::relaxCreature(){
+	btCollisionObject* ground = m_dynamicsWorld->getCollisionObjectArray().at(0);
+	btScalar friction = ground->getFriction();
+	ground->setFriction(0);
+	float last = 0.f;
+	int count = 0;
+	while(count<10){
+		simulationLoopStep(1/1000.f);
+		float center = calcPosition().y();
+		if(center = last){count++;}
+		else{count=0;}
+		last = center;
+	}
+	ground->setFriction(friction);
+}
+
 void Physics::runSimulation(){
 
 	solveGroundConflicts();
 	if(!isLegal()){
 		fitness = -999999;
 	}else{
+		relaxCreature();
 		while(totaltime<simulationTime){
 			simulationLoopStep(1/1000.f);
 		}
