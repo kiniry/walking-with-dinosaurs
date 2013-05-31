@@ -971,7 +971,7 @@ void Physics::calcFitness(fitnessTest test){
 			float pastLength = sqrt(pastVector.getX()*pastVector.getX()+pastVector.getZ()*pastVector.getZ());
 			float length = sqrt(vector.getX()*vector.getX()+vector.getZ()*vector.getZ());
 
-			float weight = totaltime/10000;
+			float weight = totaltime/10000.f;
 			fitness += (length-pastLength)*weight;
 		}
 		break;
