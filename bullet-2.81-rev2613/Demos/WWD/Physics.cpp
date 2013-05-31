@@ -106,7 +106,7 @@ void Physics::checkForDismemberment(){
 void Physics::solveGroundConflicts(){
 	calcSize();
 
-	startPoint=calcPosition();
+	//startPoint=calcPosition();
 
 
 	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
@@ -264,6 +264,7 @@ void Physics::relaxCreature(){
 		last = center;
 	}
 	ground->setFriction(friction);
+	startPoint=calcPosition();
 }
 
 void Physics::runSimulation(){
