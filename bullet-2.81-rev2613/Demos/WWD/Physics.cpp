@@ -268,14 +268,18 @@ bool Physics::relaxCreature(){
 		if(totalCount>10000){
 			ground->setFriction(friction);
 			startPoint=calcPosition();
+			pastPoint=startPoint;
 			enableEffectors=true;
+			fitness=0;
 			return false;
 		}
 		totalCount++;
 	}
 	ground->setFriction(friction);
 	startPoint=calcPosition();
+	pastPoint=startPoint;
 	enableEffectors=true;
+	fitness=0;
 	return true;
 }
 
@@ -959,16 +963,15 @@ void Physics::calcFitness(fitnessTest test){
 		break;
 	case oldMove:
 		{
-			/*btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(1)->getWorldTransform().getOrigin();
-			if(height<4){
-				fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()));
-			}else{
-				fitness = sqrt((origin.x()*origin.x())+(origin.z()*origin.z()))-height;
-			}*/
-			btVector3 tmpPos= calcPosition()-startPoint;
+			btVector3 tmpPos = calcPosition();
+			btVector3 pastVector = pastPoint-startPoint;
+			btVector3 vector = tmpPos-startPoint;
+			pastPoint = tmpPos;
 
+			float pastLength = sqrt(pastVector.getX()*pastVector.getX()+pastVector.getZ()*pastVector.getZ());
+			float length = sqrt(vector.getX()*vector.getX()+vector.getZ()*vector.getZ());
 
-			fitness= sqrt(tmpPos.getX()*tmpPos.getX()+tmpPos.getZ()*tmpPos.getZ())-height/2+10;
+			fitness += length-pastLength;
 		}
 		break;
 	case jump:

@@ -97,6 +97,7 @@ private:
 	float height;
 	float groundY;
 	btVector3 startPoint;
+	btVector3 pastPoint;
 	bool enableEffectors;
 
 	int currentBoxIndex,currentJointIndex;
