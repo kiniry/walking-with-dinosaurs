@@ -158,21 +158,23 @@ void Physics::simulationLoopStep(float stepSize){
 				subnets.at(i)->computeNetwork();
 			}
 		}
-		for(int i=0;i< (int) effectorNNindex.size();i=i+3){
-#ifdef NNMAINONLY
-			setEffect(i/3,
-				theNet->getOutput(effectorNNindex.at(i)),
-				theNet->getOutput(effectorNNindex.at(i+1)),
-				theNet->getOutput(effectorNNindex.at(i+2))
-				);
-#else
-			setEffect(i/3,
-				subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
-				subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
-				subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
-				);
+		if(enableEffectors){
+			for(int i=0;i< (int) effectorNNindex.size();i=i+3){
+			#ifdef NNMAINONLY
+				setEffect(i/3,
+					theNet->getOutput(effectorNNindex.at(i)),
+					theNet->getOutput(effectorNNindex.at(i+1)),
+					theNet->getOutput(effectorNNindex.at(i+2))
+					);
+			#else
+				setEffect(i/3,
+					subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
+					subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
+					subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
+					);
 			
-#endif
+			#endif
+			}
 		}
 
 		//fitness test
@@ -250,21 +252,31 @@ void Physics::simulationLoopStep(float stepSize){
 	}*/
 }
 
-void Physics::relaxCreature(){
+bool Physics::relaxCreature(){
+	enableEffectors=false;
 	btCollisionObject* ground = m_dynamicsWorld->getCollisionObjectArray().at(0);
 	btScalar friction = ground->getFriction();
 	ground->setFriction(0);
 	float last = 0.f;
-	int count = 0;
+	int count = 0;int totalCount=0;
 	while(count<20){
 		simulationLoopStep(1/1000.f);
 		float center = calcPosition().y();
 		if(center<(last+0.0000001f)&&center>(last-0.0000001f)){count++;}
 		else{count=0;}
 		last = center;
+		if(totalCount>10000){
+			ground->setFriction(friction);
+			startPoint=calcPosition();
+			enableEffectors=true;
+			return false;
+		}
+		totalCount++;
 	}
 	ground->setFriction(friction);
 	startPoint=calcPosition();
+	enableEffectors=true;
+	return true;
 }
 
 void Physics::runSimulation(){
@@ -273,9 +285,12 @@ void Physics::runSimulation(){
 	if(!isLegal()){
 		fitness = -999999;
 	}else{
-		relaxCreature();
-		while(totaltime<simulationTime){
-			simulationLoopStep(1/1000.f);
+		if(relaxCreature()){
+			while(totaltime<simulationTime){
+				simulationLoopStep(1/1000.f);
+			}
+		}else{
+			fitness = -999999;
 		}
 	}
 	checkForDismemberment();
@@ -286,7 +301,8 @@ void Physics::clientMoveAndDisplay()
 	//solveGroundConflicts();
 	float ms = getDeltaTimeMicroseconds();
 
-	simulationLoopStep(ms / 1000000.f); //normal speed
+	simulationLoopStep(1 / 1000.f);
+	//simulationLoopStep(ms / 1000000.f); //normal speed
 	//simulationLoopStep(ms / 100000000.f); //slow-mode
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -340,6 +356,7 @@ void	Physics::initPhysics(){
 	currentJointIndex=0;
 	noBoxes =0;
 	fitness=0;
+	enableEffectors=true;
 
 	setTexturing(true);
 	setShadows(true);

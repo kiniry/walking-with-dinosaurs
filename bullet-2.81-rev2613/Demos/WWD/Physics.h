@@ -98,6 +98,7 @@ private:
 	float height;
 	float groundY;
 	btVector3 startPoint;
+	bool enableEffectors;
 
 	int currentBoxIndex,currentJointIndex;
 
@@ -156,7 +157,7 @@ public:
 	}
 
 	void calcFitness(fitnessTest test);
-	void relaxCreature();
+	bool relaxCreature();
 
 	Physics(){
 		initPhysics();
