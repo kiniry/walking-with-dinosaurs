@@ -31,6 +31,11 @@ void Physics::calcSize(){
 		}
 	}
 	height= heighstPoint-lowestPoint;
+	if(height<=0){
+		heighstPoint = 99999;
+		lowestPoint = -99999;
+		height= heighstPoint-lowestPoint;
+	}
 }
 
 btVector3 Physics::calcPosition(){
