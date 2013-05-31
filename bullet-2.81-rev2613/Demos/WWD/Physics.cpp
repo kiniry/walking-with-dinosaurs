@@ -256,10 +256,10 @@ void Physics::relaxCreature(){
 	ground->setFriction(0);
 	float last = 0.f;
 	int count = 0;
-	while(count<10){
+	while(count<20){
 		simulationLoopStep(1/1000.f);
 		float center = calcPosition().y();
-		if(center = last){count++;}
+		if(center<(last+0.0000001f)&&center>(last-0.0000001f)){count++;}
 		else{count=0;}
 		last = center;
 	}

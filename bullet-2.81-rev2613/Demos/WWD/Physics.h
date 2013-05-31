@@ -123,7 +123,6 @@ private:
 
 	bool isLegal();
 
-	void relaxCreature();
 	void checkForDismemberment();
 	btVector3 calcPosition();
 	int setEffect(int jointIndex, float valueX,float valueY,float valueZ);
@@ -157,6 +156,7 @@ public:
 	}
 
 	void calcFitness(fitnessTest test);
+	void relaxCreature();
 
 	Physics(){
 		initPhysics();
