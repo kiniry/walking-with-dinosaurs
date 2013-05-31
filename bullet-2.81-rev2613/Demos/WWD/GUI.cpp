@@ -133,11 +133,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	HWND hWndNoGS=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE,	col2, row2, 100, 18,
 		hWnd, (HMENU)IDC_NOG_EDIT, GetModuleHandle(NULL),	NULL);
 
-	HWND hWndPopS=CreateWindowEx(NULL,TEXT("STATIC"),	"Population",WS_CHILD|WS_VISIBLE,	col3, row2, 100, 18,
+	HWND hWndPopS=CreateWindowEx(NULL,TEXT("STATIC"),	"Population",WS_CHILD|WS_VISIBLE,	col3, row1, 100, 18,
 		hWnd, (HMENU)IDC_POP_STATIC, GetModuleHandle(NULL),	NULL);
-	HWND hWndPop=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE |ES_NUMBER,	col4, row2, 100, 18,
+	HWND hWndPop=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE |ES_NUMBER,	col4, row1, 100, 18,
 		hWnd, (HMENU)IDC_POP_EDIT, GetModuleHandle(NULL),	NULL);
 
+	HWND hWndViewRate=CreateWindowEx(NULL,TEXT("STATIC"),	"Simulation view precision",WS_CHILD|WS_VISIBLE,	col3, row2, 100, 18,
+	hWnd, (HMENU)IDC_VIEW_STATIC, GetModuleHandle(NULL),	NULL);
+	
+	HWND hWndViewRateB=CreateWindowEx(NULL,TEXT("BUTTON"),	"",WS_CHILD|WS_VISIBLE | BS_CHECKBOX,	col4, row2, 100, 18,
+	hWnd, (HMENU)IDC_VIEW_CHECKBOX, GetModuleHandle(NULL),	NULL);
 	// program main loop
 	while ( !quit )
 	{
@@ -162,7 +167,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		glClearColor( .7f, 0.7f, 0.7f, 1.f );
 
-		WWDPhysics->clientMoveAndDisplay();
+		WWDPhysics->clientMoveAndDisplay(fixedSteps);
 
 		SwapBuffers( hDC );
 
@@ -432,6 +437,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 	case WM_COMMAND:
 		switch(LOWORD(wParam)){
 
+		case IDC_VIEW_CHECKBOX:
+			{
+			HWND check = GetDlgItem(hwnd, IDC_VIEW_CHECKBOX);
+			switch (SendMessage(check, BM_GETCHECK, 0,0))
+			{
+			case BST_CHECKED:
+				SendMessage(check, BM_SETCHECK, BST_UNCHECKED,0);
+				fixedSteps=false;
+			break;
+
+			case BST_UNCHECKED:
+				SendMessage(check, BM_SETCHECK, BST_CHECKED,0);
+				fixedSteps=true;
+				break;
+			}			
+			}
+			break;
 
 
 		case IDC_FITNESSTYPE_COMBOBOX:

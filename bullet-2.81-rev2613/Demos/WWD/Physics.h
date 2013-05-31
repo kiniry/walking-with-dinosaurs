@@ -22,7 +22,6 @@
 #include <vector>
 #include <limits>
 
-#include "GlutStuff.h"
 #include "btBulletDynamicsCommon.h"
 
 #include <stdio.h>
@@ -144,7 +143,9 @@ public:
 
 	virtual void displayCallback();
 	virtual void clientResetScene();
-	virtual void clientMoveAndDisplay();
+	virtual void clientMoveAndDisplay(boolean fixed);
+	//useless function, to make bullet happy
+	void clientMoveAndDisplay(){}
 	virtual void showInfo(int& xOffset,int& yStart, int yIncr);
 	NeuralNetwork* theNet;
 

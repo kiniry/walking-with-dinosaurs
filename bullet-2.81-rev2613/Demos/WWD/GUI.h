@@ -22,6 +22,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include <process.h>
 
+#define IDC_VIEW_CHECKBOX 984
+#define IDC_VIEW_STATIC 985
 #define IDC_SHOWDNA_MBUTTON 986
 #define IDC_TEST_STATIC 987
 #define IDC_RESET_BUTTON 988
@@ -39,6 +41,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 static bool sOpenGLInitialized = false;
 static int quitRequest = 0;
+boolean fixedSteps =false;
 
 #define	menuHeight 62
 #define border 20

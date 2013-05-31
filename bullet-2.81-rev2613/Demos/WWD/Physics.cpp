@@ -296,15 +296,16 @@ void Physics::runSimulation(){
 	checkForDismemberment();
 }
 
-void Physics::clientMoveAndDisplay()
+void Physics::clientMoveAndDisplay(boolean fixed)
 {
 	//solveGroundConflicts();
 	float ms = getDeltaTimeMicroseconds();
-
-	simulationLoopStep(1 / 1000.f);
-	//simulationLoopStep(ms / 1000000.f); //normal speed
+	if(fixed){
+		simulationLoopStep(1 / 1000.f);
+	}else{
+	simulationLoopStep(ms / 1000000.f); //normal speed
 	//simulationLoopStep(ms / 100000000.f); //slow-mode
-
+	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	m_dynamicsWorld->debugDrawWorld();

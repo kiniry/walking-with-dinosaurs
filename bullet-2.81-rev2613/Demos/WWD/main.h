@@ -4,7 +4,6 @@
 #include "Physics.h"
 #include "Grammar.h"
 #include "Evolution.h"
-#include "GlutStuff.h"
 #include "test.h"
 #include <ctime>
 #include <Windows.h>
