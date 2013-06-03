@@ -2,6 +2,7 @@
 
 creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor,fitnessTest type, progressInfo* proInfo ){
 	std::srand(std::time(0));
+	initEvolution(populationSize);
 	std::vector<creature>* creatures = new std::vector<creature>();
 	//create creatures
 	creatures->push_back(creature());
@@ -9,7 +10,7 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 	creatures->at(0).fitness=0;
 	for(int i=1; i<populationSize;i++){
 		creatures->push_back(creature());
-		creatures->at(i).dna=mutate(ancestor,2);
+		creatures->at(i).dna=mutate(ancestor,expectedDiviation);
 		creatures->at(i).fitness=0;
 	}
 
@@ -22,14 +23,15 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 	for(int i=1; i<populationSize;i++){
 		assertFloat(0,creatures->at(i).fitness,0.0005);
 	}
+	int start =0;
 	for(int i=0;i<nrOfGenerations;i++){
-		sendCreatures(creatures);
+		sendCreatures(creatures, start);
 		sendOrders(go);
 
 		receiveAcknowledges();
 
 		//get creatures
-		*creatures=getResults();
+		getResults(creatures, start);
 		assertInt(creatures->size(), populationSize);
 
 		//Create MTree's
@@ -37,13 +39,13 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 			creatures->at(j).treePointer=getMTree(&creatures->at(j).dna);
 		}
 
-		//creatures=evolve(creatures); //evolve clean up the MTree's so no need for that
-		proInfo->stats=evolve(creatures);
+		proInfo->stats=evolve(creatures);//evolve clean up the MTree's so no need for that
 
 		for(int j=0;j< (int) (creatures->size()/5.+0.5);j++){
 			printf("nr %d %f\n",j,creatures->at(j).fitness);
 		}
 
+		start=survivors;
 		proInfo->rounds = i+1;
 		printf("end of round %d \n",i);
 	}
@@ -164,7 +166,10 @@ int waitForClients(){
 	return 0;
 }
 
-int sendCreatures(std::vector<creature>* Creatures){
+void sendCreatures(std::vector<creature>* Creatures, int start){
+		int min = (Creatures->size()-start)/pipes.size();
+		int rest = (Creatures->size()-start)%pipes.size();
+
 	for(int id=0;id<pipes.size();id++){
 		std::ofstream os;
 		os.open(creatureFilePaths.at(id),std::ios::out | std::ios::binary);
@@ -172,15 +177,14 @@ int sendCreatures(std::vector<creature>* Creatures){
 			printf("good()=%d" , os.good());
 			printf(" eof()=%d" , os.eof());
 			printf(" fail()=%d", os.fail());
-			printf(" badd()=%d\n", os.bad());
+			printf(" bad()=%d\n", os.bad());
 			printf("error\n");
 			exit(-1);
 		}
 
 		int noCreatures;
 
-		int min = Creatures->size()/pipes.size();
-		int rest =  Creatures->size()%pipes.size();
+
 		if(id<rest){
 			noCreatures=min+1;
 		}else{
@@ -189,7 +193,7 @@ int sendCreatures(std::vector<creature>* Creatures){
 
 		os.write((const char*)&noCreatures, sizeof(int));
 
-		for(int j =id; j<Creatures->size();j+=pipes.size()){
+		for(int j =id+start; j<Creatures->size();j+=pipes.size()){
 			int size = Creatures->at(j).dna.size();
 			os.write((const char*)&size, sizeof(int));
 			os.write((const char*)&Creatures->at(j).dna[0], sizeof(int)*size);
@@ -207,7 +211,6 @@ int sendCreatures(std::vector<creature>* Creatures){
 		os.close();
 	}
 
-	return 0;
 }
 
 int sendOrders(int j){
@@ -283,15 +286,12 @@ void receiveAcknowledges(){
 	}
 }
 
-std::vector<creature> getResults(){
-	std::vector<creature> results;
-
+void getResults(std::vector<creature>* creatures, int start){
+	creatures->erase(creatures->begin()+start, creatures->end());
 	for(int	i =0;i<pipes.size();i++){
 		std::vector<creature> tmp =	 getCreatures(creatureFilePaths.at(i));
-		results.insert(results.end(), tmp.begin(), tmp.end());
+		creatures->insert(creatures->end(), tmp.begin(), tmp.end());
 	}
-
-	return results;
 }
 
 void cleanUp(){

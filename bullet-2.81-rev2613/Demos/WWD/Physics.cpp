@@ -59,13 +59,7 @@ btVector3 Physics::calcPosition(){
 	return point;
 }
 
-bool Physics::isLegal(){
-	//check for height
-	calcSize();
-	if(height>=15){
-		return false;
-	}
-
+bool Physics::checkInternCollissions(){
 
 	//check for intern collisions
 	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
@@ -87,11 +81,23 @@ bool Physics::isLegal(){
 	return true;
 }
 
+bool Physics::checkHeight(){
+	//check for height
+	calcSize();
+	if(height>=15){
+		printf("height faild");
+		return false;
+	}
+
+	return true;
+}
+
 void Physics::checkForDismemberment(){
 	bool enabled = true;
 	for(int i=0;i<m_dynamicsWorld->getNumConstraints();i++){
 		if(!m_dynamicsWorld->getConstraint(i)->isEnabled()){
 			enabled = false;
+			printf("broken\n");
 			break;
 		}
 	}
@@ -271,7 +277,8 @@ bool Physics::relaxCreature(){
 			pastPoint=startPoint;
 			enableEffectors=true;
 			fitness=0;
-			return false;
+			printf("relax failed");
+			return true;//change temp from false
 		}
 		totalCount++;
 	}
@@ -286,17 +293,15 @@ bool Physics::relaxCreature(){
 void Physics::runSimulation(){
 
 	solveGroundConflicts();
-	if(!isLegal()){
-		fitness = -999999;
-	}else{
-		if(relaxCreature()){
+
+	if(checkInternCollissions() && relaxCreature() && checkHeight()){
 			while(totaltime<simulationTime){
 				simulationLoopStep(1/1000.f);
 			}
-		}else{
+	}else{
 			fitness = -999999;
-		}
 	}
+
 	checkForDismemberment();
 }
 
@@ -909,11 +914,7 @@ void Physics::testPhysics(){
 	int box5 = createBox(95,95,395);
 	createJoint(box, box5, GENERIC6DOF,50, 50,5, 50, 50, 0, 0,0,0);
 	*/
-	if(!isLegal()){
-		printf("fail!\n");
-	}else{
-		printf("legal\n");
-	}
+
 
 	//	createSensor(box2, pressure);
 

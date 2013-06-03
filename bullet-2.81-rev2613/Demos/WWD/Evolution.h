@@ -6,8 +6,7 @@
 *
 **/
 
-#ifndef EVOLV_H
-#define EVOLV_H
+#pragma once
 
 #include <cstdlib>
 #include <vector>
@@ -35,13 +34,17 @@ struct statistic{
 	float median;
 	float mean;
 	float deviation;
-	float killed;
+	int killed;
+	int population;
 
 };
 static double totalDiviation =0;
 static double timesDiviation =0;
+static int survivors;
+static int cullAmount;
 
-void normalizeFitness(std::vector<creature> *creatures, statistic* stats);
+void initEvolution(int noCreatures);
+std::vector<float>* normalizeFitness(std::vector<creature> *creatures, statistic* stats);
 
 
 double statistik(std::vector<creature>* creatures, statistic* stats);
@@ -60,7 +63,6 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2);
 
 creature getWorthyCreature(float fitnessSum, std::vector<creature> *creatures);
 
-const int survivalRatio = 20; //how many elite creatures are there?
-const int cullRatio = 50; //how many creatures must die?
+const int survivalRatio = 20; //how many procent elite creatures are there?
+const int cullRatio = 50; //how many procent creatures must die?
 
-#endif

@@ -1,5 +1,18 @@
 #include "Evolution.h"
 
+void initEvolution(int noCreatures){
+
+	survivors = (int) ((noCreatures/100.f)*((float)survivalRatio)+0.5);
+	cullAmount = (int) ((noCreatures/100.f)*((float)cullRatio)+0.5);
+
+
+	printf("\nsurvivors %d\n", survivors);
+	printf("\nculled creatures %d\n", cullAmount);
+
+	if(survivors == 0 && noCreatures != 0){
+		survivors =1;
+	}
+}
 
 statistic evolve(std::vector<creature>* creatures){
 	statistic stats = statistic();
@@ -13,16 +26,7 @@ statistic evolve(std::vector<creature>* creatures){
 
 	double deviation=statistik(creatures, &stats);
 
-	int survivors = (int) ((creatures->size()/100.f)*((float)survivalRatio)+0.5);
-	int cullAmount = (int) ((creatures->size()/100.f)*((float)cullRatio)+0.5);
 
-
-	printf("\nsurvivors %d\n", survivors);
-	printf("\nculled creatures %d\n", cullAmount);
-
-	if(survivors == 0 && creatures->size() != 0){
-		survivors =1;
-	}
 
 	for(int i =0; i<(int)survivors; i++){
 		result.push_back(creatures->at(i));
@@ -158,51 +162,50 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 }
 
 double statistik(std::vector<creature>* creatures, statistic* stats){
-	float max=0, min=0, median=0, mean=0, deviation=0, survivors=0;
-
+	float max=0, min=0, median=0, mean=0, deviation=0;
+	stats->killed=0;
+	stats->population=creatures->size();
 	
 	max =creatures->at(0).fitness;
 	stats->max=max;
 
 	for(int i =(int)creatures->size()-1;i>=0;i--){
-		if(creatures->at(i).fitness>dead+0.0005){
+		if(creatures->at(i).fitness>dead+0.00001){
 			min=creatures->at(i).fitness;
 
-			survivors=i;
+			stats->killed=stats->population-1-i;
 			break;
 		}
 	
 	}
-
-	stats->killed=(creatures->size()-survivors)/((float)creatures->size())*100.f;
 	stats->min=min;
 
-	normalizeFitness(creatures, stats);
+
+	std::vector<float>* normValues=normalizeFitness(creatures, stats);
 
 
-	for(int i = 0; i<(int)creatures->size(); i++){
-		mean+=creatures->at(i).fitness;
+	for(int i = 0; i<(int)normValues->size(); i++){
+		mean+=normValues->at(i);
 	}
-	mean/=creatures->size();
+	mean/=normValues->size();
 	stats->mean=mean;
 
-	if(creatures->size()%2 ==0){
-		float tmp1 =creatures->at((int)(creatures->size()/2.+0.5)).fitness;
-		float tmp2 =creatures->at((int)(creatures->size()/2.+0.5)-1).fitness;
+	if(normValues->size()%2 ==0){
+		float tmp1 =normValues->at((int)(normValues->size()/2.+0.5));
+		float tmp2 =normValues->at((int)(normValues->size()/2.+0.5)-1);
 
 		median = (tmp2-tmp1)/2.+tmp1;
 	}else{
-		median= creatures->at((int)(creatures->size()/2.+0.5)-1).fitness;
+		median= normValues->at((int)(normValues->size()/2.+0.5)-1);
 	}
 	stats->median=median;
 
 
-	//should dead creatures be used for the deviration
-	if(creatures->size()>1){
-		for(int i = 0; i<(int)creatures->size(); i++){
-			deviation+=pow(creatures->at(i).fitness-mean,2);
+	if(normValues->size()>1){
+		for(int i = 0; i<(int)normValues->size(); i++){
+			deviation+=pow(normValues->at(i)-mean,2);
 		}
-		deviation=deviation/((float)(creatures->size()-1));
+		deviation=deviation/((float)(normValues->size()-1));
 		deviation=sqrt(deviation);
 	}else{
 		deviation=0;
@@ -210,36 +213,30 @@ double statistik(std::vector<creature>* creatures, statistic* stats){
 	stats->deviation=deviation;
 	printf("\nmax %f, min %f, median %f, mean %f, deviation %f\n", max, min, median, mean, deviation);
 
+	delete normValues;
 	timesDiviation+=1.;
 	totalDiviation+=deviation;
 	printf("mean diviation %f\n",totalDiviation/timesDiviation);
 	return deviation;
 }
 
-void normalizeFitness(std::vector<creature> *creatures, statistic* stats){
-	float min = 0;
+std::vector<float>* normalizeFitness(std::vector<creature> *creatures, statistic* stats){
+	std::vector<float>* normValues= new std::vector<float>(creatures->size()-stats->killed);
+	double difference = stats->max-stats->min;
+	if(difference>0){
+	for(int i =(int)creatures->size()-1-stats->killed;i>=0;i--){
+			float tmpFit=creatures->at(i).fitness-stats->min;
 
-	for(int i =creatures->size()-1; i>=0;i--){
-		if(	creatures->at(i).fitness>dead+0.00001){
-			min=creatures->at(i).fitness;
-			break;
-		}
-	}
-	stats->min=min;
-
-
-
-	double max = creatures->at(0).fitness-min;
-	for(int i =0; i<(int)creatures->size();i++){
-		if(	creatures->at(i).fitness+0.00001>dead && creatures->at(i).fitness-0.00001<dead){
-			creatures->at(i).fitness=0.000001;
-		}else{
-			creatures->at(i).fitness-=min;
-			float tmp =creatures->at(i).fitness;
-
-			creatures->at(i).fitness=(float)(creatures->at(i).fitness)/max*100.+0.00001;
-
-		}
+			normValues->at(i)=(float)(tmpFit)/difference*100.;
 
 	}
+	}else{
+	for(int i =(int)creatures->size()-1-stats->killed;i>=0;i--){
+
+			normValues->at(i)=(float)50;
+
+	}
+	
+	}
+	return normValues;
 }

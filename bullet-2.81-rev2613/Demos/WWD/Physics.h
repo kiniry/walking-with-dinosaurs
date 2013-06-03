@@ -122,7 +122,8 @@ private:
 		float CrossSectionalStrength;
 	};
 
-	bool isLegal();
+	bool Physics::checkInternCollissions();
+	bool Physics::checkHeight();
 
 	void checkForDismemberment();
 	btVector3 calcPosition();

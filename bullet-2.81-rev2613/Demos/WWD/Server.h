@@ -19,10 +19,10 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 int setupServer(int pop, int cores);
 void startPrograms(fitnessTest);
 int waitForClients();
-int sendCreatures(std::vector<creature>* creatures);
+void sendCreatures(std::vector<creature>* creatures, int start);
 int sendOrders(int i);
 void receiveAcknowledges();
-std::vector<creature> getResults();
+void getResults(std::vector<creature>* creatures, int start);
 void cleanUp();
 
 #endif
