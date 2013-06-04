@@ -161,6 +161,7 @@ public:
 
 	void calcFitness(fitnessTest test);
 	bool relaxCreature();
+	void pointCamera();
 
 	Physics(){
 		initPhysics();

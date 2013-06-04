@@ -1,5 +1,12 @@
 #include "Physics.h"
 
+void Physics::pointCamera(){
+	btVector3 aPoint = calcPosition();
+	//setCameraPosition(btVector3(aPoint.x(),aPoint.y()-100,aPoint.z()-100));
+	setCameraTargetPosition(aPoint);
+	setCameraDistance(30);
+}
+
 float Physics::getBoxHalfHeight(btCollisionObject* object){
 	btRigidBody* body = (btRigidBody*) object;
 	btBoxShape* box = (btBoxShape*) body->getCollisionShape();;
@@ -153,6 +160,7 @@ void Physics::solveGroundConflicts(){
 	setCameraPosition(cam);
 	}
 	*/
+	pointCamera();
 }
 
 void Physics::simulationLoopStep(float stepSize){
@@ -326,6 +334,8 @@ void Physics::clientMoveAndDisplay(boolean fixed)
 #ifdef _CONSOLE
 	swapBuffers();
 #endif
+
+	pointCamera();
 }
 
 void Physics::displayCallback(void) {
