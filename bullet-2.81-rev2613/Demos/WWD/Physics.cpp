@@ -93,9 +93,10 @@ bool Physics::checkHeight(){
 	calcSize();
 	if(height>=15){
 		printf("height faild");
+		totaltime=0;
 		return false;
 	}
-
+	totaltime=0;
 	return true;
 }
 
@@ -344,8 +345,6 @@ void Physics::displayCallback(void) {
 
 void Physics::showInfo(int& xOffset,int& yStart, int yIncr){
 	char blockTime[128];
-
-	double totalTime = 0;
 
 	sprintf(blockTime,"--- Total running time: %lu ms ---", totaltime );
 	displayProfileString(xOffset,yStart,blockTime);
