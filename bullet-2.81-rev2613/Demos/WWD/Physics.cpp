@@ -4,7 +4,7 @@ void Physics::pointCamera(){
 	btVector3 aPoint = calcPosition();
 	//setCameraPosition(btVector3(aPoint.x(),aPoint.y()-100,aPoint.z()-100));
 	setCameraTargetPosition(aPoint);
-	setCameraDistance(30);
+	//setCameraDistance(30);
 }
 
 float Physics::getBoxHalfHeight(btCollisionObject* object){
@@ -49,14 +49,14 @@ btVector3 Physics::calcPosition(){
 	float mass=0;
 	for(int i =1; i < m_dynamicsWorld->getCollisionObjectArray().size(); i++){
 
-		mass+= ((btRigidBody*)m_dynamicsWorld->getCollisionObjectArray().at(i))->getInvMass();
+		mass+=1/ ((btRigidBody*)m_dynamicsWorld->getCollisionObjectArray().at(i))->getInvMass();
 
 	}
 	btVector3 point =btVector3(0,0,0);
 	for(int i =1; i < m_dynamicsWorld->getCollisionObjectArray().size(); i++){
 
 		btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(i)->getWorldTransform().getOrigin();
-		float percentage =(((btRigidBody*)m_dynamicsWorld->getCollisionObjectArray().at(i))->getInvMass())/mass;
+		float percentage =(1/(((btRigidBody*)m_dynamicsWorld->getCollisionObjectArray().at(i))->getInvMass()))/mass;
 		
 		point.setX(point.getX()+ origin.getX()*percentage);
 		point.setY(point.getY()+ origin.getY()*percentage);
