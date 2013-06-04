@@ -278,7 +278,7 @@ bool Physics::relaxCreature(){
 			enableEffectors=true;
 			fitness=0;
 			printf("relax failed");
-			return true;//change temp from false
+			return false;
 		}
 		totalCount++;
 	}
