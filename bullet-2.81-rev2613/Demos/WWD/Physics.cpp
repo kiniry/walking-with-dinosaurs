@@ -517,7 +517,7 @@ inline float Physics::sign(float input){
 	return 1;
 }
 
-int Physics::createJoint(	int box1, int box2,	
+int Physics::createJoint(	int box1, int box2,	int scewIn,
 						 int preX, int preY, int preS,
 						 int postX, int postY, int postS,
 						 int dofX, int dofY, int dofZ){
@@ -533,6 +533,8 @@ int Physics::createJoint(	int box1, int box2,
 							 postX=postX%99+1;
 							 postY=postY%99+1;
 							 postS=postS%6;
+							 scewIn=scewIn%360;
+							 btScalar scew = ((float)scewIn*2.f*PI)/360.f;
 
 							 //tjek input in debug mode
 							 btAssert(preX>0 && preX<100);
@@ -567,7 +569,7 @@ int Physics::createJoint(	int box1, int box2,
 							 btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithMargin();
 							 btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
 
-							 btQuaternion rotation2 = getLocalRotation(preS, postS,PI/8.,box1);
+							 btQuaternion rotation2 = getLocalRotation(preS, postS,scew,box1);
 							 rotation2*=rotation1;
 
 							 btVector3 center2 = center1+rotate(&connection1,&rotation1.inverse())-rotate(&connection2,&rotation2);
@@ -898,14 +900,14 @@ void Physics::testPhysics(){
 
 
 	int box4 = createBox(195,195,195);
-	createJoint(box3, box4, 50, 50, 2, 50, 50,50, 30,30,30);
+	createJoint(box3, box4,0, 50, 50, 2, 50, 50,50, 30,30,30);
 
 	/*
 	int box = createBox(85,385,185);
-	createJoint(box3, box, GENERIC6DOF,50, 50, 3, 50, 50, 3, 0,0,0);
+	createJoint(box3, box, 0,50, 50, 3, 50, 50, 3, 0,0,0);
 
 	int box5 = createBox(95,95,395);
-	createJoint(box, box5, GENERIC6DOF,50, 50,5, 50, 50, 0, 0,0,0);
+	createJoint(box, box5, 0,50, 50,5, 50, 50, 0, 0,0,0);
 	*/
 
 

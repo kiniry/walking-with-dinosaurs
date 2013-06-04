@@ -51,10 +51,10 @@ int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, 
 	world->effectorNNindex.push_back(getDNA(index+2,DNA));
 	index+=3;
 
-	int part2 = world->createBox(getDNA(index+9,DNA), getDNA(index+10,DNA), getDNA(index+11,DNA));
+	int part2 = world->createBox(getDNA(index+10,DNA), getDNA(index+11,DNA),getDNA(index+12,DNA));
 
-	int j_index = world->createJoint(part1, part2, getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA));
-	index+=12;
+	int j_index = world->createJoint(part1, part2, getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA),getDNA(index+9,DNA));
+	index+=13;
 	tempNeural->push_back(index);
 
 	index = B(index, DNA, world, blocks, part2, tempNeural);
@@ -236,7 +236,7 @@ int treeJ(int index, std::vector<int> *DNA, int *blocks, partNode* body){
 	body->addChild(nextBody);
 
 	//for the normal joint vars
-	index+=12;
+	index+=13;
 
 	index = treeB(index, DNA, blocks,nextBody); //nextBody will end at the end of this B() function
 	return index;
