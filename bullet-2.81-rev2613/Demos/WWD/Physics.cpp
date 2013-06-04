@@ -214,21 +214,12 @@ void Physics::simulationLoopStep(float stepSize){
 
 	//angel sensor
 	for(int i = 0; i < m_dynamicsWorld->getNumConstraints(); i++){
-		btHingeConstraint* constraint;
 		btGeneric6DofConstraint* constraint1;
 		float x,y,z;
 
 		//pointer == -1 if its not a sensor
 		if(((int)(m_dynamicsWorld->getConstraint(i)->getUserConstraintPtr()))>=0)
 			switch((m_dynamicsWorld->getConstraint(i))->getConstraintType()){
-			case HINGE_CONSTRAINT_TYPE:
-				constraint = (btHingeConstraint*) m_dynamicsWorld->getConstraint(i);
-				sensors.at( ((UserPointerStruct*)(constraint->getUserConstraintPtr()))->sensorIndex );
-				x = constraint->getHingeAngle();
-
-				sensors.at(((UserPointerStruct*)constraint->getUserConstraintPtr())->sensorIndex)=x;
-
-				break;
 			case D6_CONSTRAINT_TYPE:
 				constraint1 = (btGeneric6DofConstraint*) m_dynamicsWorld->getConstraint(i);
 
@@ -482,16 +473,6 @@ int Physics::setEffect(int jointIndex, float valueX,float valueY,float valueZ){
 	float J;
 
 	switch(m_dynamicsWorld->getConstraint(jointIndex)->getConstraintType()){
-	case HINGE_CONSTRAINT_TYPE:
-		theSign = sign(valueX);
-		if(valueX>userPointer || valueX<-userPointer){
-			valueX = userPointer;
-		}/*else if(valueX<-userPointer){
-		 valueX = -userPointer;
-		 }*/
-		((btHingeConstraint*)m_dynamicsWorld->getConstraint(jointIndex))->enableAngularMotor(true,theSign*btScalar(MAXDWORD),btScalar(abs(valueX)));
-		return HINGE;
-		break;
 	case D6_CONSTRAINT_TYPE:
 		absX = abs(valueX);
 		absY = abs(valueY);
@@ -599,7 +580,6 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 localBox2.setOrigin(connection2);
 
 							 //setup contraint/joint
-							 btHingeConstraint* hingeC;
 							 btGeneric6DofConstraint* gen6C;
 							 //int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
 							 int DOFx = dofX %170;	int DOFy = dofY %170;	int DOFz = dofZ %170;
@@ -610,38 +590,13 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 btScalar mass1=1/Box1->getInvMass();
 							 btScalar mass2=1/Box2->getInvMass();
 
-							 switch(type){
-							 case HINGE:
-								/* {
-									 hingeC = new btHingeConstraint(*Box1,*Box2,localBox1,localBox2);
 
-									 hingeC->setLimit(btScalar(-DOFxR/2),btScalar(DOFxR/2));
-
-									 sensors.push_back(0);
-									 theStruct->sensorIndex=sensors.size()-1;
-									 //uses the gen6d which makes it possible that the max force is to small
-									 float crossSection =getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
-									 theStruct->CrossSectionalStrength=crossSection*muscleStregnth;
-									 hingeC->setUserConstraintPtr(theStruct);
-
-									 hingeC->setBreakingImpulseThreshold(tensileStrength*crossSection);
-
-									 m_dynamicsWorld->addConstraint(hingeC,true);
-								 }
-								 break;*/
-							 case GENERIC6DOF:
-								 {
 									 gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
 									 gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist)
 									 gen6C->setLimit(1,0,0);
 									 gen6C->setLimit(2,0,0);
 									 gen6C->setAngularLowerLimit(btVector3(-DOFxR/2,-DOFyR/2,-DOFzR/2));
 									 gen6C->setAngularUpperLimit(btVector3(DOFxR/2,DOFyR/2,DOFzR/2));
-									 /*gen6C->setLimit(3,-DOFxR/2,DOFxR/2);
-									 gen6C->setLimit(4,-DOFyR/2,DOFyR/2);
-									 gen6C->setLimit(5,-DOFzR/2,DOFzR/2);*/
-									 //gen6C->getTranslationalLimitMotor()->m_restitution=0.0000000;
-									 //if(box2!=3)
 
 									 sensors.push_back(0);
 									 sensors.push_back(0);
@@ -654,9 +609,6 @@ int Physics::createJoint(	int box1, int box2,	int type,
 
 									 gen6C->setBreakingImpulseThreshold(tensileStrength*crossSection);
 									 m_dynamicsWorld->addConstraint(gen6C,true);
-								 }
-								 break;
-							 }
 
 							 int returnVal = currentJointIndex;
 							 currentJointIndex++;
