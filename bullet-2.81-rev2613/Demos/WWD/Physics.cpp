@@ -416,6 +416,7 @@ void	Physics::initPhysics(){
 
 //creates a box with side lengths x,y,z
 int Physics::createBox(int x1, int y1, int z1){
+	if(noBoxes==0){scews.push_back(new btQuaternion(0,0,0));}
 	noBoxes++;
 	if(noBoxes>maxBoxes){
 		fitness= -999999;
@@ -567,7 +568,7 @@ int Physics::createJoint(	int box1, int box2,
 							 btVector3 halfside2 = ((btBoxShape*)Box2->getCollisionShape())->getHalfExtentsWithMargin();
 							 btVector3 connection2 = getLocalJointPosition(postX,postY,postS,&halfside2);
 
-							 btQuaternion rotation2 = getLocalRotation(preS, postS);
+							 btQuaternion rotation2 = getLocalRotation(preS, postS,PI/8.,box1);
 							 rotation2*=rotation1;
 
 							 btVector3 center2 = center1+rotate(&connection1,&rotation1.inverse())-rotate(&connection2,&rotation2);
@@ -576,6 +577,7 @@ int Physics::createJoint(	int box1, int box2,
 							 btTransform trans2;
 							 trans2.setIdentity();
 							 //trans2.setRotation(rotation2);
+							
 							 trans2.setRotation(rotation2.inverse());
 							 trans2.setOrigin(center2);
 							 Box2->setCenterOfMassTransform(trans2);
@@ -590,7 +592,7 @@ int Physics::createJoint(	int box1, int box2,
 
 							 //setup contraint/joint
 							 btGeneric6DofConstraint* gen6C;
-							 //int DOFx = dofX %180;	int DOFy = dofY %180;	int DOFz = dofZ %180;
+							 //int DOFx = dofX %1;	int DOFy = dofY %1;	int DOFz = dofZ %1;
 							 int DOFx = dofX %170;	int DOFy = dofY %170;	int DOFz = dofZ %170;
 							 // int DOFx = dofX %170+10;	int DOFy = dofY%170+10;	int DOFz = dofZ %170+10;
 							 float DOFxR = ((float)DOFx*2.f*PI)/360.f; float DOFyR = ((float)DOFy*2.f*PI)/360.f; float DOFzR = ((float)DOFz*2.f*PI)/360.f;
@@ -710,7 +712,32 @@ btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
 	return result*rot;
 }
 
-btQuaternion Physics::getLocalRotation(int pre, int post){
+btQuaternion Physics::getLocalRotation(int pre, int post, btScalar scew,int prevBoxIndex){
+	
+	btQuaternion* scewer;
+	//btScalar scew = PI/8.;
+	switch(pre){
+	case 0:
+		scewer = new btQuaternion(0,0,scew);break; //arms
+	case 1:
+		scewer = new btQuaternion(0,scew,0);break; //noeffect...side?? untested
+	case 2://x+
+		scewer = new btQuaternion(scew,0,0);break; //top (upperbody & head)
+	case 3://z+
+		scewer = new btQuaternion(scew,0,0);break;	//bot (dino legs)
+	case 4://x-
+		scewer = new btQuaternion(0,scew,0);break; //noeffect...side?? untested
+	case 5://z-
+		scewer = new btQuaternion(0,0,scew);break; //tail
+	default:
+		perror("not a legal s value");
+		break;
+	}
+	*scewer*=(*scews.at(prevBoxIndex-1))*(*scews.at(prevBoxIndex-1));
+	scews.push_back(scewer);
+	printf("s: %d %d\n",pre,post);
+	
+	
 	btQuaternion rot;
 	if((pre==0 && post==4) || (pre==1 && post==0) || (pre==4 && post==5) || (pre==5 && post==1)){
 		//04 10 45 51
@@ -753,8 +780,8 @@ btQuaternion Physics::getLocalRotation(int pre, int post){
 			rot=btQuaternion(0,PI,0);
 		}
 	}
-
-	return rot;
+	
+	return rot*(*scewer);
 }
 //calculates the poistion of where the joint connects to the box in regards to the local box center
 btVector3 Physics::getLocalJointPosition(int x, int y, int s, btVector3* halfSizes){
@@ -804,6 +831,12 @@ void	Physics::clientResetScene(){
 void	Physics::exitPhysics(){
 	//cleanup in the reverse order of creation/initialization
 	/*	*/
+
+	while(scews.size()>0){
+		delete scews.at(scews.size()-1);
+		scews.pop_back();
+	}
+
 	//delete NNs
 	while(subnets.size()>0){
 		NeuralNetwork* aSubnet = subnets.at(subnets.size()-1);

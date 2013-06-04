@@ -96,6 +96,7 @@ private:
 	btVector3 startPoint;
 	btVector3 pastPoint;
 	bool enableEffectors;
+	std::vector<btQuaternion*> scews;
 
 	int currentBoxIndex,currentJointIndex;
 
@@ -128,7 +129,7 @@ private:
 	void simulationLoopStep(float stepSize);
 	void Physics::calcButtom();
 	btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
-	btQuaternion getLocalRotation(int myS, int opS);
+	btQuaternion getLocalRotation(int myS, int opS, btScalar scew, int prevBoxIndex);
 	btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
 	float getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int preY, int postS, btVector3* halfside2, int postX, int postY);
 	inline float sign(float input);
