@@ -175,7 +175,7 @@ public:
 
 	int createBox(int x,int y,int z);
 	int createSensor(int box, int type);
-	int createJoint(int box1, int box2, int type,
+	int createJoint(int box1, int box2, 
 		int preX, int preY, int preS,
 		int postX, int postY, int postS,
 		int dofX, int dofY, int dofZ);

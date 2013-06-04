@@ -262,7 +262,7 @@ bool Physics::relaxCreature(){
 		if(center<(last+0.0000001f)&&center>(last-0.0000001f)){count++;}
 		else{count=0;}
 		last = center;
-		if(totalCount>10000){
+		if(totalCount>20000){
 			ground->setFriction(friction);
 			startPoint=calcPosition();
 			pastPoint=startPoint;
@@ -507,7 +507,7 @@ inline float Physics::sign(float input){
 	return 1;
 }
 
-int Physics::createJoint(	int box1, int box2,	int type,
+int Physics::createJoint(	int box1, int box2,	
 						 int preX, int preY, int preS,
 						 int postX, int postY, int postS,
 						 int dofX, int dofY, int dofZ){
@@ -523,7 +523,6 @@ int Physics::createJoint(	int box1, int box2,	int type,
 							 postX=postX%99+1;
 							 postY=postY%99+1;
 							 postS=postS%6;
-							 type=type%2;
 
 							 //tjek input in debug mode
 							 btAssert(preX>0 && preX<100);
@@ -857,7 +856,7 @@ void Physics::testPhysics(){
 
 
 	int box4 = createBox(195,195,195);
-	createJoint(box3, box4, GENERIC6DOF,50, 50, 2, 50, 50,50, 30,30,30);
+	createJoint(box3, box4, 50, 50, 2, 50, 50,50, 30,30,30);
 
 	/*
 	int box = createBox(85,385,185);
