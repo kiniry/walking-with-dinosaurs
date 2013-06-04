@@ -8,11 +8,10 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 	int blocks = 0;
 	std::vector<int>* tempNeural = new std::vector<int>;
 
-	
-		int part = world->createBox(getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA));
-		blocks++;
-		index = index+3;
-		index=B(index, DNA, world, &blocks, part, tempNeural);
+	int part = world->createBox(getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA));
+	blocks++;
+	index = index+3;
+	index=B(index, DNA, world, &blocks, part, tempNeural);
 
 	//hoved NN
 	//NN - define inputs
@@ -34,7 +33,6 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 }
 
 int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural){
-
 	int attachedCount = getDNA(index,DNA)%6;
 	index++; //the information how many boxes are attached - belongs with the previous box
 	for(int i=0;i<attachedCount;i++){
@@ -53,10 +51,10 @@ int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, 
 	world->effectorNNindex.push_back(getDNA(index+2,DNA));
 	index+=3;
 
-	int part2 = world->createBox(getDNA(index+10,DNA), getDNA(index+11,DNA), getDNA(index+12,DNA));
+	int part2 = world->createBox(getDNA(index+9,DNA), getDNA(index+10,DNA), getDNA(index+11,DNA));
 
-	int j_index = world->createJoint(part1, part2, getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA), getDNA(index+9,DNA));
-	index+=13;
+	int j_index = world->createJoint(part1, part2, getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA));
+	index+=12;
 	tempNeural->push_back(index);
 
 	index = B(index, DNA, world, blocks, part2, tempNeural);
@@ -171,7 +169,7 @@ int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, 
 
 	for(int i=1;i<inputAmount;i++){
 		if(inputAmount-i<=0){break;}	//since we reached this, none of the chances procced... since the remaining chance-
-										//all belong to the "nrOfNodes = inputAmount" case, this is chosen
+		//all belong to the "nrOfNodes = inputAmount" case, this is chosen
 		double dChance = 300;
 		for(int j=0;j<i;j++){
 			dChance = dChance / 2;		//dChance is calculated... the further from the MPC, the lower chance
@@ -204,16 +202,12 @@ MTree* getMTree(std::vector<int> *DNA){
 	int blocks = 0;
 	MTree* result = new MTree();
 
-	try{
-		partNode* body = new partNode(index); //part0 begins here
-		result->setBody(body);
+	partNode* body = new partNode(index); //part0 begins here
+	result->setBody(body);
 
-		blocks++;
-		index = index+3;
-		index=treeB(index, DNA, &blocks, body);
-	}catch (MTree* e){
-		return e;
-	}
+	blocks++;
+	index = index+3;
+	index=treeB(index, DNA, &blocks, body);
 
 	//hoved NN
 	index = treeNN(index,DNA,result);
@@ -222,7 +216,6 @@ MTree* getMTree(std::vector<int> *DNA){
 }
 
 int treeB(int index, std::vector<int> *DNA, int *blocks, partNode* body){
-
 	int attachedCount=getDNA(index,DNA)%6;
 	index++;
 	for(int i=0;i<attachedCount;i++){
@@ -243,7 +236,7 @@ int treeJ(int index, std::vector<int> *DNA, int *blocks, partNode* body){
 	body->addChild(nextBody);
 
 	//for the normal joint vars
-	index+=13;
+	index+=12;
 
 	index = treeB(index, DNA, blocks,nextBody); //nextBody will end at the end of this B() function
 	return index;

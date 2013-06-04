@@ -7,13 +7,10 @@
 **/
 
 #pragma once
-#ifdef _WINDOWS
-#include "Win32DemoApplication.h"
-#define PlatformDemoApplication Win32DemoApplication
-#else
+
 #include "GlutDemoApplication.h"
 #define PlatformDemoApplication GlutDemoApplication
-#endif
+
 
 #include "LinearMath/btAlignedObjectArray.h"
 #include "NeuralNetwork.h"
@@ -77,7 +74,7 @@ enum collisiontypes {		//definition of the collision groups
 
 enum{pressure, angle, light};
 
-enum{HINGE,GENERIC6DOF};
+enum{GENERIC6DOF};
 class btBroadphaseInterface;
 class btCollisionShape;
 class btOverlappingPairCache;
@@ -133,7 +130,6 @@ private:
 	btVector3 getLocalJointPosition(int x, int y, int s, btVector3* halfSizes);
 	btQuaternion getLocalRotation(int myS, int opS);
 	btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant);
-	inline float getCrossSectionHinge(int s,btVector3* Halfsize);
 	float getCrossSectionGen6d(int preS,btVector3* halfside1, int preX, int preY, int postS, btVector3* halfside2, int postX, int postY);
 	inline float sign(float input);
 	float getBoxHalfHeight(btCollisionObject* object);
@@ -180,7 +176,7 @@ public:
 
 	int createBox(int x,int y,int z);
 	int createSensor(int box, int type);
-	int createJoint(int box1, int box2, int type,
+	int createJoint(int box1, int box2, 
 		int preX, int preY, int preS,
 		int postX, int postY, int postS,
 		int dofX, int dofY, int dofZ);
