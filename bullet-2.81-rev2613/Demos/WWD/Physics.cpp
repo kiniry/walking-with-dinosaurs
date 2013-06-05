@@ -21,7 +21,6 @@ float Physics::getBoxHalfHeight(btCollisionObject* object){
 	return abs(rotate(&x, &rot).getY())+abs(rotate(&y, &rot).getY())+abs(rotate(&z, &rot).getY());
 }
 
-
 void Physics::calcSize(){
 	btCollisionObjectArray objs = m_dynamicsWorld->getCollisionObjectArray();
 	heighstPoint = -99999;
@@ -48,16 +47,13 @@ void Physics::calcSize(){
 btVector3 Physics::calcPosition(){
 	float mass=0;
 	for(int i =1; i < m_dynamicsWorld->getCollisionObjectArray().size(); i++){
-
 		mass+=1/ ((btRigidBody*)m_dynamicsWorld->getCollisionObjectArray().at(i))->getInvMass();
-
 	}
 	btVector3 point =btVector3(0,0,0);
 	for(int i =1; i < m_dynamicsWorld->getCollisionObjectArray().size(); i++){
-
 		btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(i)->getWorldTransform().getOrigin();
 		float percentage =(1/(((btRigidBody*)m_dynamicsWorld->getCollisionObjectArray().at(i))->getInvMass()))/mass;
-		
+
 		point.setX(point.getX()+ origin.getX()*percentage);
 		point.setY(point.getY()+ origin.getY()*percentage);
 		point.setZ(point.getZ()+ origin.getZ()*percentage);
@@ -67,7 +63,6 @@ btVector3 Physics::calcPosition(){
 }
 
 bool Physics::checkInternCollissions(){
-
 	//check for intern collisions
 	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 
@@ -122,7 +117,6 @@ void Physics::solveGroundConflicts(){
 
 	//startPoint=calcPosition();
 
-
 	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 
 	btVector3 origin = objects.at(0)->getWorldTransform().getOrigin();
@@ -175,26 +169,25 @@ void Physics::simulationLoopStep(float stepSize){
 		}
 		if(enableEffectors){
 			for(int i=0;i< (int) effectorNNindex.size();i=i+3){
-			#ifdef NNMAINONLY
+#ifdef NNMAINONLY
 				setEffect(i/3,
 					theNet->getOutput(effectorNNindex.at(i)),
 					theNet->getOutput(effectorNNindex.at(i+1)),
 					theNet->getOutput(effectorNNindex.at(i+2))
 					);
-			#else
+#else
 				setEffect(i/3,
 					subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
 					subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
 					subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
 					);
-			
-			#endif
+
+#endif
 			}
 		}
 
 		//fitness test
 		calcFitness(testType);
-
 	}
 	//fixed step... 1ms
 	m_dynamicsWorld->stepSimulation(stepSize);
@@ -277,6 +270,8 @@ bool Physics::relaxCreature(){
 			pastPoint=startPoint;
 			enableEffectors=true;
 			fitness=0;
+			fit1=0;
+			fit2=0;
 			printf("relax failed");
 			return false;
 		}
@@ -287,19 +282,20 @@ bool Physics::relaxCreature(){
 	pastPoint=startPoint;
 	enableEffectors=true;
 	fitness=0;
+	fit1=0;
+	fit2=0;
 	return true;
 }
 
 void Physics::runSimulation(){
-
 	solveGroundConflicts();
 
 	if(checkInternCollissions() && relaxCreature() && checkHeight()){
-			while(totaltime<simulationTime){
-				simulationLoopStep(1/1000.f);
-			}
+		while(totaltime<simulationTime){
+			simulationLoopStep(1/1000.f);
+		}
 	}else{
-			fitness = -999999;
+		fitness = -999999;
 	}
 
 	checkForDismemberment();
@@ -312,8 +308,8 @@ void Physics::clientMoveAndDisplay(boolean fixed)
 	if(fixed){
 		simulationLoopStep(1 / 1000.f);
 	}else{
-	simulationLoopStep(ms / 1000000.f); //normal speed
-	//simulationLoopStep(ms / 100000000.f); //slow-mode
+		simulationLoopStep(ms / 1000000.f); //normal speed
+		//simulationLoopStep(ms / 100000000.f); //slow-mode
 	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -359,13 +355,15 @@ void Physics::showInfo(int& xOffset,int& yStart, int yIncr){
 	yStart += yIncr;
 }
 
-void	Physics::initPhysics(){
+void Physics::initPhysics(){
 	testType = move;
 	totaltime=0;
 	currentBoxIndex=0;
 	currentJointIndex=0;
 	noBoxes =0;
 	fitness=0;
+	fit1=0;
+	fit2=0;
 	enableEffectors=true;
 
 	setTexturing(true);
@@ -406,7 +404,6 @@ void	Physics::initPhysics(){
 	ground->setUserPointer((void*)(-1));;
 
 	groundY =  ground->getWorldTransform().getOrigin().getY()+groundShape->getHalfExtentsWithMargin().getY();
-
 
 	currentBoxIndex++;
 
@@ -472,6 +469,9 @@ int Physics::createSensor(int boxIndex, int type){
 	return 0;
 }
 
+/**
+*	sets the force of a motor belonging to a joint
+*/
 int Physics::setEffect(int jointIndex, float valueX,float valueY,float valueZ){
 	float userPointer = ((UserPointerStruct*)(m_dynamicsWorld->getConstraint(jointIndex)->getUserConstraintPtr()))->CrossSectionalStrength;
 
@@ -517,7 +517,11 @@ inline float Physics::sign(float input){
 	return 1;
 }
 
-int Physics::createJoint(	int box1, int box2,	int scewIn,
+/**
+*	creates a joint between to boxes
+*	and moves box 2 in the correct possition according to box 1
+*/
+int Physics::createJoint(int box1, int box2, int scewIn,
 						 int preX, int preY, int preS,
 						 int postX, int postY, int postS,
 						 int dofX, int dofY, int dofZ){
@@ -578,7 +582,7 @@ int Physics::createJoint(	int box1, int box2,	int scewIn,
 							 btTransform trans2;
 							 trans2.setIdentity();
 							 //trans2.setRotation(rotation2);
-							
+
 							 trans2.setRotation(rotation2.inverse());
 							 trans2.setOrigin(center2);
 							 Box2->setCenterOfMassTransform(trans2);
@@ -602,25 +606,24 @@ int Physics::createJoint(	int box1, int box2,	int scewIn,
 							 btScalar mass1=1/Box1->getInvMass();
 							 btScalar mass2=1/Box2->getInvMass();
 
+							 gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
+							 gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist)
+							 gen6C->setLimit(1,0,0);
+							 gen6C->setLimit(2,0,0);
+							 gen6C->setAngularLowerLimit(btVector3(-DOFxR/2,-DOFyR/2,-DOFzR/2));
+							 gen6C->setAngularUpperLimit(btVector3(DOFxR/2,DOFyR/2,DOFzR/2));
 
-									 gen6C = new btGeneric6DofConstraint(*Box1,*Box2,localBox1,localBox2,true);
-									 gen6C->setLimit(0,0,0);//dist to other box can be set as (0,dist,dist)
-									 gen6C->setLimit(1,0,0);
-									 gen6C->setLimit(2,0,0);
-									 gen6C->setAngularLowerLimit(btVector3(-DOFxR/2,-DOFyR/2,-DOFzR/2));
-									 gen6C->setAngularUpperLimit(btVector3(DOFxR/2,DOFyR/2,DOFzR/2));
+							 sensors.push_back(0);
+							 sensors.push_back(0);
+							 sensors.push_back(0);
 
-									 sensors.push_back(0);
-									 sensors.push_back(0);
-									 sensors.push_back(0);
+							 theStruct->sensorIndex=sensors.size()-3;
+							 float crossSection =getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
+							 theStruct->CrossSectionalStrength=crossSection*muscleStregnth;
+							 gen6C->setUserConstraintPtr(theStruct);
 
-									 theStruct->sensorIndex=sensors.size()-3;
-									 float crossSection =getCrossSectionGen6d(preS, &halfside1,preX,preY,postS,&halfside2,postX,postY);
-									 theStruct->CrossSectionalStrength=crossSection*muscleStregnth;
-									 gen6C->setUserConstraintPtr(theStruct);
-
-									 gen6C->setBreakingImpulseThreshold(tensileStrength*crossSection);
-									 m_dynamicsWorld->addConstraint(gen6C,true);
+							 gen6C->setBreakingImpulseThreshold(tensileStrength*crossSection);
+							 m_dynamicsWorld->addConstraint(gen6C,true);
 
 							 int returnVal = currentJointIndex;
 							 currentJointIndex++;
@@ -714,7 +717,6 @@ btVector3 Physics::rotate(btVector3* vec, btQuaternion* quant){
 }
 
 btQuaternion Physics::getLocalRotation(int pre, int post, btScalar scew,int prevBoxIndex){
-	
 	btQuaternion* scewer;
 	//btScalar scew = PI/8.;
 	switch(pre){
@@ -737,8 +739,7 @@ btQuaternion Physics::getLocalRotation(int pre, int post, btScalar scew,int prev
 	*scewer*=(*scews.at(prevBoxIndex-1))*(*scews.at(prevBoxIndex-1));
 	scews.push_back(scewer);
 	printf("s: %d %d\n",pre,post);
-	
-	
+
 	btQuaternion rot;
 	if((pre==0 && post==4) || (pre==1 && post==0) || (pre==4 && post==5) || (pre==5 && post==1)){
 		//04 10 45 51
@@ -781,7 +782,7 @@ btQuaternion Physics::getLocalRotation(int pre, int post, btScalar scew,int prev
 			rot=btQuaternion(0,PI,0);
 		}
 	}
-	
+
 	return rot*(*scewer);
 }
 //calculates the poistion of where the joint connects to the box in regards to the local box center
@@ -856,7 +857,7 @@ void	Physics::exitPhysics(){
 	while(m_dynamicsWorld->getNumConstraints()>0){
 		btTypedConstraint* deathPointer = m_dynamicsWorld->getConstraint(0);
 		if((int)deathPointer->getUserConstraintPtr()!=-1){
-		delete deathPointer->getUserConstraintPtr();
+			delete deathPointer->getUserConstraintPtr();
 		}
 		m_dynamicsWorld->removeConstraint(deathPointer);
 		delete deathPointer;
@@ -894,10 +895,8 @@ void	Physics::exitPhysics(){
 	delete m_collisionConfiguration;
 }
 
-
 void Physics::testPhysics(){
 	int box3 = createBox(895,95,395);
-
 
 	int box4 = createBox(195,195,195);
 	createJoint(box3, box4,0, 50, 50, 2, 50, 50,50, 30,30,30);
@@ -909,7 +908,6 @@ void Physics::testPhysics(){
 	int box5 = createBox(95,95,395);
 	createJoint(box, box5, 0,50, 50,5, 50, 50, 0, 0,0,0);
 	*/
-
 
 	//	createSensor(box2, pressure);
 
@@ -944,17 +942,12 @@ void Physics::testPhysics(){
 	solveGroundConflicts();
 }
 
-
-
 void Physics::calcFitness(fitnessTest test){
-	
 	//er det her relevant
 	switch(test){
 	case move:
 		{
-
 			fitness= fitMove();
-
 		}
 		break;
 	case oldMove:
@@ -978,9 +971,9 @@ void Physics::calcFitness(fitnessTest test){
 		break;
 	case combi:
 		{
-			//dosnt work
-
-			fitness=(fitJump()+1)*fitMove();
+			fit2 = max(fit2, fitJump());
+			fit1+= fitMove2();
+			fitness=(fit1+1.)*(fitMove2()+1.);
 		}
 		break;
 	case none:
@@ -995,35 +988,43 @@ void Physics::calcFitness(fitnessTest test){
 }
 
 float Physics::fitJump(){
-	
-			//er der kontakt emd jorden
-			// hvis der ikke er så er det afstanden fra jord til nederste punkt
-			calcSize();
-			
-			//fix ground collision
-			//collision detection
-			//one per btPersistentManifold for each collision
-			int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
+	//er der kontakt emd jorden
+	// hvis der ikke er så er det afstanden fra jord til nederste punkt
+	calcSize();
 
-			for (int i=0;i<numManifolds;i++){
-				btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-				int box1 = (int)contactManifold->getBody0()->getUserPointer();
-				int box2 = (int)contactManifold->getBody1()->getUserPointer();
+	//fix ground collision
+	//collision detection
+	//one per btPersistentManifold for each collision
+	int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
 
-				if(box1 == ground || box1 == ground){
-					return fitness;
-				}
-			}
+	for (int i=0;i<numManifolds;i++){
+		btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+		int box1 = (int)contactManifold->getBody0()->getUserPointer();
+		int box2 = (int)contactManifold->getBody1()->getUserPointer();
 
-			return max(fitness,  lowestPoint-groundY);
+		if(box1 == ground || box1 == ground){
+			return fitness;
+		}
+	}
+
+	return max(fitness,  lowestPoint-groundY);
 }
 
-
 float Physics::fitMove(){
-
-
 	btVector3 tmpPos= calcPosition()-startPoint;
 
 	return sqrt(tmpPos.getX()*tmpPos.getX()+tmpPos.getZ()*tmpPos.getZ());
+}
 
+float Physics::fitMove2(){
+	btVector3 tmpPos = calcPosition();
+	btVector3 pastVector = pastPoint-startPoint;
+	btVector3 vector = tmpPos-startPoint;
+	pastPoint = tmpPos;
+
+	float pastLength = sqrt(pastVector.getX()*pastVector.getX()+pastVector.getZ()*pastVector.getZ());
+	float length = sqrt(vector.getX()*vector.getX()+vector.getZ()*vector.getZ());
+
+	float weight = totaltime/10000.f;
+	return (length-pastLength)*weight;
 }

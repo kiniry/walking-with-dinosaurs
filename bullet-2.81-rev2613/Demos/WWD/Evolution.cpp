@@ -14,6 +14,9 @@ void initEvolution(int noCreatures){
 	}
 }
 
+/**
+*	main evolution loop
+*/
 statistic evolve(std::vector<creature>* creatures){
 	statistic stats = statistic();
 	float fitnessSumElites = 0;
@@ -45,8 +48,8 @@ statistic evolve(std::vector<creature>* creatures){
 
 		int random = rand()%100+1;
 
-		/*std::vector<int> dna = getWorthyCreature(fitnessSumBreeders,breeders).dna;
-		std::vector<int> dna2 = getWorthyCreature(fitnessSumElites,elites).dna;
+		/*std::vector<int> dna = getWorthyCreature(fitnessSumBreeders,&breeders).dna;
+		std::vector<int> dna2 = getWorthyCreature(fitnessSumElites,&elites).dna;
 		if(random<=50){
 		creat.dna = mutate(crossOver1(dna,dna2),deviation);
 		}else{
@@ -99,10 +102,16 @@ creature getWorthyCreatureFail(float fitnessSum, std::vector<creature> *creature
 		printf("FAIL... how irritating");
 		return creatures->at(creatures->size()-1);
 	}
-	//printf(" %d ",i);
+
 	return creatures->at(i);
 }
 
+/**
+*	mutes the dna according to the chance calculated
+*	the chance is calculated as 1/lenght if diviation is as expected
+*	if diviation is less the chance goes up
+*	if higher it goes down
+*/
 std::vector<int> mutate(const std::vector<int> dna, double deviation){
 	std::vector<int> newCreature = dna;
 	double forskel= expectedDiviation-deviation;
@@ -122,6 +131,9 @@ std::vector<int> mutate(const std::vector<int> dna, double deviation){
 	return newCreature;
 }
 
+/**
+*	One-point crossover
+*/
 std::vector<int> crossOver1(std::vector<int> dna1, std::vector<int> dna2){
 	std::vector<int> newCreature;
 
@@ -139,6 +151,7 @@ std::vector<int> crossOver1(std::vector<int> dna1, std::vector<int> dna2){
 }
 
 /**
+*   Two-point crossover
 *	replaces the middel part of dna1 with a part from dna2
 **/
 std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
@@ -161,6 +174,10 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 	return newCreature;
 }
 
+/**
+*	Calculation of statistics
+*	all values excepet min and max are normalised to be in the span 0-100
+*/
 double statistik(std::vector<creature>* creatures, statistic* stats){
 	float max=0, min=0, median=0, mean=0, deviation=0;
 	stats->killed=0;
@@ -220,6 +237,9 @@ double statistik(std::vector<creature>* creatures, statistic* stats){
 	return deviation;
 }
 
+/**
+*	normalises the values to be in the span 0-100
+*/
 std::vector<float>* normalizeFitness(std::vector<creature> *creatures, statistic* stats){
 	std::vector<float>* normValues= new std::vector<float>(creatures->size()-stats->killed);
 	double difference = stats->max-stats->min;

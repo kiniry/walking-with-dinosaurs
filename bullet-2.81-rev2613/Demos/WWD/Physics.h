@@ -11,7 +11,6 @@
 #include "GlutDemoApplication.h"
 #define PlatformDemoApplication GlutDemoApplication
 
-
 #include "LinearMath/btAlignedObjectArray.h"
 #include "NeuralNetwork.h"
 #include "MTree.h"
@@ -89,6 +88,8 @@ class Physics : public PlatformDemoApplication{
 private:
 	int noBoxes;
 	float fitness;
+	float fit1;
+	float fit2;
 	float heighstPoint;
 	float lowestPoint;
 	float height;
@@ -136,6 +137,7 @@ private:
 	float getBoxHalfHeight(btCollisionObject* object);
 	float Physics::fitJump();
 	float Physics::fitMove();
+	float Physics::fitMove2();
 public:
 
 	enum boxes{ground=-2};
@@ -166,6 +168,8 @@ public:
 
 	void setFitnesFunction(fitnessTest type){
 		fitness=0;
+		fit1=0;
+		fit2=0;
 		testType=type;
 	}
 
@@ -177,7 +181,7 @@ public:
 
 	int createBox(int x,int y,int z);
 	int createSensor(int box, int type);
-	int createJoint(int box1, int box2,	int scewIn, 
+	int createJoint(int box1, int box2,	int scewIn,
 		int preX, int preY, int preS,
 		int postX, int postY, int postS,
 		int dofX, int dofY, int dofZ);

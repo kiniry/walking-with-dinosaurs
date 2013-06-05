@@ -1,7 +1,11 @@
 #include "Grammar.h"
 
 /**
-*Here be Dinos!!!
+*	Here be Dinos!!!
+*/
+
+/**
+*	Reads and loads a creature from dna
 */
 int readDNA(std::vector<int> *DNA, Physics *world){
 	int index = 0;
@@ -31,6 +35,7 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 
 	return 0;
 }
+
 
 int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural){
 	int attachedCount = getDNA(index,DNA)%6;
