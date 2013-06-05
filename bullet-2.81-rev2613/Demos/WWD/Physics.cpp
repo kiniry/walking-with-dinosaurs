@@ -21,6 +21,9 @@ float Physics::getBoxHalfHeight(btCollisionObject* object){
 	return abs(rotate(&x, &rot).getY())+abs(rotate(&y, &rot).getY())+abs(rotate(&z, &rot).getY());
 }
 
+/**
+*	calculates the height of a creature
+*/
 void Physics::calcSize(){
 	btCollisionObjectArray objs = m_dynamicsWorld->getCollisionObjectArray();
 	heighstPoint = -99999;
@@ -83,6 +86,9 @@ bool Physics::checkInternCollissions(){
 	return true;
 }
 
+/**
+*	check if the creature is with in the allowed height
+*/
 bool Physics::checkHeight(){
 	//check for height
 	calcSize();
@@ -95,27 +101,25 @@ bool Physics::checkHeight(){
 	return true;
 }
 
+/**
+*	checks if joints are broken because they have exceed there streght
+*/
 void Physics::checkForDismemberment(){
-	bool enabled = true;
+
 	for(int i=0;i<m_dynamicsWorld->getNumConstraints();i++){
 		if(!m_dynamicsWorld->getConstraint(i)->isEnabled()){
-			enabled = false;
+			fitness = -999999;
 			printf("broken\n");
 			break;
 		}
 	}
-	if(!enabled){
-		fitness = -999999;
-	}
 }
 
 /**
-* moves ground down to avoid collisions from the beging and things stuck in ground
+* moves ground down to avoid collisions from the beging and objects stuck in ground
 */
 void Physics::solveGroundConflicts(){
 	calcSize();
-
-	//startPoint=calcPosition();
 
 	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
 
@@ -126,35 +130,7 @@ void Physics::solveGroundConflicts(){
 	myMotionState->setWorldTransform(objects.at(0)->getWorldTransform());
 
 	groundY =  m_dynamicsWorld->getCollisionObjectArray().at(0)->getWorldTransform().getOrigin().getY()+((btBoxShape*)objects.at(0)->getCollisionShape())->getHalfExtentsWithMargin().getY();
-	/*
-	bool conflicts = true;
-	btCollisionObjectArray objects = m_dynamicsWorld->getCollisionObjectArray();
-	MyContactResultCallback result;
 
-	while(conflicts){
-	result.m_connected=false;
-	conflicts=false;
-
-	for (int j = 1; j < objects.size(); j++){
-	m_dynamicsWorld->contactPairTest(objects.at(0),objects.at(j),result);
-
-	if(result.m_connected == true){
-	btVector3 oldOrigin = objects.at(0)->getWorldTransform().getOrigin();
-	oldOrigin.setY(oldOrigin.y()-1);
-	objects.at(0)->getWorldTransform().setOrigin(oldOrigin);
-	btDefaultMotionState* myMotionState = (btDefaultMotionState*)(((btRigidBody*)objects.at(0))->getMotionState());
-	myMotionState->setWorldTransform(objects.at(0)->getWorldTransform());
-
-	conflicts=true;
-	break;
-	}
-	}
-	setCameraTargetPosition(objects.at(1)->getWorldTransform().getOrigin()); //drunk compiler
-	btVector3 cam = getCameraPosition();
-	cam.setY(getCameraTargetPosition().y());
-	setCameraPosition(cam);
-	}
-	*/
 	pointCamera();
 }
 
@@ -251,6 +227,9 @@ void Physics::simulationLoopStep(float stepSize){
 	}*/
 }
 
+/**
+*	short simulation with out frition to remove some potential energy and magic bullet energy
+*/
 bool Physics::relaxCreature(){
 	enableEffectors=false;
 	btCollisionObject* ground = m_dynamicsWorld->getCollisionObjectArray().at(0);
@@ -287,6 +266,9 @@ bool Physics::relaxCreature(){
 	return true;
 }
 
+/**
+*	runs a simulation without a view
+*/
 void Physics::runSimulation(){
 	solveGroundConflicts();
 
@@ -339,6 +321,9 @@ void Physics::displayCallback(void) {
 	swapBuffers();
 }
 
+/**
+*	writes info in the simulation view
+*/
 void Physics::showInfo(int& xOffset,int& yStart, int yIncr){
 	char blockTime[128];
 
@@ -942,8 +927,10 @@ void Physics::testPhysics(){
 	solveGroundConflicts();
 }
 
+/**
+*	calculates the fitness value
+*/
 void Physics::calcFitness(fitnessTest test){
-	//er det her relevant
 	switch(test){
 	case move:
 		{
@@ -952,21 +939,12 @@ void Physics::calcFitness(fitnessTest test){
 		break;
 	case oldMove:
 		{
-			btVector3 tmpPos = calcPosition();
-			btVector3 pastVector = pastPoint-startPoint;
-			btVector3 vector = tmpPos-startPoint;
-			pastPoint = tmpPos;
-
-			float pastLength = sqrt(pastVector.getX()*pastVector.getX()+pastVector.getZ()*pastVector.getZ());
-			float length = sqrt(vector.getX()*vector.getX()+vector.getZ()*vector.getZ());
-
-			float weight = totaltime/10000.f;
-			fitness += (length-pastLength)*weight;
+			fitness +=fitMove2();
 		}
 		break;
 	case jump:
 		{
-			fitness=fitJump();
+			fitness=max(fitJump(),fitness);
 		}
 		break;
 	case combi:
@@ -983,10 +961,13 @@ void Physics::calcFitness(fitnessTest test){
 
 	default:
 
-		printf("unkown fitness test\n");
+		perror("unkown fitness test\n");
 	}
 }
 
+/**
+*	calculates the distance from lowest point of the creature to the ground
+*/
 float Physics::fitJump(){
 	//er der kontakt emd jorden
 	// hvis der ikke er så er det afstanden fra jord til nederste punkt
@@ -1003,19 +984,25 @@ float Physics::fitJump(){
 		int box2 = (int)contactManifold->getBody1()->getUserPointer();
 
 		if(box1 == ground || box1 == ground){
-			return fitness;
+			return 0;
 		}
 	}
 
-	return max(fitness,  lowestPoint-groundY);
+	return lowestPoint-groundY;
 }
 
+/**
+*	calculates Center of mass distance from its starting point 
+*/
 float Physics::fitMove(){
 	btVector3 tmpPos= calcPosition()-startPoint;
 
 	return sqrt(tmpPos.getX()*tmpPos.getX()+tmpPos.getZ()*tmpPos.getZ());
 }
 
+/**
+*	calculates fitness based on last move and time since start 
+*/
 float Physics::fitMove2(){
 	btVector3 tmpPos = calcPosition();
 	btVector3 pastVector = pastPoint-startPoint;
