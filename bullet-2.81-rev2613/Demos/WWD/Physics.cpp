@@ -318,7 +318,10 @@ void Physics::displayCallback(void) {
 		m_dynamicsWorld->debugDrawWorld();
 
 	glFlush();
+	#ifdef _CONSOLE
 	swapBuffers();
+	#endif
+
 }
 
 /**

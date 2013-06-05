@@ -88,7 +88,7 @@ progressInfo* proInfo;
 static int popupMenuSel =0;
 
 // Function Declarations
-
+MSG messageLoop(	HDC hDC, HGLRC hRC);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);

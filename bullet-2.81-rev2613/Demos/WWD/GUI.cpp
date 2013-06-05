@@ -5,7 +5,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	argv =CommandLineToArgvW(GetCommandLineW(),&argc);
 
 	directory = getDirectory();
-	
+
 #ifdef _DEBUG
 	console();
 #endif
@@ -17,9 +17,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	HDC hDC;
 	HGLRC hRC;
-	MSG msg;
-	BOOL quit = FALSE;
-	float theta = 0.0f;
 
 	// register window class
 	//definere et vindues classe og dens parametre/udsende
@@ -53,8 +50,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		WS_THICKFRAME | WS_CAPTION | WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX |WS_CLIPCHILDREN |WS_MAXIMIZEBOX,
 		GetSystemMetrics(SM_CXMAXIMIZED)/2-SM_CXFIXEDFRAME/2-width/2-listWidth, GetSystemMetrics(SM_CYMAXIMIZED)/2-SM_CYFIXEDFRAME/2-height/2, 1024, 768,
 		NULL, NULL, hInstance, NULL );
-	// create main window
+	
 
+	//simulations window
 	// register window class
 	wc.cbSize		 = sizeof(WNDCLASSEX);
 	//cs_owndc svaes the cach, used for painting outside normal routine
@@ -77,43 +75,45 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	EnableOpenGL( blank, &hDC, &hRC );
 
-	//listbox
+	//selection listbox
 	hWndList = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("listbox"), "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL|LBS_NOTIFY,0, 0, listWidth, listHeight, hWnd,  (HMENU)IDC_LISTBOX, GetModuleHandle(NULL), NULL);
 	for(int i=0;i<(int)saves.size();i++){
 		SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)saves.at(i)->name.c_str());
 	}
 	SendMessage(hWndList,LB_SETCURSEL,0,0);
 
+	//init creature/world
+	WWDPhysics = new Physics();
+	readDNA(&saves.at(0)->dna,WWDPhysics);
+	WWDPhysics->solveGroundConflicts();
+	WWDPhysics->relaxCreature();
+	WWDPhysics->reshape(simWidth,simHeight);
 
+
+
+	//settings area
 	int row1=10,row2=35, row3 =60;
 	int col1 =160,col2=330,col3=600,col4=700;
 	HWND hWndFitS=CreateWindowEx(NULL,TEXT("STATIC"),	"Fitness Test",WS_CHILD|WS_VISIBLE,	col1, row1, 100, 18, hWnd, (HMENU)IDC_TEST_STATIC, GetModuleHandle(NULL),	NULL);
 	HWND hwndCombo = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("combobox"), "", WS_CHILD | WS_VISIBLE| CBS_DROPDOWNLIST ,col2, row1-5, 100, 24, hWnd,  (HMENU)IDC_FITNESSTYPE_COMBOBOX, GetModuleHandle(NULL), NULL);
-	
+
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Move");
 	SendMessage(hwndCombo,CB_SETITEMDATA, 0, move);
 
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"OLDMove");
 	SendMessage(hwndCombo,CB_SETITEMDATA, 1, oldMove);
-	
+
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Jump");
 	SendMessage(hwndCombo,CB_SETITEMDATA, 2, jump);
 
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Combi");
 	SendMessage(hwndCombo,CB_SETITEMDATA, 3, combi);
-	
+
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"None");
 	SendMessage(hwndCombo,CB_SETITEMDATA, 4, none);
 
 	SendMessage(hwndCombo,CB_SETCURSEL,0,0);
-
-	WWDPhysics = new Physics();
-
-	//init creature
-	readDNA(&saves.at(0)->dna,WWDPhysics);
-	WWDPhysics->solveGroundConflicts();
-	WWDPhysics->relaxCreature();
-	WWDPhysics->reshape(simWidth,simHeight);
+	WWDPhysics->setFitnesFunction(move);
 
 
 	HWND hWndButton=CreateWindowEx(NULL,TEXT("BUTTON"),	"RUN", WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_DEFPUSHBUTTON,
@@ -139,11 +139,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		hWnd, (HMENU)IDC_POP_EDIT, GetModuleHandle(NULL),	NULL);
 
 	HWND hWndViewRate=CreateWindowEx(NULL,TEXT("STATIC"),	"Simulation view precision",WS_CHILD|WS_VISIBLE,	col3, row2, 100, 18,
-	hWnd, (HMENU)IDC_VIEW_STATIC, GetModuleHandle(NULL),	NULL);
-	
+		hWnd, (HMENU)IDC_VIEW_STATIC, GetModuleHandle(NULL),	NULL);
+
 	HWND hWndViewRateB=CreateWindowEx(NULL,TEXT("BUTTON"),	"",WS_CHILD|WS_VISIBLE | BS_CHECKBOX,	col4, row2, 100, 18,
-	hWnd, (HMENU)IDC_VIEW_CHECKBOX, GetModuleHandle(NULL),	NULL);
-	// program main loop
+		hWnd, (HMENU)IDC_VIEW_CHECKBOX, GetModuleHandle(NULL),	NULL);
+	
+	MSG msg = messageLoop(hDC, hRC);
+	return msg.wParam;
+}
+
+// program main loop
+MSG messageLoop(	HDC hDC, HGLRC hRC){
+	BOOL quit = FALSE;
+	MSG msg;
+
 	while ( !quit )
 	{
 		// check for messages
@@ -164,14 +173,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		};
 
 		//OpenGL animation code goes here
-
 		glClearColor( .7f, 0.7f, 0.7f, 1.f );
 
 		WWDPhysics->clientMoveAndDisplay(fixedSteps);
 
 		SwapBuffers( hDC );
 
-		theta += 1.0f;
+
 	}
 
 	// shutdown OpenGL
@@ -186,10 +194,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		delete saves.at(i);
 	}
 
-	return msg.wParam;
+	return msg;
 }
 
-// Window Procedure
+
+
+//Main Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 	switch (message)
 	{
@@ -436,39 +446,36 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 	case WM_COMMAND:
 		switch(LOWORD(wParam)){
-
 		case IDC_VIEW_CHECKBOX:
 			{
-			HWND check = GetDlgItem(hwnd, IDC_VIEW_CHECKBOX);
-			switch (SendMessage(check, BM_GETCHECK, 0,0))
-			{
-			case BST_CHECKED:
-				SendMessage(check, BM_SETCHECK, BST_UNCHECKED,0);
-				fixedSteps=false;
-			break;
+				HWND check = GetDlgItem(hwnd, IDC_VIEW_CHECKBOX);
+				switch (SendMessage(check, BM_GETCHECK, 0,0))
+				{
+				case BST_CHECKED:
+					SendMessage(check, BM_SETCHECK, BST_UNCHECKED,0);
+					fixedSteps=false;
+					break;
 
-			case BST_UNCHECKED:
-				SendMessage(check, BM_SETCHECK, BST_CHECKED,0);
-				fixedSteps=true;
-				break;
-			}			
+				case BST_UNCHECKED:
+					SendMessage(check, BM_SETCHECK, BST_CHECKED,0);
+					fixedSteps=true;
+					break;
+				}
 			}
 			break;
-
 
 		case IDC_FITNESSTYPE_COMBOBOX:
 			switch (HIWORD(wParam)){
-				case CBN_SELCHANGE:
-					HWND hwndfit = GetDlgItem(hwnd, IDC_FITNESSTYPE_COMBOBOX);
-					int index = SendMessage(hwndfit, CB_GETCURSEL,0,0);
-					fitnessTest tmptest=(fitnessTest) SendMessage(hwndfit,CB_GETITEMDATA, index,0);
-					WWDPhysics->setFitnesFunction(tmptest);	
+			case CBN_SELCHANGE:
+				HWND hwndfit = GetDlgItem(hwnd, IDC_FITNESSTYPE_COMBOBOX);
+				int index = SendMessage(hwndfit, CB_GETCURSEL,0,0);
+				fitnessTest tmptest=(fitnessTest) SendMessage(hwndfit,CB_GETITEMDATA, index,0);
+				WWDPhysics->setFitnesFunction(tmptest);
 				break;
-
 			}
 
-		break;
-	
+			break;
+
 		case IDC_LISTBOX:
 			{
 				switch (HIWORD(wParam)){
@@ -487,7 +494,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						WWDPhysics->solveGroundConflicts();
 						WWDPhysics->relaxCreature();
 						WWDPhysics->reshape(simWidth,simHeight);
-
 					}
 				}
 			}
@@ -568,7 +574,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 					return 0;
 				}
 
-
 				HWND hwndfit = GetDlgItem(hwnd, IDC_FITNESSTYPE_COMBOBOX);
 				int index = SendMessage(hwndfit, CB_GETCURSEL,0,0);
 				fitnessTest tmptest=(fitnessTest) SendMessage(hwndfit,CB_GETITEMDATA, index,0);
@@ -582,9 +587,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				aList->type=tmptest;
 				aList->theResult = new creature();
 
-
 				proInfo = new progressInfo();
-
 
 				HANDLE threadHandle = (HANDLE) _beginthreadex(0,0,&runServer,(void*)aList,0,0);
 
@@ -661,15 +664,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				}
 			}
 			break;
-				case IDC_SHOWDNA_MBUTTON:
+		case IDC_SHOWDNA_MBUTTON:
 			{
 				HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
-				
 
 				printf("DNA of %s\n",saves.at(popupMenuSel)->name.c_str());
 				for(int i=0; i<saves.at(popupMenuSel)->dna.size();i++){
 					printf("%d, ", saves.at(popupMenuSel)->dna.at(i));
-
 				}
 				printf("\n");
 			}
@@ -775,39 +776,39 @@ void loadSaves(){
 }
 
 void loadDefault(){
-int temp[] = {300,350,300,			4,//nrAttachedToMain
-//leg1
-0,0,0,0,0,0,0,0,0,
-0,0,0,
-0,75,0,2,0,0,3,100,0,10,100,400,100,0,
-//leg2
-0,0,0,0,0,0,0,0,0,
-0,0,0,
-0,25,0,2,0,0,3,100,0,10,100,400,100,0,
-//Tail1
-0,0,0,0,0,0,0,0,0,
-0,0,0,
-0,0,0,5,0,0,0,100,100,5,150,150,400,1,
-//Tail2
-0,0,0,0,0,0,0,0,0,
-0,0,0,
-0,0,0,5,0,0,0,100,100,5,130,130,300,0,
-//UpperBody
-0,0,0,0,0,0,0,0,0,
-0,0,0,
-0,0,0,3,0,0,2,0,0,0,300,350,300,3,
-//Head
-0,0,0,0,0,0,0,0,0,
-0,0,0,
-0,0,0,3,0,0,2,20,20,20,230,230,230,0,
-//arm1
-0,0,0,0,0,0,0,0,0,
-0,0,0,
-0,25,40,0,0,0,5,50,50,50,70,70,200,0,
-//arm1
-0,0,0,0,0,0,0,0,0,
-0,0,0,
-0,75,40,0,0,0,5,50,50,50,70,70,200,0
+	int temp[] = {300,350,300,			4,//nrAttachedToMain
+		//leg1
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,
+		0,75,0,2,0,0,3,100,0,10,100,400,100,0,
+		//leg2
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,
+		0,25,0,2,0,0,3,100,0,10,100,400,100,0,
+		//Tail1
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,
+		0,0,0,5,0,0,0,100,100,5,150,150,400,1,
+		//Tail2
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,
+		0,0,0,5,0,0,0,100,100,5,130,130,300,0,
+		//UpperBody
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,
+		0,0,0,3,0,0,2,0,0,0,300,350,300,3,
+		//Head
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,
+		0,0,0,3,0,0,2,20,20,20,230,230,230,0,
+		//arm1
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,
+		0,25,40,0,0,0,5,50,50,50,70,70,200,0,
+		//arm1
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,
+		0,75,40,0,0,0,5,50,50,50,70,70,200,0
 	};
 	int size = sizeof( temp ) / sizeof ( *temp );
 	std::vector<int> ancestor (temp, temp+size);
@@ -819,17 +820,17 @@ int temp[] = {300,350,300,			4,//nrAttachedToMain
 	saves.push_back(tmp);
 
 	int temp2[] = {5722, 7620, 6358, 1501, 2112, 0, 1421, 1350, 6341, 707, 0, 1317, 4586, 0, 2919,
-8088, 874, 1912, 2029, 2, 2119, 3194, 3429, 362, 8147, 2262, 7666, 687, 7894, 0,
- 5991, 70, 7587, 0, 9245, 0, 3627, 1350, 6445, 7722, 3044, 2832, 0, 0, 2919, 0,
-6790, 1547, 1901, 8536, 5067, 9414, 1119, 8077, 6453, 2998, 0, 5504, 0, 1378, 3237,
-794, 1006, 6823, 1712, 331, 0, 7347, 8717, 9661, 99, 5694, 7730, 460, 9104,
-538, 8744, 4399, 6761, 920, 4421, 2965, 2367, 5189, 6010, 8088, 758, 0, 3627, 9827,
-2842, 7585, 9826, 4138, 9598, 0, 299, 1701, 8031, 2328, 5169, 3975, 8385, 6088,
-6645, 2448, 1491, 5329, 8981, 4233, 8760, 6111, 1902, 6195, 7891, 9343, 2033,
-5403, 1702, 4425, 7867, 4576, 9346, 1516, 7105, 7833, 7355, 1711, 8904, 107, 4079,
-7475, 3186, 4225, 4224, 3842, 7143, 4772, 5740, 7180, 9885, 7870, 0, 8612,
-6012, 9239, 1832, 963, 8294, 1410, 2589, 2287, 5159, 6170, 2320, 6043, 9484, 6663,
-9635, 47, 903, 2065, 2605, 246, 302, 6081, 1492, 1923, 7962, 89, 2934, 821, 793, 2945, 4671};
+		8088, 874, 1912, 2029, 2, 2119, 3194, 3429, 362, 8147, 2262, 7666, 687, 7894, 0,
+		5991, 70, 7587, 0, 9245, 0, 3627, 1350, 6445, 7722, 3044, 2832, 0, 0, 2919, 0,
+		6790, 1547, 1901, 8536, 5067, 9414, 1119, 8077, 6453, 2998, 0, 5504, 0, 1378, 3237,
+		794, 1006, 6823, 1712, 331, 0, 7347, 8717, 9661, 99, 5694, 7730, 460, 9104,
+		538, 8744, 4399, 6761, 920, 4421, 2965, 2367, 5189, 6010, 8088, 758, 0, 3627, 9827,
+		2842, 7585, 9826, 4138, 9598, 0, 299, 1701, 8031, 2328, 5169, 3975, 8385, 6088,
+		6645, 2448, 1491, 5329, 8981, 4233, 8760, 6111, 1902, 6195, 7891, 9343, 2033,
+		5403, 1702, 4425, 7867, 4576, 9346, 1516, 7105, 7833, 7355, 1711, 8904, 107, 4079,
+		7475, 3186, 4225, 4224, 3842, 7143, 4772, 5740, 7180, 9885, 7870, 0, 8612,
+		6012, 9239, 1832, 963, 8294, 1410, 2589, 2287, 5159, 6170, 2320, 6043, 9484, 6663,
+		9635, 47, 903, 2065, 2605, 246, 302, 6081, 1492, 1923, 7962, 89, 2934, 821, 793, 2945, 4671};
 	int size2 = sizeof( temp2 ) / sizeof ( *temp2 );
 	std::vector<int> ancestor2 (temp2, temp2+size2);
 
@@ -848,7 +849,6 @@ int temp[] = {300,350,300,			4,//nrAttachedToMain
 	tmp3->name="block";
 
 	saves.push_back(tmp3);
-
 }
 
 void saveSaves(std::vector<save*> saves){
@@ -940,7 +940,7 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 					text = new TCHAR[length + 1];
 					GetWindowText(hwndPop,text,length+1);
 					*result=text;
-				delete text;
+					delete text;
 				}else{
 					text = "new Creature";
 					*result=text;
@@ -1021,15 +1021,14 @@ VOID CALLBACK update(){
 		aStream <<proInfo->stats.min;
 		SetWindowText(minText,aStream.str().c_str());
 
-
 		aStream.str("");
 		aStream << proInfo->stats.max;
 		SetWindowText(maxText,aStream.str().c_str());
-		
+
 		aStream.str("");
 		aStream <<proInfo->stats.mean;
 		SetWindowText(meanText,aStream.str().c_str());
-		
+
 		aStream.str("");
 		aStream <<proInfo->stats.median;
 		SetWindowText(medianText,aStream.str().c_str());
@@ -1037,7 +1036,7 @@ VOID CALLBACK update(){
 		aStream.str("");
 		aStream <<proInfo->stats.killed/((float)proInfo->stats.population)*100.f<<"%";
 		SetWindowText(killedText,aStream.str().c_str());
-		
+
 		aStream.str("");
 		aStream <<proInfo->stats.deviation;
 		SetWindowText(deviationText,aStream.str().c_str());
