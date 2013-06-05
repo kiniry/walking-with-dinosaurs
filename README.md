@@ -5,4 +5,4 @@ TODO list:
 
 optimize evolution
 
-fix camera position and target (center of mass)
+dont count shoot boxs
