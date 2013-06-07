@@ -654,6 +654,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 				if(itemIndex==popupMenuSel){
 					if(saves.size() > 0){
+						if(itemIndex==saves.size()){
+							itemIndex--;
+						}
 						SendMessage(hwndList,LB_SETCURSEL,itemIndex,0);
 						SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);
 					}else{
