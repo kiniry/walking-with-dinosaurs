@@ -33,3 +33,5 @@ public:
 	inline MTreeNode* getRandomBodyNode(MTree* tree);
 	MTreeNode* ReduceImpact(MTreeNode* node,int choosePercentage);
 };
+
+int NN(int index, std::vector<int> *DNA,partNode* body); //guest from Grammar.h

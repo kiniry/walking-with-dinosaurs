@@ -19,6 +19,17 @@ std::vector<int> MTree::crossBreed(std::vector<int> myDNA, std::vector<int> seed
 			MTreeNode* theOtherNode = ReduceImpact(seed->bodyPart->findNode(rand()%seed->bodyPart->countNodes()),IMPACTPERCENTAGESEEDPART);
 			myDNA.erase(myDNA.begin()+theNode->getStart(),myDNA.begin()+theNode->getEnd());
 			myDNA.insert(myDNA.begin()+theNode->getStart(),seedDNA.begin()+theOtherNode->getStart(),seedDNA.begin()+theOtherNode->getEnd());
+			
+			if(myDNA.at(theNode->getStart()+3)>0){
+				partNode* falseBody = new partNode(0);
+				myDNA.at(
+					NN(theNode->getStart()+4,&myDNA,falseBody)
+					+3
+					+2
+				) = 180;
+				delete falseBody;
+			}
+
 			return myDNA;
 		}else{				//10% chance of X-breeding only the NN part
 			MTreeNode* theOtherNode = getRandomBodyNode(seed);

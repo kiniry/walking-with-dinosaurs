@@ -40,7 +40,7 @@ int NI(int index, std::vector<int> *DNA);
 int NI(int index, std::vector<int> *DNA, NeuralNetwork* net);
 
 int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, NNLayerNode* node, bool isJustChecking);
-int NN(int index, std::vector<int> *DNA,partNode* body);
+//int NN(int index, std::vector<int> *DNA,partNode* body); //moved to MTree.h
 int NN(int index, std::vector<int>* DNA, std::vector<NeuralNode*> inputs, Physics *world, bool isNotSubnet);
 
 MTree* getMTree(std::vector<int> *DNA);
