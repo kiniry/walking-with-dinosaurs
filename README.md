@@ -1,4 +1,4 @@
-walking-with-dinosaurs
+﻿walking-with-dinosaurs
 ======================
 
 TODO list:
@@ -11,9 +11,9 @@ dont count shoot boxs
 
 scale frame rate
 
-mtree line 29 std out of range
-
 reset m_clock and totaltime when creating new world in gui
 
 frame rate outside visual
 http://stackoverflow.com/questions/8858128/c-opengl-application-running-smoother-with-debugger-attached
+
+Fix simulation in GUI with the "simulation" flag set
