@@ -86,8 +86,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//init creature/world
 	WWDPhysics = new Physics();
 	readDNA(&saves.at(0)->dna,WWDPhysics);
-	WWDPhysics->solveGroundConflicts();
-	WWDPhysics->relaxCreature();
+	//WWDPhysics->solveGroundConflicts();
+	//WWDPhysics->relaxCreature();
+	WWDPhysics->runSimStartUp();
 	WWDPhysics->reshape(simWidth,simHeight);
 
 
@@ -491,8 +492,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						WWDPhysics = new Physics();
 						SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_FITNESSTYPE_COMBOBOX,LBN_SELCHANGE),0);
 						readDNA(&saves.at(index)->dna,WWDPhysics);
-						WWDPhysics->solveGroundConflicts();
-						WWDPhysics->relaxCreature();
+						//WWDPhysics->solveGroundConflicts();
+						//WWDPhysics->relaxCreature();
+						WWDPhysics->runSimStartUp();
 						WWDPhysics->reshape(simWidth,simHeight);
 					}
 				}
@@ -613,8 +615,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				WWDPhysics = new Physics();
 				WWDPhysics->setFitnesFunction(tmptest);
 				readDNA(&saves.at(saves.size()-1)->dna,WWDPhysics);
-				WWDPhysics->solveGroundConflicts();
-				WWDPhysics->relaxCreature();
+				//WWDPhysics->solveGroundConflicts();
+				//WWDPhysics->relaxCreature();
+				WWDPhysics->runSimStartUp();
 				WWDPhysics->reshape(simWidth,simHeight);
 			}
 			break;

@@ -277,12 +277,60 @@ void Physics::runSimulation(){
 
 void Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
 
-	Physics::clientMoveAndDisplay(fixed);
-#ifndef _CONSOLE
+	float ms = getDeltaTimeMicroseconds();
+	static float time=0;
+	time+=ms;
+	static float timesinceupdate= 9999;
+
+	if(fixed){
+		timesinceupdate+=ms;
+		if(timesinceupdate>1000){
+			
+			static int update=20;
+			
+			simulationLoopStep(1 / 1000.f);
+			timesinceupdate-=1000;
+			if(update<20){
+				update++;
+
+				return;
+			}
+			
+			
+			//printf("%f\n",ms);
+			update=0;
+
+		}
+	}else{
+		simulationLoopStep(ms / 1000000.f); //normal speed
+		//simulationLoopStep(ms / 100000000.f); //slow-mode
+	}
+	frameRate=1000000/time+0.5;
+
+	time=0;
+	pointCamera();
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	m_dynamicsWorld->debugDrawWorld();
+
+	renderme();
+
+	glFlush();
+
+#ifdef _CONSOLE
+	swapBuffers();
+#else
 	SwapBuffers( hDC );
 #endif
+
+//	Physics::clientMoveAndDisplay(fixed);
+/*#ifndef _CONSOLE
+	SwapBuffers( hDC );
+#endif*/
 }
 
+/*
 void Physics::clientMoveAndDisplay(boolean fixed){
 	
 	float ms = getDeltaTimeMicroseconds();
@@ -332,6 +380,7 @@ void Physics::clientMoveAndDisplay(boolean fixed){
 
 
 }
+*/
 
 void Physics::displayCallback(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

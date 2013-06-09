@@ -176,6 +176,15 @@ public:
 
 	void runSimulation();
 
+	void runSimStartUp(){
+		solveGroundConflicts();
+		if(!(checkInternCollissions() && relaxCreature() && checkHeight())){
+			printf("Startup Error");
+		}
+		totaltime=0;
+		m_clock.reset();
+	}
+
 	virtual ~Physics(){
 		exitPhysics();
 	}
