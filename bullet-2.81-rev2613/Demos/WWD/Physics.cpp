@@ -29,7 +29,7 @@ void Physics::calcSize(){
 	heighstPoint = -99999;
 	lowestPoint = 99999;
 	height = 0;
-	for (int i = 1; i < objs.size(); i++){
+	for (int i = 1; i <= noBoxes; i++){
 		float halfHeight = getBoxHalfHeight(objs.at(i));
 		float y = objs.at(i)->getWorldTransform().getOrigin().getY();
 		if(y-halfHeight < lowestPoint){
@@ -49,11 +49,11 @@ void Physics::calcSize(){
 
 btVector3 Physics::calcPosition(){
 	float mass=0;
-	for(int i =1; i < m_dynamicsWorld->getCollisionObjectArray().size(); i++){
+	for(int i =1; i <= noBoxes; i++){
 		mass+=1/ ((btRigidBody*)m_dynamicsWorld->getCollisionObjectArray().at(i))->getInvMass();
 	}
 	btVector3 point =btVector3(0,0,0);
-	for(int i =1; i < m_dynamicsWorld->getCollisionObjectArray().size(); i++){
+	for(int i =1; i <= noBoxes; i++){
 		btVector3 origin = m_dynamicsWorld->getCollisionObjectArray().at(i)->getWorldTransform().getOrigin();
 		float percentage =(1/(((btRigidBody*)m_dynamicsWorld->getCollisionObjectArray().at(i))->getInvMass()))/mass;
 
@@ -277,93 +277,48 @@ void Physics::runSimulation(){
 
 void Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
 
-	float ms = getDeltaTimeMicroseconds();
-	static float time=0;
-	time+=ms;
-	static float timesinceupdate= 9999;
-
-	if(fixed){
-		timesinceupdate+=ms;
-		if(timesinceupdate>1000){
-			
-			static int update=20;
-			
-			simulationLoopStep(1 / 1000.f);
-			timesinceupdate-=1000;
-			if(update<20){
-				update++;
-
-				return;
-			}
-			
-			
-			//printf("%f\n",ms);
-			update=0;
-
-		}
-	}else{
-		simulationLoopStep(ms / 1000000.f); //normal speed
-		//simulationLoopStep(ms / 100000000.f); //slow-mode
-	}
-	frameRate=1000000/time+0.5;
-
-	time=0;
-	pointCamera();
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	m_dynamicsWorld->debugDrawWorld();
-
-	renderme();
-
-	glFlush();
-
-#ifdef _CONSOLE
-	swapBuffers();
-#else
+clientMoveAndDisplay(fixed);
+#ifndef _CONSOLE
 	SwapBuffers( hDC );
 #endif
-
-//	Physics::clientMoveAndDisplay(fixed);
-/*#ifndef _CONSOLE
-	SwapBuffers( hDC );
-#endif*/
 }
 
-/*
+
 void Physics::clientMoveAndDisplay(boolean fixed){
 	
 	float ms = getDeltaTimeMicroseconds();
 	static float time=0;
 	time+=ms;
-	static float timesinceupdate= 9999;
-
+	static float timeBehind= 0;
+	timeBehind+=ms;
 	if(fixed){
-		timesinceupdate+=ms;
-		if(timesinceupdate>1000){
+		
+		if(timeBehind>1000){
 			
 			static int update=20;
 			
 			simulationLoopStep(1 / 1000.f);
-			timesinceupdate-=1000;
-			if(update<20){
+			timeBehind-=1000;
+			/*
+			if(update<15){
 				update++;
 
 				return;
 			}
-			
-			
-			//printf("%f\n",ms);
-			update=0;
 
-		}
+			update=0;
+			*/
+		}/*else{
+			return;
+		}*/
 	}else{
 		simulationLoopStep(ms / 1000000.f); //normal speed
 		//simulationLoopStep(ms / 100000000.f); //slow-mode
+		timeBehind=0;
 	}
-	frameRate=1000000/time+0.5;
-
+	frameRate=1000000./time+0.5;
 	time=0;
+
 	pointCamera();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -378,9 +333,8 @@ void Physics::clientMoveAndDisplay(boolean fixed){
 	swapBuffers();
 #endif
 
-
 }
-*/
+
 
 void Physics::displayCallback(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1044,30 +998,15 @@ void Physics::calcFitness(fitnessTest test){
 
 		perror("unkown fitness test\n");
 	}
+	fitness= floorf((fitness) * 10000 + 0.5) / 10000;
 }
 
 /**
 *	calculates the distance from lowest point of the creature to the ground
 */
 float Physics::fitJump(){
-	//er der kontakt emd jorden
-	// hvis der ikke er så er det afstanden fra jord til nederste punkt
+
 	calcSize();
-
-	//fix ground collision
-	//collision detection
-	//one per btPersistentManifold for each collision
-	int numManifolds = m_dynamicsWorld->getDispatcher()->getNumManifolds();
-
-	for (int i=0;i<numManifolds;i++){
-		btPersistentManifold* contactManifold =  m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-		int box1 = (int)contactManifold->getBody0()->getUserPointer();
-		int box2 = (int)contactManifold->getBody1()->getUserPointer();
-
-		if(box1 == ground || box1 == ground){
-			return 0;
-		}
-	}
 
 	return lowestPoint-groundY;
 }
