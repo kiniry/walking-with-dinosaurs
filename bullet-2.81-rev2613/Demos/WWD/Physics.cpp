@@ -213,18 +213,6 @@ void Physics::simulationLoopStep(float stepSize){
 		}
 	}
 
-	/*if(m_dynamicsWorld->getNumConstraints()>0){
-	for(int i=m_dynamicsWorld->getNumConstraints()-1;i>=0;i--){
-	btTypedConstraint* con = m_dynamicsWorld->getConstraint(i);
-	con->enableFeedback(true);
-	if(con->getAppliedImpulse()>m_dynamicsWorld->getConstraint(i)->getBreakingImpulseThreshold()){
-	m_dynamicsWorld->removeConstraint(m_dynamicsWorld->getConstraint(i));
-	}
-	else{
-	con->enableFeedback(false);
-	}
-	}
-	}*/
 }
 
 /**
@@ -260,9 +248,11 @@ bool Physics::relaxCreature(){
 	startPoint=calcPosition();
 	pastPoint=startPoint;
 	enableEffectors=true;
+
 	fitness=0;
 	fit1=0;
 	fit2=0;
+
 	return true;
 }
 
@@ -273,6 +263,8 @@ void Physics::runSimulation(){
 	solveGroundConflicts();
 
 	if(checkInternCollissions() && relaxCreature() && checkHeight()){
+		totaltime=0;
+		m_clock.reset();
 		while(totaltime<simulationTime){
 			simulationLoopStep(1/1000.f);
 		}
@@ -283,16 +275,49 @@ void Physics::runSimulation(){
 	checkForDismemberment();
 }
 
-void Physics::clientMoveAndDisplay(boolean fixed)
-{
-	//solveGroundConflicts();
+void Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
+
+	Physics::clientMoveAndDisplay(fixed);
+#ifndef _CONSOLE
+	SwapBuffers( hDC );
+#endif
+}
+
+void Physics::clientMoveAndDisplay(boolean fixed){
+	
 	float ms = getDeltaTimeMicroseconds();
+	static float time=0;
+	time+=ms;
+	static float timesinceupdate= 9999;
+
 	if(fixed){
-		simulationLoopStep(1 / 1000.f);
+		timesinceupdate+=ms;
+		if(timesinceupdate>1000){
+			
+			static int update=20;
+			
+			simulationLoopStep(1 / 1000.f);
+			timesinceupdate-=1000;
+			if(update<20){
+				update++;
+
+				return;
+			}
+			
+			
+			//printf("%f\n",ms);
+			update=0;
+
+		}
 	}else{
 		simulationLoopStep(ms / 1000000.f); //normal speed
 		//simulationLoopStep(ms / 100000000.f); //slow-mode
 	}
+	frameRate=1000000/time+0.5;
+
+	time=0;
+	pointCamera();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	m_dynamicsWorld->debugDrawWorld();
@@ -305,7 +330,7 @@ void Physics::clientMoveAndDisplay(boolean fixed)
 	swapBuffers();
 #endif
 
-	pointCamera();
+
 }
 
 void Physics::displayCallback(void) {
@@ -318,9 +343,9 @@ void Physics::displayCallback(void) {
 		m_dynamicsWorld->debugDrawWorld();
 
 	glFlush();
-	#ifdef _CONSOLE
+#ifdef _CONSOLE
 	swapBuffers();
-	#endif
+#endif
 
 }
 
@@ -329,6 +354,10 @@ void Physics::displayCallback(void) {
 */
 void Physics::showInfo(int& xOffset,int& yStart, int yIncr){
 	char blockTime[128];
+
+	sprintf(blockTime,"--- Frame rate: %d fps ---", frameRate);
+	displayProfileString(xOffset,yStart,blockTime);
+	yStart += yIncr;
 
 	sprintf(blockTime,"--- Total running time: %lu ms ---", totaltime );
 	displayProfileString(xOffset,yStart,blockTime);

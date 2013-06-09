@@ -98,7 +98,7 @@ private:
 	btVector3 pastPoint;
 	bool enableEffectors;
 	std::vector<btQuaternion*> scews;
-
+	int frameRate;
 	int currentBoxIndex,currentJointIndex;
 
 	//keep the collision shapes, for deletion/cleanup
@@ -144,7 +144,8 @@ public:
 
 	virtual void displayCallback();
 	virtual void clientResetScene();
-	virtual void clientMoveAndDisplay(boolean fixed);
+	void clientMoveAndDisplay(boolean fixed);
+	void clientMoveAndDisplay(boolean fixed, HDC hDC);
 	//useless function, to make bullet happy
 	void clientMoveAndDisplay(){}
 	virtual void showInfo(int& xOffset,int& yStart, int yIncr);

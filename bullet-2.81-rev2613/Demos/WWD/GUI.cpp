@@ -2,6 +2,7 @@
 
 // WinMain
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int cmdShow){
+
 	argv =CommandLineToArgvW(GetCommandLineW(),&argc);
 
 	directory = getDirectory();
@@ -152,7 +153,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 MSG messageLoop(	HDC hDC, HGLRC hRC){
 	BOOL quit = FALSE;
 	MSG msg;
-
 	while ( !quit )
 	{
 		// check for messages
@@ -175,9 +175,7 @@ MSG messageLoop(	HDC hDC, HGLRC hRC){
 		//OpenGL animation code goes here
 		glClearColor( .7f, 0.7f, 0.7f, 1.f );
 
-		WWDPhysics->clientMoveAndDisplay(fixedSteps);
-
-		SwapBuffers( hDC );
+		WWDPhysics->clientMoveAndDisplay(fixedSteps, hDC);
 
 
 	}
@@ -454,11 +452,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				case BST_CHECKED:
 					SendMessage(check, BM_SETCHECK, BST_UNCHECKED,0);
 					fixedSteps=false;
+					printf("off\n");
 					break;
 
 				case BST_UNCHECKED:
 					SendMessage(check, BM_SETCHECK, BST_CHECKED,0);
 					fixedSteps=true;
+					printf("on\n");
 					break;
 				}
 			}
