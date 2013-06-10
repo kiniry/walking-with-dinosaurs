@@ -86,6 +86,12 @@ enum fitnessTest{none,jump, move, oldMove, combi};
 
 class Physics : public PlatformDemoApplication{
 private:
+	//timer
+	unsigned long last;
+	unsigned long timeBehind;
+	unsigned long time;
+
+
 	int noBoxes;
 	float fitness;
 	float fit1;
@@ -138,6 +144,10 @@ private:
 	float Physics::fitJump();
 	float Physics::fitMove();
 	float Physics::fitMove2();
+
+
+
+
 public:
 
 	enum boxes{ground=-2};
@@ -147,7 +157,7 @@ public:
 	void clientMoveAndDisplay(boolean fixed);
 	void clientMoveAndDisplay(boolean fixed, HDC hDC);
 	//useless function, to make bullet happy
-	void clientMoveAndDisplay(){}
+	void clientMoveAndDisplay(){clientMoveAndDisplay(false);}
 	virtual void showInfo(int& xOffset,int& yStart, int yIncr);
 	NeuralNetwork* theNet;
 
@@ -182,6 +192,9 @@ public:
 			printf("Startup Error");
 		}
 		totaltime=0;
+		last=0;
+		time=0;
+		timeBehind=0;
 		m_clock.reset();
 	}
 

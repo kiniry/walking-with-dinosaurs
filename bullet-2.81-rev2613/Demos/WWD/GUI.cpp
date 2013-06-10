@@ -174,7 +174,7 @@ MSG messageLoop(	HDC hDC, HGLRC hRC){
 		};
 
 		//OpenGL animation code goes here
-		glClearColor( .7f, 0.7f, 0.7f, 1.f );
+		//glClearColor( .7f, 0.7f, 0.7f, 1.f );
 
 		WWDPhysics->clientMoveAndDisplay(fixedSteps, hDC);
 

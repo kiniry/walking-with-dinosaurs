@@ -276,30 +276,24 @@ void Physics::runSimulation(){
 }
 
 void Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
+	unsigned long tmplast=m_clock.getTimeMicroseconds();
+	unsigned long ms = tmplast-last;
 
-clientMoveAndDisplay(fixed);
-#ifndef _CONSOLE
-	SwapBuffers( hDC );
-#endif
-}
-
-
-void Physics::clientMoveAndDisplay(boolean fixed){
-	
-	float ms = getDeltaTimeMicroseconds();
-	static float time=0;
+	last=tmplast;
 	time+=ms;
-	static float timeBehind= 0;
+
 	timeBehind+=ms;
+	//printf("time %lu\n",timeBehind);
+
 	if(fixed){
-		
+		//printf("%f %f\n",timeBehind, ms);
+		//printf("%f\n",timeBehind);
 		if(timeBehind>1000){
 			
 			static int update=20;
-			
+			//printf("-");
 			simulationLoopStep(1 / 1000.f);
 			timeBehind-=1000;
-			/*
 			if(update<15){
 				update++;
 
@@ -307,16 +301,16 @@ void Physics::clientMoveAndDisplay(boolean fixed){
 			}
 
 			update=0;
-			*/
-		}/*else{
+			//printf(".");
+		}else{
 			return;
-		}*/
+		}
 	}else{
 		simulationLoopStep(ms / 1000000.f); //normal speed
 		//simulationLoopStep(ms / 100000000.f); //slow-mode
 		timeBehind=0;
 	}
-	frameRate=1000000./time+0.5;
+	frameRate=1000000./((double)time)+0.5;
 	time=0;
 
 	pointCamera();
@@ -328,10 +322,48 @@ void Physics::clientMoveAndDisplay(boolean fixed){
 	renderme();
 
 	glFlush();
+	SwapBuffers( hDC );
 
-#ifdef _CONSOLE
+}
+
+
+void Physics::clientMoveAndDisplay(boolean fixed){
+	
+	float ms = getDeltaTimeMicroseconds();
+	static float time2=0;
+	time2+=ms;
+	static float timeBehind2= 0;
+	timeBehind2+=ms;
+	if(fixed){
+		
+		if(timeBehind2>1000){
+			
+			static int update=20;
+			
+			simulationLoopStep(1 / 1000.f);
+			timeBehind2-=1000;
+			
+		}
+	}else{
+		simulationLoopStep(ms / 1000000.f); //normal speed
+		//simulationLoopStep(ms / 100000000.f); //slow-mode
+		timeBehind=0;
+	}
+	frameRate=1000000./time2+0.5;
+	time2=0;
+
+	pointCamera();
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	m_dynamicsWorld->debugDrawWorld();
+
+	renderme();
+
+	glFlush();
+
+
 	swapBuffers();
-#endif
 
 }
 
@@ -902,6 +934,7 @@ void	Physics::exitPhysics(){
 		delete shape->getUserPointer2();
 		delete shape;
 	}
+
 	m_collisionShapes.clear();
 
 	delete m_dynamicsWorld;
