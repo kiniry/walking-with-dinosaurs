@@ -1147,13 +1147,13 @@ void captureVideo(HDC hDC){
 
 
 		currentFrame = 0;
-
+		GLvoid *imageData = 0;
 		while(WWDPhysics->totaltime<10000){
 			while(!WWDPhysics->clientMoveAndDisplay(true, hDC)){}
 
 			HDC hdcscreen=GetDC(0), hdc=CreateCompatibleDC(hdcscreen); ReleaseDC(0,hdcscreen);
 			HBITMAP hData;
-			GLvoid *imageData = 0;
+			
 			hData = CreateDIBSection(hdc,(BITMAPINFO*) bi,DIB_RGB_COLORS,&imageData,NULL,NULL);
 			GdiFlush(); //flush graphics operations batch to ensure memory contains the right pixels
 		
@@ -1169,7 +1169,9 @@ void captureVideo(HDC hDC){
 					if(currentFrame==0){keyframe=AVIIF_KEYFRAME;}
 					AVIStreamWrite(*pcompressedstream,currentFrame,1,dibs.dsBm.bmBits,dibs.dsBmih.biSizeImage,keyframe,NULL,NULL);
 					currentFrame++;
+					
 				}
+			DeleteObject(hData);
 			}
 			else{printf("frame skipped nr %d\n",currentFrame);}
 		}
