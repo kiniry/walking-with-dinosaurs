@@ -108,6 +108,7 @@ DemoApplication::~DemoApplication()
 #endif //BT_NO_PROFILE
 
 	if (m_shootBoxShape)
+		delete m_shootBoxShape->getUserPointer2();
 		delete m_shootBoxShape;
 
 	if (m_shapeDrawer)
