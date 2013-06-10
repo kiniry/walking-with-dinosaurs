@@ -1093,7 +1093,7 @@ void VFWInit(){
 	const char* string = "C:\\Users\\Tugsav\\Documents\\GitHub\\walking-with-dinosaurs\\bullet-2.81-rev2613\\TheVideo.avi";
 	//printf("%s",string);
 	pfile = new PAVIFILE();
-	VFWReturnVal = AVIFileOpen(pfile, string,OF_SHARE_DENY_WRITE|OF_CREATE,0L);
+	VFWReturnVal = AVIFileOpen(pfile, filename.str().c_str(),OF_SHARE_DENY_WRITE|OF_CREATE,0L);
 	if(VFWReturnVal !=0 ){
 		printf("failfailfail\n");
 	}
