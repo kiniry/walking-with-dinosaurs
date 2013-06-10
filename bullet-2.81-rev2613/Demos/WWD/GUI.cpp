@@ -16,7 +16,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	WNDCLASSEX wc;
 
-	HDC hDC;
+	//HDC hDC;
 	HGLRC hRC;
 
 	// register window class
@@ -690,6 +690,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 			PostQuitMessage( 0 );
 
 			break;
+		case ID_VIDEO_CAPTURE:
+			VFWInit();
+			captureVideo(hDC);
+			break;
 		default:
 			printf("");
 		}
@@ -1079,4 +1083,107 @@ VOID CALLBACK update(){
 			ShowWindow(okButton,SW_SHOW);
 		}
 	}
+}
+
+void VFWInit(){
+	AVIFileInit();
+	CoInitialize(NULL);
+	std::stringstream filename;
+	filename << directory<< "TheVideo.avi\0";
+	const char* string = "C:\\Users\\Tugsav\\Documents\\GitHub\\walking-with-dinosaurs\\bullet-2.81-rev2613\\TheVideo.avi";
+	//printf("%s",string);
+	pfile = new PAVIFILE();
+	VFWReturnVal = AVIFileOpen(pfile, string,OF_SHARE_DENY_WRITE|OF_CREATE,0L);
+	if(VFWReturnVal !=0 ){
+		printf("failfailfail\n");
+	}
+
+	AVISTREAMINFO* strhdr = new AVISTREAMINFO();// ZeroMemory(&strhdr,sizeof(strhdr));
+    strhdr->fccType = streamtypeVIDEO;// stream type
+    strhdr->fccHandler = 0; 
+    strhdr->dwScale = 1;
+    strhdr->dwRate = 60;//10;//100;//*/1000;
+	
+	pstream = new PAVISTREAM();
+	VFWReturnVal = AVIFileCreateStream(*pfile,pstream,strhdr);
+	if(VFWReturnVal !=0 ){
+		printf("failfailfail\n");
+	}
+	
+	poptions = new AVICOMPRESSOPTIONS();
+	
+	aopts[0] = poptions;
+
+	AVISaveOptions(hWnd,0,1, pstream,aopts);
+	
+	pcompressedstream = new PAVISTREAM();
+	VFWReturnVal = AVIMakeCompressedStream(pcompressedstream,*pstream,aopts[0],NULL);
+	if(VFWReturnVal !=AVIERR_OK ){
+		printf("failfailfail\n");
+	}
+
+	bi = new BITMAPINFOHEADER();
+	bi->biSize = sizeof (BITMAPINFOHEADER);
+    bi->biWidth         = simWidth;
+    bi->biHeight        = simHeight;
+    bi->biPlanes        = 1;
+    bi->biBitCount      = 32;
+	bi->biCompression   = BI_RGB;
+    bi->biSizeImage     = ((bi->biWidth*bi->biBitCount/8)*bi->biHeight);
+    bi->biXPelsPerMeter = 14173;
+    bi->biYPelsPerMeter = 14173;
+    bi->biClrUsed       = 0;
+    bi->biClrImportant  = 0;
+
+	VFWReturnVal = AVIStreamSetFormat(*pcompressedstream,0,bi,bi->biSize);
+	if(VFWReturnVal != 0 ){
+		printf("failfailfail\n");
+	}
+}
+
+void captureVideo(HDC hDC){
+	if(saves.size()>0){
+		SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);
+
+
+		currentFrame = 0;
+
+		while(WWDPhysics->totaltime<10000){
+			while(!WWDPhysics->clientMoveAndDisplay(true, hDC)){}
+
+			HDC hdcscreen=GetDC(0), hdc=CreateCompatibleDC(hdcscreen); ReleaseDC(0,hdcscreen);
+			HBITMAP hData;
+			GLvoid *imageData = 0;
+			hData = CreateDIBSection(hdc,(BITMAPINFO*) bi,DIB_RGB_COLORS,&imageData,NULL,NULL);
+			GdiFlush(); //flush graphics operations batch to ensure memory contains the right pixels
+		
+			if(imageData!=0){
+				glReadPixels(0, 0, abs(simWidth), abs(simHeight), GL_BGRA, GL_UNSIGNED_BYTE, imageData); //Copy the image to the array imageData
+		
+				DIBSECTION dibs; int sbm = GetObject(hData,sizeof(dibs),&dibs);
+		
+				if (sbm!=sizeof(DIBSECTION)){
+					printf("fault\n");
+				}else{
+					DWORD keyframe = NULL;
+					if(currentFrame==0){keyframe=AVIIF_KEYFRAME;}
+					AVIStreamWrite(*pcompressedstream,currentFrame,1,dibs.dsBm.bmBits,dibs.dsBmih.biSizeImage,keyframe,NULL,NULL);
+					currentFrame++;
+				}
+			}
+			else{printf("frame skipped nr %d\n",currentFrame);}
+		}
+	}
+
+	//vfw cleanup
+		if(VFWReturnVal==0){
+		AVIStreamRelease(*pcompressedstream);
+		delete(pcompressedstream);
+		AVIStreamRelease(*pstream);
+		delete pstream;
+		AVISaveOptionsFree(1,aopts);
+		AVIFileRelease(*pfile);  // closes the file 
+		}
+		AVIFileExit();          // releases AVIFile library 
+	//\vfw cleanup
 }

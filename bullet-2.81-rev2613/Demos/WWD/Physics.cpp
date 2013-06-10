@@ -275,7 +275,7 @@ void Physics::runSimulation(){
 	checkForDismemberment();
 }
 
-void Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
+bool Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
 	unsigned long tmplast=m_clock.getTimeMicroseconds();
 	unsigned long ms = tmplast-last;
 
@@ -297,13 +297,13 @@ void Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
 			if(update<15){
 				update++;
 
-				return;
+				return false;
 			}
 
 			update=0;
 			//printf(".");
 		}else{
-			return;
+			return false;
 		}
 	}else{
 		simulationLoopStep(ms / 1000000.f); //normal speed
@@ -323,7 +323,7 @@ void Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
 
 	glFlush();
 	SwapBuffers( hDC );
-
+	return true;
 }
 
 

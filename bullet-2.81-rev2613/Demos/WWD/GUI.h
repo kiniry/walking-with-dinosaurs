@@ -39,6 +39,21 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define IDC_POP_EDIT 998
 #define IDC_POP_STATIC 999
 
+HDC hDC; //sry man
+//vfw - video recording system
+#pragma comment(lib, "Vfw32.lib")
+long VFWReturnVal;
+PAVIFILE* pfile;
+PAVISTREAM* pstream;
+PAVISTREAM* pcompressedstream;
+AVICOMPRESSOPTIONS* poptions;
+BITMAPINFOHEADER* bi;
+AVICOMPRESSOPTIONS* aopts[1];
+long currentFrame = 0;
+void VFWInit();
+void captureVideo(HDC hDC);
+//\vfw
+
 static bool sOpenGLInitialized = false;
 static int quitRequest = 0;
 boolean fixedSteps =false;

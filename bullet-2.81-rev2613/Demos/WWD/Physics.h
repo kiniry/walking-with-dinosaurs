@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include "GLDebugDrawer.h"
 
+#include <Vfw.h>
+
 static GLDebugDrawer gDebugDraw;
 
 struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallback{
@@ -155,7 +157,7 @@ public:
 	virtual void displayCallback();
 	virtual void clientResetScene();
 	void clientMoveAndDisplay(boolean fixed);
-	void clientMoveAndDisplay(boolean fixed, HDC hDC);
+	bool clientMoveAndDisplay(boolean fixed, HDC hDC);
 	//useless function, to make bullet happy
 	void clientMoveAndDisplay(){clientMoveAndDisplay(false);}
 	virtual void showInfo(int& xOffset,int& yStart, int yIncr);
