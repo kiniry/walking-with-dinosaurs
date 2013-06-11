@@ -1005,9 +1005,30 @@ void Physics::calcFitness(fitnessTest test){
 			fitness= fitMove();
 		}
 		break;
-	case oldMove:
+	case iterateMove:
 		{
 			fitness +=fitMove2();
+		}
+		break;
+	case dwarfslayerMove:
+		{
+			if(noBoxes<3){fitness = -999999; totaltime=simulationTime;}
+			else{fitness +=fitMove2();}
+		}
+		break;
+	case fatLovingMove:
+		{
+			float totMass = 0;
+			btCollisionObjectArray objs = m_dynamicsWorld->getCollisionObjectArray();
+			for (int i = 1; i <= noBoxes; i++){
+				totMass += 1.f/(float)((btRigidBody*) objs.at(i))->getInvMass();
+			}
+			fitness +=(fitMove2()*totMass/(float)DensityHuman);
+		}
+		break;
+	case boxLovingMove:
+		{
+			fitness +=fitMove2()*(float)noBoxes;
 		}
 		break;
 	case jump:

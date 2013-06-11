@@ -102,17 +102,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Move");
 	SendMessage(hwndCombo,CB_SETITEMDATA, 0, move);
 
-	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"OLDMove");
-	SendMessage(hwndCombo,CB_SETITEMDATA, 1, oldMove);
+	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Iterative Move");
+	SendMessage(hwndCombo,CB_SETITEMDATA, 1, iterateMove);
+
+	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Dwarfslayer Move");
+	SendMessage(hwndCombo,CB_SETITEMDATA, 2, dwarfslayerMove);
+
+	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Fat Loving Move");
+	SendMessage(hwndCombo,CB_SETITEMDATA, 3, fatLovingMove);
+
+	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Box Loving Move");
+	SendMessage(hwndCombo,CB_SETITEMDATA, 4, boxLovingMove);
 
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Jump");
-	SendMessage(hwndCombo,CB_SETITEMDATA, 2, jump);
+	SendMessage(hwndCombo,CB_SETITEMDATA, 5, jump);
 
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"Combi");
-	SendMessage(hwndCombo,CB_SETITEMDATA, 3, combi);
+	SendMessage(hwndCombo,CB_SETITEMDATA, 6, combi);
 
 	SendMessage(hwndCombo,CB_ADDSTRING, 0, (LPARAM)"None");
-	SendMessage(hwndCombo,CB_SETITEMDATA, 4, none);
+	SendMessage(hwndCombo,CB_SETITEMDATA, 7, none);
 
 	SendMessage(hwndCombo,CB_SETCURSEL,0,0);
 	WWDPhysics->setFitnesFunction(move);

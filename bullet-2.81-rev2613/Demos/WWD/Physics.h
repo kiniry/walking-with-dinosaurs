@@ -84,7 +84,7 @@ class btConstraintSolver;
 struct btCollisionAlgorithmCreateFunc;
 class btDefaultCollisionConfiguration;
 
-enum fitnessTest{none,jump, move, oldMove, combi};
+enum fitnessTest{none,jump, move, iterateMove, dwarfslayerMove, fatLovingMove, boxLovingMove, combi};
 
 class Physics : public PlatformDemoApplication{
 private:
