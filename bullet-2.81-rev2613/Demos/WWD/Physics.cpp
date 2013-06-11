@@ -105,7 +105,6 @@ bool Physics::checkHeight(){
 *	checks if joints are broken because they have exceed there streght
 */
 void Physics::checkForDismemberment(){
-
 	for(int i=0;i<m_dynamicsWorld->getNumConstraints();i++){
 		if(!m_dynamicsWorld->getConstraint(i)->isEnabled()){
 			fitness = -999999;
@@ -212,7 +211,6 @@ void Physics::simulationLoopStep(float stepSize){
 				break;
 		}
 	}
-
 }
 
 /**
@@ -289,7 +287,6 @@ bool Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
 		//printf("%f %f\n",timeBehind, ms);
 		//printf("%f\n",timeBehind);
 		if(timeBehind>1000){
-			
 			static int update=20;
 			//printf("-");
 			simulationLoopStep(1 / 1000.f);
@@ -326,23 +323,18 @@ bool Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
 	return true;
 }
 
-
 void Physics::clientMoveAndDisplay(boolean fixed){
-	
 	float ms = getDeltaTimeMicroseconds();
 	static float time2=0;
 	time2+=ms;
 	static float timeBehind2= 0;
 	timeBehind2+=ms;
 	if(fixed){
-		
 		if(timeBehind2>1000){
-			
 			static int update=20;
-			
+
 			simulationLoopStep(1 / 1000.f);
 			timeBehind2-=1000;
-			
 		}
 	}else{
 		simulationLoopStep(ms / 1000000.f); //normal speed
@@ -362,11 +354,8 @@ void Physics::clientMoveAndDisplay(boolean fixed){
 
 	glFlush();
 
-
 	swapBuffers();
-
 }
-
 
 void Physics::displayCallback(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -381,7 +370,6 @@ void Physics::displayCallback(void) {
 #ifdef _CONSOLE
 	swapBuffers();
 #endif
-
 }
 
 /**
@@ -1058,14 +1046,13 @@ void Physics::calcFitness(fitnessTest test){
 *	calculates the distance from lowest point of the creature to the ground
 */
 float Physics::fitJump(){
-
 	calcSize();
 
 	return lowestPoint-groundY;
 }
 
 /**
-*	calculates Center of mass distance from its starting point 
+*	calculates Center of mass distance from its starting point
 */
 float Physics::fitMove(){
 	btVector3 tmpPos= calcPosition()-startPoint;
@@ -1074,7 +1061,7 @@ float Physics::fitMove(){
 }
 
 /**
-*	calculates fitness based on last move and time since start 
+*	calculates fitness based on last move and time since start
 */
 float Physics::fitMove2(){
 	btVector3 tmpPos = calcPosition();

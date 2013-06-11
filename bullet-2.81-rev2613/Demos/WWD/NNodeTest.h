@@ -6,11 +6,11 @@
 
 namespace NNode
 {
-void construct1();
+	void construct1();
 
-void construct2();
+	void construct2();
 
-void functionsAndWeights();
+	void functionsAndWeights();
 
-void all();
+	void all();
 }

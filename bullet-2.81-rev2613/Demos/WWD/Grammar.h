@@ -12,7 +12,6 @@
 
 #define NULL 0
 
-
 #define toFloat(X) X/100.f
 
 #define SUBNET_NET_WIDTH 5
@@ -25,7 +24,7 @@ inline int getDNA(int x, std::vector<int> *dna){
 	while(x >= (int) dna->size()){
 		dna->push_back(0);
 	}
-		return dna->at(x);
+	return dna->at(x);
 };
 
 int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural);

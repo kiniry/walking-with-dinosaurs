@@ -87,9 +87,9 @@ void startPrograms(fitnessTest type){
 	PathAppend(filePathAbs,"Client.exe");
 
 	int show=SW_HIDE;
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	show=SW_MINIMIZE;
-	#endif
+#endif
 	for(int i=0;i<pipes.size();i++){
 		std::stringstream commandArgs;
 		commandArgs<<i<<" "<<type;
@@ -150,8 +150,8 @@ int setupServer(int pop, int cores){
 	return 0;
 }
 
+// Wait for the client to connect.
 int waitForClients(){
-	// Wait for the client to connect.
 	for(int i =0; i<pipes.size();i++){
 		if (!ConnectNamedPipe(pipes.at(i), NULL))
 		{
@@ -167,8 +167,8 @@ int waitForClients(){
 }
 
 void sendCreatures(std::vector<creature>* Creatures, int start){
-		int min = (Creatures->size()-start)/pipes.size();
-		int rest = (Creatures->size()-start)%pipes.size();
+	int min = (Creatures->size()-start)/pipes.size();
+	int rest = (Creatures->size()-start)%pipes.size();
 
 	for(int id=0;id<pipes.size();id++){
 		std::ofstream os;
@@ -183,7 +183,6 @@ void sendCreatures(std::vector<creature>* Creatures, int start){
 		}
 
 		int noCreatures;
-
 
 		if(id<rest){
 			noCreatures=min+1;
@@ -210,12 +209,10 @@ void sendCreatures(std::vector<creature>* Creatures, int start){
 		os.flush();
 		os.close();
 	}
-
 }
 
 int sendOrders(int j){
 	std::string chResponse;
-	//wchar_t chResponse[] =L"go";
 
 	if(j==go){
 		chResponse = "go";
@@ -247,11 +244,10 @@ int sendOrders(int j){
 	}
 	return 0;
 }
-
+/**
+*	waits for acknowledges from the clients
+*/
 void receiveAcknowledges(){
-	//
-	// Receive a request from client.
-	//
 	for(int i =0;i<pipes.size();i++){
 		wchar_t chRequest[BUFFER_SIZE];
 		DWORD cbRequest, cbRead;

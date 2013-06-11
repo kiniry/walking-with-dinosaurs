@@ -31,40 +31,40 @@ NeuralNetwork::~NeuralNetwork(void)
 
 void NeuralNetwork::insertNode(float value)
 {
-//1: get value and create node from it
+	//1: get value and create node from it
 	NeuralNode* n = new NeuralNode(value);
-//2: insert created node in current layers
+	//2: insert created node in current layers
 	layers.at(layerIndex).push_back(n);
 }
 
 void NeuralNetwork::insertNode(int f, int i1, float w1)
 {
-//1: get input node from previous layer and create node from it
+	//1: get input node from previous layer and create node from it
 	NeuralNode* n = new NeuralNode(f,layers.at(layerIndex-1).at(i1%layers.at(layerIndex-1).size()),w1);
-//2: insert created node in current layers
+	//2: insert created node in current layers
 	layers.at(layerIndex).push_back(n);
 }
 
 void NeuralNetwork::insertNode(int f, int i1, int i2, float w1, float w2)
 {
-//1: get input nodes from previous layer and create node from it
+	//1: get input nodes from previous layer and create node from it
 	int size = layers.at(layerIndex-1).size();
 	NeuralNode* inputNode1 = layers.at(layerIndex-1).at(i1%size);
 	NeuralNode* inputNode2 = layers.at(layerIndex-1).at(i2%size);
 	NeuralNode* n = new NeuralNode(f,inputNode1,inputNode2,w1,w2);
-//2: insert created node in current layers
+	//2: insert created node in current layers
 	layers.at(layerIndex).push_back(n);
 }
 
 void NeuralNetwork::insertNode(int f, int i1, int i2, int i3, float w1, float w2, float w3)
 {
-//1: get input nodes from previous layer and create node from it
+	//1: get input nodes from previous layer and create node from it
 	int size = layers.at(layerIndex-1).size();
 	NeuralNode* inputNode1 = layers.at(layerIndex-1).at(i1%size);
 	NeuralNode* inputNode2 = layers.at(layerIndex-1).at(i2%size);
 	NeuralNode* inputNode3 = layers.at(layerIndex-1).at(i3%size);
 	NeuralNode* n = new NeuralNode(f,inputNode1,inputNode2,inputNode3,w1,w2,w3);
-//2: insert created node in current layers
+	//2: insert created node in current layers
 	layers.at(layerIndex).push_back(n);
 }
 
@@ -76,12 +76,12 @@ void NeuralNetwork::changeLayer()
 
 		//we have to flip the vector to maintain the ordering of nodes...
 		while(!currentLayer.empty()){
-			flipVariable.push_back(currentLayer.back());
-			currentLayer.pop_back();
+		flipVariable.push_back(currentLayer.back());
+		currentLayer.pop_back();
 		}
 		while(!flipVariable.empty()){
-			previousLayerOutputs.push_back(flipVariable.back());
-			flipVariable.pop_back();
+		previousLayerOutputs.push_back(flipVariable.back());
+		flipVariable.pop_back();
 		}*/
 
 		//TODO set currentlayer...
@@ -140,11 +140,11 @@ std::vector<NeuralNode*> NeuralNetwork::getLastLayer(){
 float NeuralNetwork::getOutput(int index){
 	//printf("size %d \n",lastLayer.size());
 	/*if(index<lastLayer.size()){
-		return lastLayer.at(index)->getOutput();
+	return lastLayer.at(index)->getOutput();
 	}
 	else{
-		//no defined output in network. Defaulting...
-		return 0;
+	//no defined output in network. Defaulting...
+	return 0;
 	}*/
 	if(outputUndefined){return 0;}
 
@@ -153,8 +153,8 @@ float NeuralNetwork::getOutput(int index){
 
 void NeuralNetwork::killFirstLayer(){
 	std::vector<NeuralNode*> L = layers.at(0);
-		while(L.size()>0){
-			delete L.at(L.size()-1);
-			L.pop_back();
-		}
+	while(L.size()>0){
+		delete L.at(L.size()-1);
+		L.pop_back();
+	}
 }

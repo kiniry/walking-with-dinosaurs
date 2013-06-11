@@ -36,7 +36,6 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 	return 0;
 }
 
-
 int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, std::vector<int>* tempNeural){
 	int attachedCount = getDNA(index,DNA)%6;
 	index++; //the information how many boxes are attached - belongs with the previous box

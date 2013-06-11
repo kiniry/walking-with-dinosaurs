@@ -14,10 +14,8 @@
 const int populationSize = 10;
 const int nrOfGenerations = 1;
 
-
 static int numCores;
 static std::vector<Physics*> worlds;
-
 
 unsigned int __stdcall run(void* data);
 

@@ -3,14 +3,14 @@
 std::vector<int> MTree::crossBreed(std::vector<int> myDNA, std::vector<int> seedDNA, MTree* seed){
 	//30/70 chance of crossBreeding NN-main part or the body part
 	bool chooser = rand()%10<7;
-	#ifdef NNONLY
-		chooser=false;
-	#endif
+#ifdef NNONLY
+	chooser=false;
+#endif
 	if(chooser){	//X-Breed body part
 		int nrOfNodes = this->bodyPart->countNodes();
 		//MTreeNode* theNode = this->bodyPart->findNode(rand()%nrOfNodes);	//equal chances for all boxes to be chosen
 		MTreeNode* theNode = ReduceImpact(this->bodyPart->findNode(rand()%nrOfNodes),IMPACTPERCENTAGEBREEDPART);
-		
+
 		bool random = (rand()%10)<9;
 		if(((partNode*)theNode)->NNChildren->size()==0){random = true;} //guard against invalid X-breeds
 
@@ -19,7 +19,7 @@ std::vector<int> MTree::crossBreed(std::vector<int> myDNA, std::vector<int> seed
 			MTreeNode* theOtherNode = ReduceImpact(seed->bodyPart->findNode(rand()%seed->bodyPart->countNodes()),IMPACTPERCENTAGESEEDPART);
 			myDNA.erase(myDNA.begin()+theNode->getStart(),myDNA.begin()+theNode->getEnd());
 			myDNA.insert(myDNA.begin()+theNode->getStart(),seedDNA.begin()+theOtherNode->getStart(),seedDNA.begin()+theOtherNode->getEnd());
-			
+
 			if((myDNA.at(theNode->getStart()+3)%6)>0){
 				partNode* falseBody = new partNode(0);
 				int index = NN(theNode->getStart()+4,&myDNA,falseBody)+3+2;
@@ -40,12 +40,11 @@ std::vector<int> MTree::crossBreed(std::vector<int> myDNA, std::vector<int> seed
 			}
 			return NNcrossBreed(myDNA,seedDNA,((partNode*)theNode)->NNChildren,((partNode*)theOtherNode)->NNChildren);
 		}
-		
 	}else{				//X-Breed NN-main part
 		MTreeNode* theOtherNode = getRandomBodyNode(seed);
-		#ifdef NNMAINONLY
-			theOtherNode=0;
-		#endif
+#ifdef NNMAINONLY
+		theOtherNode=0;
+#endif
 		while(theOtherNode != 0 && ((partNode*)theOtherNode)->NNChildren->size()==0){ //Guard against invalid X-breeds
 			theOtherNode = getRandomBodyNode(seed);
 		}
@@ -54,7 +53,7 @@ std::vector<int> MTree::crossBreed(std::vector<int> myDNA, std::vector<int> seed
 		}
 		return NNcrossBreed(myDNA,seedDNA,this->NNPart,((partNode*)theOtherNode)->NNChildren);
 	}
-	
+
 	printf("FAIL");
 	return std::vector<int>();
 }
@@ -71,12 +70,12 @@ std::vector<int> MTree::NNcrossBreed(std::vector<int> myDNA, std::vector<int> se
 	MTreeNode* theNode = myNode->at(myChosenLayer)->findNode(myChosen);
 	if(theNode==0){ //the layer itself is chosen
 		myDNA.erase(myDNA.begin()+myNode->at(myChosenLayer)->getStart()
-					,myDNA.begin()+myNode->at(myChosenLayer)->getEnd());
+			,myDNA.begin()+myNode->at(myChosenLayer)->getEnd());
 
 		myDNA.insert(myDNA.begin()+myNode->at(myChosenLayer)->getStart()
-					,seedDNA.begin()+seedNode->at(seedChosenLayer)->getStart()
-					,seedDNA.begin()+seedNode->at(seedChosenLayer)->getEnd());
-		return myDNA;	
+			,seedDNA.begin()+seedNode->at(seedChosenLayer)->getStart()
+			,seedDNA.begin()+seedNode->at(seedChosenLayer)->getEnd());
+		return myDNA;
 	}else{ //a node in the layer is chosen
 		int seedChosen = rand()%(seedNode->at(seedChosenLayer)->countNodes());
 		MTreeNode* aSeedNode = seedNode->at(seedChosenLayer)->findNode(seedChosen);

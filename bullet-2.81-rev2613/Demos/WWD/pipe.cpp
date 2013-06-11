@@ -1,7 +1,6 @@
 #include "pipe.h"
 
 std::vector<creature> getCreatures(std::string filename){
-
 	std::vector<creature> creatures;
 
 	std::ifstream is;
@@ -9,8 +8,6 @@ std::vector<creature> getCreatures(std::string filename){
 
 	int noCreatures;
 	is.read((char*)&noCreatures, sizeof(int));
-
-
 
 	for(int i=0;i<noCreatures;i++){
 		creature* tmpCreature =new creature();
@@ -66,7 +63,6 @@ std::string getDirectory(){
 
 	directory.clear();
 	directory.append(filePathAbs);
-
 
 	return directory;
 }

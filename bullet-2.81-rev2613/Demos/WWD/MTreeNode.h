@@ -4,7 +4,7 @@
 #define maxDNAVal 10000 //TODO:? get from shared/global var instead
 
 class MTreeNode{
-protected:	
+protected:
 	int startIndex;
 	int endIndex;
 	std::vector<MTreeNode*>* children;

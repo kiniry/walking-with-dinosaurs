@@ -91,7 +91,6 @@ struct argumentList{
 	creature* theResult;
 };
 
-
 struct save{
 	std::string name;
 	std::vector<int> dna;

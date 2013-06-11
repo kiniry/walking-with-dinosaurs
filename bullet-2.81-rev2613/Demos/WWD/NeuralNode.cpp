@@ -66,7 +66,7 @@ float NeuralNode::getOutput()
 void NeuralNode::compute()
 {
 	if(nrOfInputs>0){
-	switch(function){
+		switch(function){
 		case SENSOR:
 			currentOutput=*sensorInput;
 			//printf("sensor out: %f",currentOutput);
@@ -141,8 +141,8 @@ inline float NeuralNode::sum(){
 		return	input1->currentOutput * weight1;
 	}else{
 		return	input1->currentOutput * weight1
-				+
-				input2->currentOutput * weight2;
+			+
+			input2->currentOutput * weight2;
 	}
 }
 
@@ -151,8 +151,8 @@ inline float NeuralNode::product(){
 		return input1->currentOutput * weight1;
 	}else{
 		return	input1->currentOutput * weight1
-				*
-				input2->currentOutput * weight2;
+			*
+			input2->currentOutput * weight2;
 	}
 }
 
@@ -161,8 +161,8 @@ inline float NeuralNode::divide(){
 		return input1->currentOutput * weight1;
 	}else{
 		return	input1->currentOutput * weight1
-				/
-				input2->currentOutput * weight2;
+			/
+			input2->currentOutput * weight2;
 	}
 }
 
@@ -295,9 +295,9 @@ inline float NeuralNode::myLog(){
 inline float NeuralNode::myExpt(){
 	if(input2 == NULL){return input1->currentOutput*weight1;} //default in2 to 1
 	return	pow(
-				input1->currentOutput*weight1 ,
-				input2->currentOutput*weight2
-			);
+		input1->currentOutput*weight1 ,
+		input2->currentOutput*weight2
+		);
 }
 
 inline float NeuralNode::sigmoid(){

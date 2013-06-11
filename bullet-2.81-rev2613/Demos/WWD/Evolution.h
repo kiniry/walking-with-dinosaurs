@@ -36,7 +36,6 @@ struct statistic{
 	float deviation;
 	int killed;
 	int population;
-
 };
 static double totalDiviation =0;
 static double timesDiviation =0;
@@ -45,7 +44,6 @@ static int cullAmount;
 
 void initEvolution(int noCreatures);
 std::vector<float>* normalizeFitness(std::vector<creature> *creatures, statistic* stats);
-
 
 double statistik(std::vector<creature>* creatures, statistic* stats);
 
@@ -65,4 +63,3 @@ creature getWorthyCreature(float fitnessSum, std::vector<creature> *creatures);
 
 const int survivalRatio = 20; //how many procent elite creatures are there?
 const int cullRatio = 50; //how many procent creatures must die?
-

@@ -93,7 +93,6 @@ private:
 	unsigned long timeBehind;
 	unsigned long time;
 
-
 	int noBoxes;
 	float fitness;
 	float fit1;
@@ -146,9 +145,6 @@ private:
 	float Physics::fitJump();
 	float Physics::fitMove();
 	float Physics::fitMove2();
-
-
-
 
 public:
 
