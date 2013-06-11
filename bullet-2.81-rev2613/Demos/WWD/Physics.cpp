@@ -790,7 +790,6 @@ btQuaternion Physics::getLocalRotation(int pre, int post, btScalar scew,int prev
 	}
 	*scewer*=(*scews.at(prevBoxIndex-1))*(*scews.at(prevBoxIndex-1));
 	scews.push_back(scewer);
-	printf("s: %d %d\n",pre,post);
 
 	btQuaternion rot;
 	if((pre==0 && post==4) || (pre==1 && post==0) || (pre==4 && post==5) || (pre==5 && post==1)){

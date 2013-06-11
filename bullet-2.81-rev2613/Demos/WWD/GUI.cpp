@@ -86,8 +86,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//init creature/world
 	WWDPhysics = new Physics();
 	readDNA(&saves.at(0)->dna,WWDPhysics);
-	//WWDPhysics->solveGroundConflicts();
-	//WWDPhysics->relaxCreature();
 	WWDPhysics->runSimStartUp();
 	WWDPhysics->reshape(simWidth,simHeight);
 
@@ -434,7 +432,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 		case ' ':
 			{
 				if (WWDPhysics)
-					WWDPhysics->clientResetScene();
+					//WWDPhysics->clientResetScene();
+					if(saves.size()>0){
+						SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);
+					}
 				break;
 			}
 		case 'Q':
@@ -501,8 +502,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 						WWDPhysics = new Physics();
 						SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_FITNESSTYPE_COMBOBOX,LBN_SELCHANGE),0);
 						readDNA(&saves.at(index)->dna,WWDPhysics);
-						//WWDPhysics->solveGroundConflicts();
-						//WWDPhysics->relaxCreature();
 						WWDPhysics->runSimStartUp();
 						WWDPhysics->reshape(simWidth,simHeight);
 					}
@@ -624,8 +623,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				WWDPhysics = new Physics();
 				WWDPhysics->setFitnesFunction(tmptest);
 				readDNA(&saves.at(saves.size()-1)->dna,WWDPhysics);
-				//WWDPhysics->solveGroundConflicts();
-				//WWDPhysics->relaxCreature();
 				WWDPhysics->runSimStartUp();
 				WWDPhysics->reshape(simWidth,simHeight);
 			}
@@ -1043,7 +1040,6 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 		printf("hell no :)");
 		break;}
 	default:
-		//SendMessage(progress,PBM_SETPOS,*roundCount,0);
 		return FALSE;
 	}
 	return TRUE;
@@ -1099,8 +1095,6 @@ void VFWInit(){
 	CoInitialize(NULL);
 	std::stringstream filename;
 	filename << directory<< "TheVideo.avi\0";
-	const char* string = "C:\\Users\\Tugsav\\Documents\\GitHub\\walking-with-dinosaurs\\bullet-2.81-rev2613\\TheVideo.avi";
-	//printf("%s",string);
 	pfile = new PAVIFILE();
 	VFWReturnVal = AVIFileOpen(pfile, filename.str().c_str(),OF_SHARE_DENY_WRITE|OF_CREATE,0L);
 	if(VFWReturnVal !=0 ){
