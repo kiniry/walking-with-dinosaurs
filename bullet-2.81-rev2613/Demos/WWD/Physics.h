@@ -189,10 +189,7 @@ public:
 
 
 	void addFitnessFunction(fitnessTest test,float weight){
-		fitnessStruct fitness;
-		fitness.type=test;
-		fitness.weight=weight;
-		fitness.value=0;
+		fitnessStruct fitness={test,weight,0};
 		tests.push_back(fitness);
 	}
 

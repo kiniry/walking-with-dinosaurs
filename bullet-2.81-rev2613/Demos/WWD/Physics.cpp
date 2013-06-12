@@ -383,7 +383,7 @@ void Physics::showInfo(int& xOffset,int& yStart, int yIncr){
 	displayProfileString(xOffset,yStart,blockTime);
 	yStart += yIncr;
 
-	sprintf(blockTime,"--- Current fitness value: %f ---", fitness );
+	sprintf(blockTime,"--- Current fitness value: %.4f ---", fitness );
 	displayProfileString(xOffset,yStart,blockTime);
 	yStart += yIncr;
 
@@ -1029,11 +1029,20 @@ void Physics::calcFitness(fitnessTest test, float* fit){
 		break;
 	case jump:
 		{
-			*fit=max(fitJump(),fitness);
+			*fit=max(fitJump(),*fit);
+		}
+		break;
+	case combi:
+		{
+			clearFitnessFunctions();
+			addFitnessFunction(jump,1);
+			addFitnessFunction(move,1);
+			calcFitness();
+			return;
 		}
 		break;
 	case none:
-		fitness=0;
+		*fit=0;
 
 		break;
 
@@ -1041,7 +1050,7 @@ void Physics::calcFitness(fitnessTest test, float* fit){
 
 		printf("unkown fitness test\n");
 	}
-	fitness= floorf((fitness) * 10000 + 0.5) / 10000;
+	*fit= floorf((*fit) * 10000 + 0.5) / 10000;
 }
 
 /**
