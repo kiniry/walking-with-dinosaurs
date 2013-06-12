@@ -1027,7 +1027,7 @@ void Physics::calcFitness(fitnessTest test){
 		{
 			fit2 = max(fit2, fitJump());
 			fit1+= fitMove2();
-			fitness=(fit1+1.)*(fitMove2()+1.);
+			fitness=(fit1+1.)*(fit2+1.);
 		}
 		break;
 	case none:
