@@ -118,7 +118,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SendMessage(hwndCombo,CB_SETITEMDATA, 7, none);
 
 	SendMessage(hwndCombo,CB_SETCURSEL,0,0);
-	WWDPhysics->setFitnesFunction(move);
+	WWDPhysics->addFitnessFunction(move,1);
 
 	HWND hWndButton=CreateWindowEx(NULL,TEXT("BUTTON"),	"RUN", WS_TABSTOP|WS_VISIBLE|WS_CHILD|BS_DEFPUSHBUTTON,
 		col1, row3, 100, 24,
@@ -472,7 +472,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				HWND hwndfit = GetDlgItem(hwnd, IDC_FITNESSTYPE_COMBOBOX);
 				int index = SendMessage(hwndfit, CB_GETCURSEL,0,0);
 				fitnessTest tmptest=(fitnessTest) SendMessage(hwndfit,CB_GETITEMDATA, index,0);
-				WWDPhysics->setFitnesFunction(tmptest);
+				WWDPhysics->clearFitnessFunctions();
+				WWDPhysics->addFitnessFunction(tmptest,1);
 				break;
 			}
 
@@ -612,7 +613,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				delete WWDPhysics;
 
 				WWDPhysics = new Physics();
-				WWDPhysics->setFitnesFunction(tmptest);
+				WWDPhysics->addFitnessFunction(tmptest,1);
 				readDNA(&saves.at(saves.size()-1)->dna,WWDPhysics);
 				WWDPhysics->runSimStartUp();
 				WWDPhysics->reshape(simWidth,simHeight);

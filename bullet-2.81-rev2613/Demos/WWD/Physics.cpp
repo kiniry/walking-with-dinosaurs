@@ -108,6 +108,7 @@ void Physics::checkForDismemberment(){
 	for(int i=0;i<m_dynamicsWorld->getNumConstraints();i++){
 		if(!m_dynamicsWorld->getConstraint(i)->isEnabled()){
 			fitness = -999999;
+			dead=true;
 			printf("broken\n");
 			break;
 		}
@@ -162,7 +163,7 @@ void Physics::simulationLoopStep(float stepSize){
 		}
 
 		//fitness test
-		calcFitness(testType);
+		calcFitness();
 	}
 	//fixed step... 1ms
 	m_dynamicsWorld->stepSimulation(stepSize);
@@ -235,8 +236,6 @@ bool Physics::relaxCreature(){
 			pastPoint=startPoint;
 			enableEffectors=true;
 			fitness=0;
-			fit1=0;
-			fit2=0;
 			printf("relax failed");
 			return false;
 		}
@@ -248,9 +247,6 @@ bool Physics::relaxCreature(){
 	enableEffectors=true;
 
 	fitness=0;
-	fit1=0;
-	fit2=0;
-
 	return true;
 }
 
@@ -268,6 +264,7 @@ void Physics::runSimulation(){
 		}
 	}else{
 		fitness = -999999;
+		dead=true;
 	}
 
 	checkForDismemberment();
@@ -396,14 +393,12 @@ void Physics::showInfo(int& xOffset,int& yStart, int yIncr){
 }
 
 void Physics::initPhysics(){
-	testType = move;
+	dead=false;
 	totaltime=0;
 	currentBoxIndex=0;
 	currentJointIndex=0;
 	noBoxes =0;
 	fitness=0;
-	fit1=0;
-	fit2=0;
 	enableEffectors=true;
 
 	setTexturing(true);
@@ -456,6 +451,7 @@ int Physics::createBox(int x1, int y1, int z1){
 	noBoxes++;
 	if(noBoxes>maxBoxes){
 		fitness= -999999;
+		dead=true;
 		totaltime=simulationTime;
 	}
 
@@ -871,7 +867,6 @@ void	Physics::clientResetScene(){
 
 void	Physics::exitPhysics(){
 	//cleanup in the reverse order of creation/initialization
-	/*	*/
 
 	while(scews.size()>0){
 		delete scews.at(scews.size()-1);
@@ -982,22 +977,19 @@ void Physics::testPhysics(){
 	solveGroundConflicts();
 }
 
-
-
-void Physics::calcFitness(fitnessTest test){
-	if(test!=combi){
-		calcFitness(test, &fitness);
-	}else{
-		calcFitness(testType1, testType2, weight1, weight2);
+void Physics::calcFitness(){
+	float tmpFitness=1;
+	for(int i=0;i<tests.size();i++){
+		calcFitness(tests.at(i).type,&tests.at(i).value);
+		if(dead){
+			fitness= -999999;
+			return;
+		}
+		tmpFitness*=tests.at(i).value*tests.at(i).weight+1;
 	}
+	fitness=max(tmpFitness-1, fitness);
 }
 
-void Physics::calcFitness(fitnessTest test1, fitnessTest test2, float wieght1, float weight2){
-
-	calcFitness(test1, &fit1);
-	calcFitness(test2, &fit2);
-	fitness=(fit1*wieght1+1.)*(fit2*weight2+1.);
-}
 
 /**
 *	calculates the fitness value
@@ -1016,7 +1008,7 @@ void Physics::calcFitness(fitnessTest test, float* fit){
 		break;
 	case dwarfslayerMove:
 		{
-			if(noBoxes<3){*fit = -999999; totaltime=simulationTime;}
+			if(noBoxes<3){*fit = -999999;dead=true; totaltime=simulationTime;}
 			else{*fit +=fitMove2();}
 		}
 		break;

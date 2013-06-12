@@ -95,8 +95,7 @@ private:
 
 	int noBoxes;
 	float fitness;
-	float fit1;
-	float fit2;
+	boolean dead;
 	float heighstPoint;
 	float lowestPoint;
 	float height;
@@ -118,11 +117,13 @@ private:
 	btConstraintSolver*	m_solver;
 
 	btDefaultCollisionConfiguration* m_collisionConfiguration;
-
-	fitnessTest testType;
-	fitnessTest testType1;
-	fitnessTest testType2;
-	float weight1, weight2;
+	
+	struct fitnessStruct{
+		fitnessTest type;
+		float weight;
+		float value;
+	};
+	std::vector<fitnessStruct> tests;
 
 
 	void	initPhysics();
@@ -177,24 +178,28 @@ public:
 	void calcFitness(fitnessTest test);
 	void calcFitness(fitnessTest test, float* fit);
 
+	void calcFitness();
+
 	bool relaxCreature();
 	void pointCamera();
 
 	Physics(){
 		initPhysics();
 	}
-	void setFitnesFunction(fitnessTest type){
-		setFitnesFunction(type,none,none,1,1);
+
+
+	void addFitnessFunction(fitnessTest test,float weight){
+		fitnessStruct fitness;
+		fitness.type=test;
+		fitness.weight=weight;
+		fitness.value=0;
+		tests.push_back(fitness);
 	}
-	void setFitnesFunction(fitnessTest type,fitnessTest type1,fitnessTest type2, float weight1, float weight2){
+
+	void clearFitnessFunctions(){
+		startPoint=calcPosition();
+		tests.clear();
 		fitness=0;
-		fit1=0;
-		fit2=0;
-		testType=type;
-		testType1=type1;
-		testType1=type1;
-		this->weight2=weight2;
-		this->weight1=weight1;
 	}
 
 
