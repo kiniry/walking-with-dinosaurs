@@ -89,7 +89,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//settings area
 	int row1=10,row2=35, row3 =60;
-	int col1 =160,col2=330,col3=600,col4=770;
+	int col1 =160,col2=col1+170,col3=500,col4=col3+170, col5=340,col6=col5+170;
 	HWND hWndFitS=CreateWindowEx(NULL,TEXT("STATIC"),	"Fitness Test",WS_CHILD|WS_VISIBLE,	col1, row1, 100, 18, hWnd, (HMENU)IDC_TEST_STATIC, GetModuleHandle(NULL),	NULL);
 	HWND hwndCombo = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("combobox"), "", WS_CHILD | WS_VISIBLE| CBS_DROPDOWNLIST ,col2, row1-5, 150, 24, hWnd,  (HMENU)IDC_FITNESSTYPE_COMBOBOX, GetModuleHandle(NULL), NULL);
 
@@ -137,7 +137,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	HWND hWndNoGS=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE|ES_NUMBER,	col2, row2, 42, 18,
 		hWnd, (HMENU)IDC_NOG_EDIT, GetModuleHandle(NULL),	NULL);
 
-	HWND hWndPopS=CreateWindowEx(NULL,TEXT("STATIC"),	"Population Size",WS_CHILD|WS_VISIBLE,	col3, row1, 100, 18,
+	HWND hWndPopS=CreateWindowEx(NULL,TEXT("STATIC"),	"Population Size",WS_CHILD|WS_VISIBLE,	col3, row1, 150, 18,
 		hWnd, (HMENU)IDC_POP_STATIC, GetModuleHandle(NULL),	NULL);
 	HWND hWndPop=CreateWindowEx(NULL,TEXT("EDIT"),	"10",WS_CHILD|WS_VISIBLE |ES_NUMBER,	col4, row1, 42, 18,
 		hWnd, (HMENU)IDC_POP_EDIT, GetModuleHandle(NULL),	NULL);

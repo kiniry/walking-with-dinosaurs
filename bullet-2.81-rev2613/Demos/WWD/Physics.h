@@ -49,7 +49,7 @@ struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallbac
 
 //real world units
 //average density of the human body 1062 kg/m3 acording to http://www.dtic.mil/dtic/tr/fulltext/u2/639241.pdf
-#define DensityHuman 1062
+#define DensityHuman 1062.
 
 //average strength human cross-sectional area 6.3 kg/cm2 http://link.springer.com/article/10.1007%2FBF00696087
 #define musclePercentage 0.15 //the ca percentage of muscle mass in a joint
@@ -119,6 +119,12 @@ private:
 
 	btDefaultCollisionConfiguration* m_collisionConfiguration;
 
+	fitnessTest testType;
+	fitnessTest testType1;
+	fitnessTest testType2;
+	float weight1, weight2;
+
+
 	void	initPhysics();
 
 	void	exitPhysics();
@@ -167,20 +173,31 @@ public:
 		return fitness;
 	}
 
+	void calcFitness(fitnessTest test1, fitnessTest test2, float wieght1, float weight2);
 	void calcFitness(fitnessTest test);
+	void calcFitness(fitnessTest test, float* fit);
+
 	bool relaxCreature();
 	void pointCamera();
 
 	Physics(){
 		initPhysics();
 	}
-
 	void setFitnesFunction(fitnessTest type){
+		setFitnesFunction(type,none,none,1,1);
+	}
+	void setFitnesFunction(fitnessTest type,fitnessTest type1,fitnessTest type2, float weight1, float weight2){
 		fitness=0;
 		fit1=0;
 		fit2=0;
 		testType=type;
+		testType1=type1;
+		testType1=type1;
+		this->weight2=weight2;
+		this->weight1=weight1;
 	}
+
+
 
 	void runSimulation();
 
@@ -210,5 +227,5 @@ public:
 	void testPhysics();
 	void calcSize();
 	void solveGroundConflicts();
-	fitnessTest testType;
+
 };

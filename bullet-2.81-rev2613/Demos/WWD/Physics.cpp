@@ -144,20 +144,20 @@ void Physics::simulationLoopStep(float stepSize){
 		}
 		if(enableEffectors){
 			for(int i=0;i< (int) effectorNNindex.size();i=i+3){
-#ifdef NNMAINONLY
+				#ifdef NNMAINONLY
 				setEffect(i/3,
 					theNet->getOutput(effectorNNindex.at(i)),
 					theNet->getOutput(effectorNNindex.at(i+1)),
 					theNet->getOutput(effectorNNindex.at(i+2))
 					);
-#else
+				#else
 				setEffect(i/3,
 					subnets.at(i/3)->getOutput(effectorNNindex.at(i)),
 					subnets.at(i/3)->getOutput(effectorNNindex.at(i+1)),
 					subnets.at(i/3)->getOutput(effectorNNindex.at(i+2))
 					);
 
-#endif
+				#endif
 			}
 		}
 
@@ -982,25 +982,42 @@ void Physics::testPhysics(){
 	solveGroundConflicts();
 }
 
+
+
+void Physics::calcFitness(fitnessTest test){
+	if(test!=combi){
+		calcFitness(test, &fitness);
+	}else{
+		calcFitness(testType1, testType2, weight1, weight2);
+	}
+}
+
+void Physics::calcFitness(fitnessTest test1, fitnessTest test2, float wieght1, float weight2){
+
+	calcFitness(test1, &fit1);
+	calcFitness(test2, &fit2);
+	fitness=(fit1*wieght1+1.)*(fit2*weight2+1.);
+}
+
 /**
 *	calculates the fitness value
 */
-void Physics::calcFitness(fitnessTest test){
+void Physics::calcFitness(fitnessTest test, float* fit){
 	switch(test){
 	case move:
 		{
-			fitness= fitMove();
+			*fit= fitMove();
 		}
 		break;
 	case iterateMove:
 		{
-			fitness +=fitMove2();
+			*fit +=fitMove2();
 		}
 		break;
 	case dwarfslayerMove:
 		{
-			if(noBoxes<3){fitness = -999999; totaltime=simulationTime;}
-			else{fitness +=fitMove2();}
+			if(noBoxes<3){*fit = -999999; totaltime=simulationTime;}
+			else{*fit +=fitMove2();}
 		}
 		break;
 	case fatLovingMove:
@@ -1010,24 +1027,17 @@ void Physics::calcFitness(fitnessTest test){
 			for (int i = 1; i <= noBoxes; i++){
 				totMass += 1.f/(float)((btRigidBody*) objs.at(i))->getInvMass();
 			}
-			fitness +=(fitMove2()*totMass/(float)DensityHuman);
+			*fit +=(fitMove2()*totMass/DensityHuman);
 		}
 		break;
 	case boxLovingMove:
 		{
-			fitness +=fitMove2()*(float)noBoxes;
+			*fit +=fitMove2()*(float)noBoxes;
 		}
 		break;
 	case jump:
 		{
-			fitness=max(fitJump(),fitness);
-		}
-		break;
-	case combi:
-		{
-			fit2 = max(fit2, fitJump());
-			fit1+= fitMove2();
-			fitness=(fit1+1.)*(fit2+1.);
+			*fit=max(fitJump(),fitness);
 		}
 		break;
 	case none:
@@ -1037,7 +1047,7 @@ void Physics::calcFitness(fitnessTest test){
 
 	default:
 
-		perror("unkown fitness test\n");
+		printf("unkown fitness test\n");
 	}
 	fitness= floorf((fitness) * 10000 + 0.5) / 10000;
 }
