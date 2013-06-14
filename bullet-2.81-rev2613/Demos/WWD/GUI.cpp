@@ -147,6 +147,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	HWND hWndViewRateB=CreateWindowEx(NULL,TEXT("BUTTON"),	"",WS_CHILD|WS_VISIBLE | BS_CHECKBOX,	col4, row2, 100, 18,
 		hWnd, (HMENU)IDC_VIEW_CHECKBOX, GetModuleHandle(NULL),	NULL);
+	SendMessage(hWndViewRateB, BM_SETCHECK, BST_CHECKED,0);
+	fixedSteps=true;
+	EnableWindow(hWndViewRateB,false);
 
 	MSG msg = messageLoop(hDC, hRC);
 	return msg.wParam;
