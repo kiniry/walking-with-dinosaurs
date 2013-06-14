@@ -171,9 +171,10 @@ int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, 
 	int usedChance = 0;
 	int nrOfNodes = inputAmount; //assume the most probable case
 
-	for(int i=1;i<inputAmount;i++){
-		if(inputAmount-i<=0){break;}	//since we reached this, none of the chances procced... since the remaining chance-
-		//all belong to the "nrOfNodes = inputAmount" case, this is chosen
+	for(int i=1;i<(inputAmount-1);i++){
+		if(inputAmount-i<=0){break;}	//Guard...
+										//since we reached the end, none of the chances procced... since the remaining chance-
+										//all belong to the "nrOfNodes = inputAmount" case, this is chosen
 		double dChance = 300;
 		for(int j=0;j<i;j++){
 			dChance = dChance / 2;		//dChance is calculated... the further from the MPC, the lower chance
