@@ -222,14 +222,31 @@ bool Physics::relaxCreature(){
 	btCollisionObject* ground = m_dynamicsWorld->getCollisionObjectArray().at(0);
 	btScalar friction = ground->getFriction();
 	ground->setFriction(0);
-	float last = 0.f;
+	//float last = 0.f;
+	float margin = 0.0000001f;
+	int size = m_dynamicsWorld->getCollisionObjectArray().size();
+	std::vector<float> last = std::vector<float>();
+	std::vector<float> Ys = std::vector<float>();
+	for(int i = 1; i < m_dynamicsWorld->getCollisionObjectArray().size(); i++){
+		last.push_back(m_dynamicsWorld->getCollisionObjectArray().at(i)->getWorldTransform().getOrigin().y());
+	}
 	int count = 0;int totalCount=0;
 	while(count<20){
 		simulationLoopStep(1/1000.f);
-		float center = calcPosition().y();
-		if(center<(last+0.0000001f)&&center>(last-0.0000001f)){count++;}
+		//float center = calcPosition().y();
+		//if(center<(last+0.0000001f)&&center>(last-0.0000001f)){count++;}
+		bool succeeded = true;
+		for(int j = 1; j<m_dynamicsWorld->getCollisionObjectArray().size(); j++){
+			float y = m_dynamicsWorld->getCollisionObjectArray().at(j)->getWorldTransform().getOrigin().y();
+			if(!(y<(last.at(j-1)+margin) && y>(last.at(j-1)-margin))){
+				succeeded = false;
+			}
+			Ys.push_back(y);
+		}
+		if(succeeded){count++;}
 		else{count=0;}
-		last = center;
+		last.swap(Ys);
+		Ys.clear();
 		if(totalCount>20000){
 			ground->setFriction(friction);
 			startPoint=calcPosition();
