@@ -223,26 +223,15 @@ bool Physics::relaxCreature(){
 	btScalar friction = ground->getFriction();
 	ground->setFriction(0);
 	for(int run=0;run<2;run++){
-		float lastY = 0.f;
-		float lastX = 0.f;
-		float lastZ = 0.f;
+		float last = 0.f;
 		int count = 0;int totalCount=0;
-		float margin = 0.00001f;
+		float margin = 0.0000001f;
 		while(count<20){
 			simulationLoopStep(1/1000.f);
-			btVector3 pos = calcPosition();
-			//float center = pos.y();
-			if(pos.y()<(lastY+margin)&&pos.y()>(lastY-margin)
-					&&
-					(run==0|| 
-						(
-							pos.x()<(lastX+margin)&&pos.x()>(lastX-margin)
-							&&pos.z()<(lastZ+margin)&&pos.z()>(lastZ-margin)
-						)
-					)
-				){count++;}
+			float center = calcPosition().y();
+			if(center<(last+margin)&&center>(last-margin)){count++;}
 			else{count=0;}
-			lastY = pos.y();lastX = pos.x();lastZ = pos.z();
+			last = center;
 			if(totalCount>20000){
 				ground->setFriction(friction);
 				startPoint=calcPosition();
