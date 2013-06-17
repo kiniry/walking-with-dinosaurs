@@ -151,6 +151,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	fixedSteps=true;
 	EnableWindow(hWndViewRateB,false);
 
+
+
+//tooltips
+HWND hwnd_tip = CreateWindowExW(0, TOOLTIPS_CLASSW, NULL, 
+  WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP, 
+  CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+  NULL, NULL, GetModuleHandle(NULL), NULL
+);
+SetWindowPos(hwnd_tip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+
+TOOLINFOW ti;
+memset(&ti, 0, sizeof(TOOLINFOW));
+ti.cbSize = sizeof(TOOLINFOW);
+ti.hwnd = hWnd;
+ti.uId = (UINT) hWndButton;
+ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
+ti.lpszText = L"This tip is shown correctly, including unicode characters.";
+SendMessageW(hwnd_tip, TTM_ADDTOOLW, 0, (LPARAM) &ti);
+
+
+
 	MSG msg = messageLoop(hDC, hRC);
 	return msg.wParam;
 }
@@ -305,7 +326,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 		}
 	case 0x020A://WM_MOUSEWHEEL:
 		{
-			int  zDelta = (short)HIWORD(wParam);
+			int zDelta = (short)HIWORD(wParam);
 			int xPos = LOWORD(lParam);
 			int yPos = HIWORD(lParam);
 			if (zDelta>0)
@@ -752,7 +773,7 @@ void loadSaves(){
 
 	if(!is.good()){
 		is.close();
-		MessageBox(NULL, "Error 404: file not found\nDefault value will be used", TEXT("Failed to load saves"), MB_OK | MB_ICONERROR);
+		MessageBox(NULL, "Error 404: Savefile not found\nDefault values will be used instead", TEXT("Failed to load saves"), MB_OK | MB_ICONERROR);
 		loadDefault();
 		return;
 	}
