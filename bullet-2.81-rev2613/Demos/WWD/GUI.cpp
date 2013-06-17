@@ -714,8 +714,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 
 			break;
 		case ID_VIDEO_CAPTURE:
-			VFWInit();
-			captureVideo(hDC);
+			if(VFWInit()){
+				captureVideo(hDC);
+				MessageBox(hwnd, "Video Captured", TEXT("DONE"), MB_OK | MB_ICONINFORMATION);
+			}else{
+				MessageBox(hwnd, "Video Capture failed to start\n Try another codec", TEXT("ERROR"), MB_OK | MB_ICONERROR);
+			}
+			SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);
 			break;
 		default:
 			printf("");
@@ -1020,6 +1025,7 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 	}
 	return TRUE;
 }
+
 void makeTooltip(HWND hwnd, HWND hwnd_tip, HWND field, LPWSTR message){
 		TOOLINFOW ti;
 		memset(&ti, 0, sizeof(TOOLINFOW));
@@ -1145,7 +1151,7 @@ VOID CALLBACK update(){
 	}
 }
 
-void VFWInit(){
+boolean VFWInit(){
 	AVIFileInit();
 	CoInitialize(NULL);
 	std::stringstream filename;
@@ -1154,6 +1160,7 @@ void VFWInit(){
 	VFWReturnVal = AVIFileOpen(pfile, filename.str().c_str(),OF_SHARE_DENY_WRITE|OF_CREATE,0L);
 	if(VFWReturnVal !=0 ){
 		printf("failfailfail\n");
+		return false;
 	}
 
 	AVISTREAMINFO* strhdr = new AVISTREAMINFO();// ZeroMemory(&strhdr,sizeof(strhdr));
@@ -1166,18 +1173,33 @@ void VFWInit(){
 	VFWReturnVal = AVIFileCreateStream(*pfile,pstream,strhdr);
 	if(VFWReturnVal !=0 ){
 		printf("failfailfail\n");
+		return false;
 	}
 
 	poptions = new AVICOMPRESSOPTIONS();
 
 	aopts[0] = poptions;
-
 	AVISaveOptions(hWnd,0,1, pstream,aopts);
+	
+	DWORD flag=poptions->dwFlags &AVICOMPRESSF_VALID;
+	if(!(poptions->dwFlags &AVICOMPRESSF_VALID)){
+	
+		printf("failed");
+		delete poptions;
+		return false;
+	}
 
 	pcompressedstream = new PAVISTREAM();
 	VFWReturnVal = AVIMakeCompressedStream(pcompressedstream,*pstream,aopts[0],NULL);
 	if(VFWReturnVal !=AVIERR_OK ){
 		printf("failfailfail\n");
+		AVIStreamRelease(*pcompressedstream);
+		delete(pcompressedstream);
+		AVIStreamRelease(*pstream);
+		delete pstream;
+		AVISaveOptionsFree(1,aopts);
+		AVIFileRelease(*pfile);
+		return false;
 	}
 
 	bi = new BITMAPINFOHEADER();
@@ -1196,7 +1218,16 @@ void VFWInit(){
 	VFWReturnVal = AVIStreamSetFormat(*pcompressedstream,0,bi,bi->biSize);
 	if(VFWReturnVal != 0 ){
 		printf("failfailfail\n");
+		AVIStreamRelease(*pcompressedstream);
+		delete(pcompressedstream);
+		AVIStreamRelease(*pstream);
+		delete pstream;
+		AVISaveOptionsFree(1,aopts);
+		AVIFileRelease(*pfile);
+
+		return false;
 	}
+	return true;
 }
 
 void captureVideo(HDC hDC){

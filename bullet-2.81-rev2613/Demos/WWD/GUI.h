@@ -50,7 +50,7 @@ AVICOMPRESSOPTIONS* poptions;
 BITMAPINFOHEADER* bi;
 AVICOMPRESSOPTIONS* aopts[1];
 long currentFrame = 0;
-void VFWInit();
+BOOLEAN VFWInit();
 void captureVideo(HDC hDC);
 //\vfw
 
