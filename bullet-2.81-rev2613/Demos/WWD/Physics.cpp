@@ -253,6 +253,9 @@ bool Physics::relaxCreature(){
 			pastPoint=startPoint;
 			enableEffectors=true;
 			fitness=0;
+			for(int dead=0;dead<tests.size();dead++){
+				tests.at(dead).value=0;
+			}
 			printf("relax failed");
 			return false;
 		}
@@ -264,6 +267,9 @@ bool Physics::relaxCreature(){
 	enableEffectors=true;
 
 	fitness=0;
+	for(int dead=0;dead<tests.size();dead++){
+		tests.at(dead).value=0;
+	}
 	return true;
 }
 
