@@ -222,32 +222,28 @@ bool Physics::relaxCreature(){
 	btCollisionObject* ground = m_dynamicsWorld->getCollisionObjectArray().at(0);
 	btScalar friction = ground->getFriction();
 	ground->setFriction(0);
-	for(int run=0;run<2;run++){
-		float last = 0.f;
-		int count = 0;int totalCount=0;
-		float margin = 0.0000001f;
-		while(count<20){
-			simulationLoopStep(1/1000.f);
-			float center = calcPosition().y();
-			if(center<(last+margin)&&center>(last-margin)){count++;}
-			else{count=0;}
-			last = center;
-			if(totalCount>20000){
-				ground->setFriction(friction);
-				startPoint=calcPosition();
-				pastPoint=startPoint;
-				enableEffectors=true;
-				fitness=0;
-				printf("relax failed");
-				return false;
-			}
-			totalCount++;
+	float last = 0.f;
+	int count = 0;int totalCount=0;
+	while(count<20){
+		simulationLoopStep(1/1000.f);
+		float center = calcPosition().y();
+		if(center<(last+0.0000001f)&&center>(last-0.0000001f)){count++;}
+		else{count=0;}
+		last = center;
+		if(totalCount>20000){
+			ground->setFriction(friction);
+			startPoint=calcPosition();
+			pastPoint=startPoint;
+			enableEffectors=true;
+			fitness=0;
+			printf("relax failed");
+			return false;
 		}
-		ground->setFriction(friction);
+		totalCount++;
 	}
+	ground->setFriction(friction);
 	startPoint=calcPosition();
 	pastPoint=startPoint;
-
 	enableEffectors=true;
 
 	fitness=0;
