@@ -11,9 +11,6 @@ faldende fitness værdi
 dead codecs 
 	intel iyu
 	
-cancel button codec
-
-	
 speed up mtree
 
 
