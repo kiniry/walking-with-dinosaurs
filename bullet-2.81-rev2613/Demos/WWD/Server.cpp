@@ -1,6 +1,6 @@
 #include "Server.h"
 
-creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor,fitnessTest type, progressInfo* proInfo ){
+creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor,fitnessTest type, progressInfo* proInfo, BOOLEAN* stopSim){
 	std::srand(std::time(0));
 	initEvolution(populationSize);
 	std::vector<creature>* creatures = new std::vector<creature>();
@@ -41,13 +41,18 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 
 		proInfo->stats=evolve(creatures);//evolve clean up the MTree's so no need for that
 
-		for(int j=0;j< (int) (creatures->size()/5.+0.5);j++){
-			printf("nr %d %f\n",j,creatures->at(j).fitness);
-		}
+//		for(int j=0;j< (int) (creatures->size()/5.+0.5);j++){
+///			printf("nr %d %f\n",j,creatures->at(j).fitness);
+//		}
 
 		start=survivors;
 		proInfo->rounds = i+1;
-		printf("end of round %d \n",i);
+		if(*stopSim){
+			stopSim=false;
+			proInfo->rounds=nrOfGenerations;
+			break;
+		}
+//		printf("end of round %d \n",i);
 	}
 	sendOrders(stop);
 

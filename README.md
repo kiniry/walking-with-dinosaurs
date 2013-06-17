@@ -13,11 +13,6 @@ dead codecs
 	
 cancel button codec
 
-
-fix progress view
-	cancel
-	hover info
-	
 	
 speed up mtree
 

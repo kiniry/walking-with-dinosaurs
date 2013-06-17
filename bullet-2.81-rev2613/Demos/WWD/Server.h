@@ -14,7 +14,7 @@ struct progressInfo{
 	float rounds;
 };
 
-creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor, fitnessTest type, progressInfo* progressInfo);
+creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std::vector<int> ancestor, fitnessTest type, progressInfo* progressInfo, BOOLEAN* stopSim);
 
 int setupServer(int pop, int cores);
 void startPrograms(fitnessTest);

@@ -151,7 +151,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	fixedSteps=true;
 	EnableWindow(hWndViewRateB,false);
 
-
+/*
 
 //tooltips
 HWND hwnd_tip = CreateWindowExW(0, TOOLTIPS_CLASSW, NULL, 
@@ -170,7 +170,7 @@ ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
 ti.lpszText = L"This tip is shown correctly, including unicode characters.";
 SendMessageW(hwnd_tip, TTM_ADDTOOLW, 0, (LPARAM) &ti);
 
-
+*/
 
 	MSG msg = messageLoop(hDC, hRC);
 	return msg.wParam;
@@ -610,6 +610,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				aList->p=pop;
 				aList->nG=noG;
 				aList->iI=itemIndex;
+				aList->stopSim=&stopSim;
 				aList->type=tmptest;
 				aList->theResult = new creature();
 
@@ -938,8 +939,9 @@ void saveSaves(std::vector<save*> saves){
 	os.close();
 }
 
+// console borrowed from http://justcheckingonall.wordpress.com/2008/08/29/console-window-win32-app/
+// only used in debugmode
 void console(){
-	// console borrowed from http://justcheckingonall.wordpress.com/2008/08/29/console-window-win32-app/
 	AllocConsole();
 
 	HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -998,7 +1000,7 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 					*result=text;
 					delete text;
 				}else{
-					text = "new Creature";
+					text = "the Nameless One";
 					*result=text;
 				}
 
@@ -1007,8 +1009,6 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 				break;
 			}
 		case IDCANCEL:
-			MessageBox(hwnd, "Bye!", "This is also a message",
-				MB_OK | MB_ICONEXCLAMATION);
 			TCHAR * text = "the Nameless One";
 			*result=text;
 			EndDialog(hwnd, 0);
@@ -1020,12 +1020,24 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 	}
 	return TRUE;
 }
+void makeTooltip(HWND hwnd, HWND hwnd_tip, HWND field, LPWSTR message){
+		TOOLINFOW ti;
+		memset(&ti, 0, sizeof(TOOLINFOW));
+		ti.cbSize = sizeof(TOOLINFOW);
+		ti.hwnd = hwnd;
+		ti.uId = (UINT) field;
+		ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
+		ti.lpszText = message;
+		SendMessageW(hwnd_tip, TTM_ADDTOOLW, 0, (LPARAM) &ti);	
 
+}
 BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	switch(Message){
-	case WM_INITDIALOG:{
+	case WM_INITDIALOG:
+		{
 		int nrGens =*((int*)lParam);
 		//printf("thevalue %d\n",nrGens); //works
+		stopButton= GetDlgItem(hwnd,ID_STOP);
 		progress = GetDlgItem(hwnd,IDC_PROGRESSBAR);
 		okButton = GetDlgItem(hwnd,IDOK);
 		progressText = GetDlgItem(hwnd,IDC_STATIC_PROGRESS);
@@ -1036,7 +1048,32 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 		killedText = GetDlgItem(hwnd,IDC_STATIC_KILLED);
 		deviationText = GetDlgItem(hwnd,IDC_STATIC_DEVIATION);
 		SendMessage(progress, PBM_SETRANGE, 0, MAKELPARAM(0, nrGens));
-		break;}
+
+		//tooltips
+		HWND hwnd_tip = CreateWindowExW(0, TOOLTIPS_CLASSW, NULL, 
+		  WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP, 
+		  CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		  NULL, NULL, GetModuleHandle(NULL), NULL
+		);
+		SetWindowPos(hwnd_tip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+
+
+		makeTooltip(hwnd,hwnd_tip,maxText,L"Stops the simulation as soone as the current genereation is done.\nThe result will not be deleted");
+
+		makeTooltip(hwnd,hwnd_tip,maxText,L"Highest fitness value reached");
+		makeTooltip(hwnd,hwnd_tip,GetDlgItem(hwnd,IDC_STATIC_MAX2),L"Highest fitness value reached");
+		makeTooltip(hwnd,hwnd_tip,minText,L"Lowest fitness value reached");
+		makeTooltip(hwnd,hwnd_tip,GetDlgItem(hwnd,IDC_STATIC_MIN2),L"Mean of the normalised values (0-100)");		
+		makeTooltip(hwnd,hwnd_tip,meanText,L"Mean of the normalised values (0-100)");
+		makeTooltip(hwnd,hwnd_tip,GetDlgItem(hwnd,IDC_STATIC_MEAN2),L"Lowest fitness value reached");		
+		makeTooltip(hwnd,hwnd_tip,deviationText,L"Deviation of the normalised values (0-100)");
+		makeTooltip(hwnd,hwnd_tip,GetDlgItem(hwnd,IDC_STATIC_DEVIATION2),L"Deviation of the normalised values (0-100)");		
+		makeTooltip(hwnd,hwnd_tip,medianText,L"Median of the normalised values (0-100)");
+		makeTooltip(hwnd,hwnd_tip,GetDlgItem(hwnd,IDC_STATIC_MEDIAN2),L"Median of the normalised values (0-100)");		
+		makeTooltip(hwnd,hwnd_tip,killedText,L"Percentage killed during current Generation");
+		makeTooltip(hwnd,hwnd_tip,GetDlgItem(hwnd,IDC_STATIC_KILLED2),L"Percentage killed during current Generation");	
+		break;
+		}
 	case WM_COMMAND:{
 		switch(LOWORD(wParam))
 		{
@@ -1045,9 +1082,14 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 				EndDialog(hwnd,0);
 				break;
 			}
+		case ID_STOP:
+			stopSim=true;
+			EnableWindow(GetDlgItem(hwnd,ID_STOP),FALSE);
+			break;
+		
 		}
 		break;
-					}
+		}
 	case WM_CLOSE:{
 		printf("hell no :)");
 		break;}
@@ -1059,7 +1101,7 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 unsigned int _stdcall runServer(void* args){
 	argumentList* aList = (argumentList*) args;
 
-	*aList->theResult = pipeServerMain(aList->nC,aList->p,aList->nG,saves.at(aList->iI)->dna, aList->type,proInfo);
+	*aList->theResult = pipeServerMain(aList->nC,aList->p,aList->nG,saves.at(aList->iI)->dna, aList->type,proInfo, aList->stopSim);
 
 	return 1;
 }
@@ -1069,7 +1111,7 @@ VOID CALLBACK update(){
 		SendMessage(progress,PBM_SETPOS,proInfo->rounds,0);
 
 		std::stringstream aStream;
-		aStream <<"Current Progress: "<< proInfo->rounds<<" out of "<<noGenerations<<"\n";
+		aStream <<"Current Progress: "<< proInfo->rounds<<" out of "<<noGenerations<<" generations completed\n";
 		SetWindowText(progressText,aStream.str().c_str());
 
 		aStream.str("");
@@ -1097,7 +1139,8 @@ VOID CALLBACK update(){
 		SetWindowText(deviationText,aStream.str().c_str());
 
 		if(proInfo->rounds>=noGenerations){
-			ShowWindow(okButton,SW_SHOW);
+			EnableWindow(okButton,TRUE);
+			EnableWindow(stopButton,FALSE);
 		}
 	}
 }

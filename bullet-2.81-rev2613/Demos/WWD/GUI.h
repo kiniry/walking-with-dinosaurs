@@ -73,6 +73,7 @@ int argc;
 
 HWND progress;
 HWND okButton;
+HWND stopButton;
 HWND progressText;
 HWND maxText;
 HWND minText;
@@ -87,6 +88,7 @@ struct argumentList{
 	int p;
 	int nG;
 	int iI;
+	BOOLEAN* stopSim;
 	fitnessTest type;
 	creature* theResult;
 };
@@ -100,6 +102,7 @@ std::vector<save*> saves;
 static Physics* WWDPhysics;
 progressInfo* proInfo;
 static int popupMenuSel =0;
+static BOOLEAN stopSim=false;
 
 // Function Declarations
 MSG messageLoop(	HDC hDC, HGLRC hRC);
