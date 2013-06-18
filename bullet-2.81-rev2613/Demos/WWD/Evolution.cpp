@@ -21,9 +21,12 @@ statistic evolve(std::vector<creature>* creatures){
 	statistic stats = statistic();
 	//float fitnessSumElites = 0;
 	//float fitnessSumBreeders = 0;
-	std::vector<creature> result;
-	std::vector<creature> elites;
-	std::vector<creature> breeders;
+	std::vector<creature> result = std::vector<creature>();
+	result.reserve(creatures->size());
+	std::vector<creature> elites = std::vector<creature>();
+	elites.reserve(survivors);
+	std::vector<creature> breeders = std::vector<creature>();
+	breeders.reserve(creatures->size()-survivors-cullAmount);
 
 	std::sort(creatures->begin(), creatures->end(), compareCreatures);
 
@@ -35,7 +38,7 @@ statistic evolve(std::vector<creature>* creatures){
 		//fitnessSumElites += (float) (creatures->at(i).fitness>0.001?creatures->at(i).fitness:0.001);
 	}
 
-	for(int i =survivors; i<(((int)creatures->size())-survivors-cullAmount); i++){
+	for(int i =survivors; i<(((int)creatures->size())-cullAmount); i++){
 		breeders.push_back(creatures->at(i));
 		//fitnessSumBreeders += (float) (creatures->at(i).fitness>0.001?creatures->at(i).fitness:0.001);
 	}

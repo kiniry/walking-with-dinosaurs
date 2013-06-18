@@ -35,8 +35,14 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 		assertInt(creatures->size(), populationSize);
 
 		//Create MTree's
-		for(int j=0;j<(int)creatures->size();j++){
-			creatures->at(j).treePointer=getMTree(&creatures->at(j).dna);
+		if(i==0){
+			for(int j=0;j<(int)creatures->size();j++){
+				creatures->at(j).treePointer=getMTree(&creatures->at(j).dna);
+			}
+		}else{
+			for(int j=0;j<(int)creatures->size()-cullAmount;j++){
+				creatures->at(j).treePointer=getMTree(&creatures->at(j).dna);
+			}
 		}
 
 		proInfo->stats=evolve(creatures);//evolve clean up the MTree's so no need for that
