@@ -1,8 +1,8 @@
 /**
-*	this files handels removing the creatures with lowest fitness score and adding new creatures based on the surving creatures.
-*	this means the resulting batch of creatures will be a combination of surviors and children of the survivors
+*	this file handles removing the creatures with lowest fitness score and adding new creatures based on the surving creatures.
+*	this means the resulting batch of creatures will be a combination of survivors and children of the survivors
 *
-*	the correctness of the new dna belonging to the children are not check in this file.
+*	the correctness of the new dna belonging to the children are not checked in this file.
 *
 **/
 
@@ -50,7 +50,6 @@ double statistik(std::vector<creature>* creatures, statistic* stats);
 static bool compareCreatures(const creature &a, const creature &b){
 	return a.fitness > b.fitness;
 }
-//std::vector<creature> evolve(std::vector<creature>* creatures);
 statistic evolve(std::vector<creature>* creatures);
 
 std::vector<int> mutate(const std::vector<int>  dna, double deviation);
@@ -61,5 +60,5 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2);
 
 creature getWorthyCreature(float fitnessSum, std::vector<creature> *creatures);
 
-const int survivalRatio = 20; //how many procent elite creatures are there?
-const int cullRatio = 50; //how many procent creatures must die?
+const int survivalRatio = 20; //how many percent elite creatures are there?
+const int cullRatio = 50; //how many percent creatures must die?
