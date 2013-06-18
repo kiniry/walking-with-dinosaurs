@@ -2,13 +2,14 @@
 
 std::vector<creature> getCreatures(std::string filename){
 	std::vector<creature> creatures;
+	
 
 	std::ifstream is;
 	is.open(filename,std::ios::in | std::ios::binary);
 
 	int noCreatures;
 	is.read((char*)&noCreatures, sizeof(int));
-
+	creatures.reserve(noCreatures);
 	for(int i=0;i<noCreatures;i++){
 		creature* tmpCreature =new creature();
 
