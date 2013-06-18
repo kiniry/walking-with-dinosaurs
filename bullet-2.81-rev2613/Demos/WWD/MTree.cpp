@@ -53,8 +53,9 @@ std::vector<int> MTree::crossBreed(std::vector<int> myDNA, std::vector<int> seed
 		}
 		return NNcrossBreed(myDNA,seedDNA,this->NNPart,((partNode*)theOtherNode)->NNChildren);
 	}
-
+#ifdef _DEBUG
 	printf("FAIL");
+#endif
 	return std::vector<int>();
 }
 
@@ -85,8 +86,9 @@ std::vector<int> MTree::NNcrossBreed(std::vector<int> myDNA, std::vector<int> se
 			,seedDNA.begin()+aSeedNode->getStart(),seedDNA.begin()+aSeedNode->getEnd());
 		return myDNA;
 	}
-
+#ifdef _DEBUG
 	printf("error - NNbreeder!");
+#endif
 }
 
 MTreeNode* MTree::ReduceImpact(MTreeNode* node,int choosePercentage){

@@ -206,7 +206,9 @@ public:
 	void runSimStartUp(){
 		solveGroundConflicts();
 		if(!(checkInternCollissions() && relaxCreature() && checkHeight())){
+#ifdef _DEBUG
 			printf("Startup Error");
+#endif
 		}
 		totaltime=0;
 		last=0;

@@ -389,7 +389,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RUN_MBUTTON,"Run");
 				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_RENAME_MBUTTON,"Rename");
 				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_DELETE_MBUTTON,"Delete");
+#ifdef _DEBUG
 				InsertMenu(popupMenu,0,MF_BYPOSITION|MF_STRING,IDC_SHOWDNA_MBUTTON,"Show DNA");
+#endif
 				GetCursorPos(&p);
 				TrackPopupMenu(popupMenu,TPM_TOPALIGN|TPM_LEFTALIGN,p.x,p.y,0,hwnd,NULL);
 			}
@@ -478,13 +480,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 				case BST_CHECKED:
 					SendMessage(check, BM_SETCHECK, BST_UNCHECKED,0);
 					fixedSteps=false;
+#ifdef _DEBUG
 					printf("off\n");
+#endif
 					break;
 
 				case BST_UNCHECKED:
 					SendMessage(check, BM_SETCHECK, BST_CHECKED,0);
 					fixedSteps=true;
+#ifdef _DEBUG
 					printf("on\n");
+#endif
 					break;
 				}
 			}
@@ -695,6 +701,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 			break;
 		case IDC_SHOWDNA_MBUTTON:
 			{
+#ifdef _DEBUG
 				HWND hwndList = GetDlgItem(hwnd, IDC_LISTBOX);
 
 				printf("DNA of %s\n",saves.at(popupMenuSel)->name.c_str());
@@ -702,6 +709,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 					printf("%d, ", saves.at(popupMenuSel)->dna.at(i));
 				}
 				printf("\n");
+#endif
 			}
 			break;
 		case ID_FILE_SAVE40003:
@@ -723,7 +731,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 			SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);
 			break;
 		default:
+#ifdef _DEBUG
 			printf("");
+#endif
 		}
 		break;
 
@@ -914,7 +924,9 @@ void loadDefault(){
 }
 
 void saveSaves(std::vector<save*> saves){
+#ifdef _DEBUG
 	printf("Sending results\n");
+#endif
 
 	std::stringstream filename;
 	filename << directory<< "GenPool.dino";
@@ -937,7 +949,9 @@ void saveSaves(std::vector<save*> saves){
 		os.write((const char*)&saves.at(j)->fitness, sizeof(float));
 	}
 	if(!os.good()){
+#ifdef _DEBUG
 		printf("error\n");
+#endif
 		exit(-1);
 	}
 	os.flush();
@@ -1008,8 +1022,9 @@ BOOL CALLBACK namingControl(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lPara
 					text = "the Nameless One";
 					*result=text;
 				}
-
+#ifdef _DEBUG
 				printf("name %s", result->c_str());
+#endif
 				EndDialog(hwnd,0);
 				break;
 			}
@@ -1097,7 +1112,9 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 		break;
 		}
 	case WM_CLOSE:{
+#ifdef _DEBUG
 		printf("hell no :)");
+#endif
 		break;}
 	default:
 		return FALSE;
@@ -1159,7 +1176,6 @@ boolean VFWInit(){
 	pfile = new PAVIFILE();
 	VFWReturnVal = AVIFileOpen(pfile, filename.str().c_str(),OF_SHARE_DENY_WRITE|OF_CREATE,0L);
 	if(VFWReturnVal !=0 ){
-		printf("failfailfail\n");
 		return false;
 	}
 
@@ -1172,7 +1188,6 @@ boolean VFWInit(){
 	pstream = new PAVISTREAM();
 	VFWReturnVal = AVIFileCreateStream(*pfile,pstream,strhdr);
 	if(VFWReturnVal !=0 ){
-		printf("failfailfail\n");
 		return false;
 	}
 
@@ -1184,7 +1199,6 @@ boolean VFWInit(){
 	DWORD flag=poptions->dwFlags &AVICOMPRESSF_VALID;
 	if(!(poptions->dwFlags &AVICOMPRESSF_VALID)){
 	
-		printf("failed");
 		delete poptions;
 		return false;
 	}
@@ -1192,7 +1206,6 @@ boolean VFWInit(){
 	pcompressedstream = new PAVISTREAM();
 	VFWReturnVal = AVIMakeCompressedStream(pcompressedstream,*pstream,aopts[0],NULL);
 	if(VFWReturnVal !=AVIERR_OK ){
-		printf("failfailfail\n");
 		AVIStreamRelease(*pcompressedstream);
 		delete(pcompressedstream);
 		AVIStreamRelease(*pstream);
@@ -1217,7 +1230,6 @@ boolean VFWInit(){
 
 	VFWReturnVal = AVIStreamSetFormat(*pcompressedstream,0,bi,bi->biSize);
 	if(VFWReturnVal != 0 ){
-		printf("failfailfail\n");
 		AVIStreamRelease(*pcompressedstream);
 		delete(pcompressedstream);
 		AVIStreamRelease(*pstream);
@@ -1251,7 +1263,9 @@ void captureVideo(HDC hDC){
 				DIBSECTION dibs; int sbm = GetObject(hData,sizeof(dibs),&dibs);
 
 				if (sbm!=sizeof(DIBSECTION)){
-					printf("fault\n");
+#ifdef _DEBUG
+					printf("dibsection fault\n");
+#endif
 				}else{
 					DWORD keyframe = NULL;
 					if(currentFrame==0){keyframe=AVIIF_KEYFRAME;}
@@ -1260,7 +1274,11 @@ void captureVideo(HDC hDC){
 				}
 				DeleteObject(hData);
 			}
-			else{printf("frame skipped nr %d\n",currentFrame);}
+			else{
+#ifdef _DEBUG
+				printf("frame skipped nr %d\n",currentFrame);
+#endif
+			}
 		}
 	}
 

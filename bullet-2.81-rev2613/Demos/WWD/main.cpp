@@ -11,7 +11,9 @@ int main(int argc,char** argv)
 
 	numCores= sysinfo.dwNumberOfProcessors;
 	//numCores=1;
+#ifdef _DEBUG
 	printf("cores %d\n", numCores);
+#endif
 
 #ifdef  _DEBUG
 
@@ -142,15 +144,21 @@ int WWD(int argc,char** argv){
 
 			//#pragma omp for ordered
 			for(int j=0;j< (int) (creatures->size()/5.f);j++){
+#ifdef _DEBUG
 				printf("nr %d %f\n",j,creatures->at(j).fitness);
+#endif
 			}
 			//#pragma omp for ordered
+#ifdef _DEBUG
 			printf("round %d \n",i);
+#endif
 		}
 	}
 
 	for (int i = 0; i < (int) creatures->at(0).dna.size(); i++){
+#ifdef _DEBUG
 		printf("%d,", creatures->at(0).dna.at(i));
+#endif
 	}
 
 	//Show end result if we want to...
@@ -161,7 +169,9 @@ int WWD(int argc,char** argv){
 
 	WWDPhysics->calcSize();
 	WWDPhysics->solveGroundConflicts();
+#ifdef _DEBUG
 	printf("\nPress enter to continue\n");
+#endif
 	getchar();
 	return glutmain(argc, argv,1024,600,"Walking with dinosaurs",WWDPhysics);
 }

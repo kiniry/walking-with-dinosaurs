@@ -100,7 +100,9 @@ void startPrograms(fitnessTest type){
 		commandArgs<<i<<" "<<type;
 		int error=(int) ShellExecute( NULL, "open", filePathAbs, (commandArgs.str()).c_str(), NULL, show);
 		if(error < 32){
+#ifdef _DEBUG
 			printf("Error: faild to start Client\n");
+#endif
 			exit(-1);
 		}
 	}
@@ -148,7 +150,9 @@ int setupServer(int pop, int cores){
 		if (pipes.at(i) == INVALID_HANDLE_VALUE)
 		{
 			dwError = GetLastError();
+#ifdef _DEBUG
 			wprintf(L"Unable to create named pipe w/err 0x%08lx\n", dwError);
+#endif
 			return -1;
 		}
 	}
@@ -163,7 +167,9 @@ int waitForClients(){
 			if (ERROR_PIPE_CONNECTED != GetLastError())
 			{
 				dwError = GetLastError();
+#ifdef _DEBUG
 				wprintf(L"ConnectNamedPipe failed w/err 0x%08lx\n", dwError);
+#endif
 				return -1;
 			}
 		}
@@ -179,11 +185,13 @@ void sendCreatures(std::vector<creature>* Creatures, int start){
 		std::ofstream os;
 		os.open(creatureFilePaths.at(id),std::ios::out | std::ios::binary);
 		if(!os.good()){
+#ifdef _DEBUG
 			printf("good()=%d" , os.good());
 			printf(" eof()=%d" , os.eof());
 			printf(" fail()=%d", os.fail());
 			printf(" bad()=%d\n", os.bad());
 			printf("error\n");
+#endif
 			exit(-1);
 		}
 
@@ -204,11 +212,13 @@ void sendCreatures(std::vector<creature>* Creatures, int start){
 			os.write((const char*)&Creatures->at(j).fitness, sizeof(float));
 		}
 		if(!os.good()){
+#ifdef _DEBUG
 			printf("good()=%d" , os.good());
 			printf(" eof()=%d" , os.eof());
 			printf(" fail()=%d", os.fail());
 			printf(" badd()=%d\n", os.bad());
 			printf("error\n");
+#endif
 			exit(-1);
 		}
 		os.flush();
@@ -240,10 +250,14 @@ int sendOrders(int j){
 			dwError = GetLastError();
 
 			if (ERROR_BROKEN_PIPE == GetLastError()){
+#ifdef _DEBUG
 				wprintf(L"broken Pipe w/err 0x%08lx\n", dwError);
+#endif
 				return -1;
 			}
+#ifdef _DEBUG
 			wprintf(L"WriteFile to pipe failed w/err 0x%08lx\n", dwError);
+#endif
 			return -1;
 		}
 	}
@@ -268,20 +282,26 @@ void receiveAcknowledges(){
 				);
 
 			if (ERROR_BROKEN_PIPE == GetLastError()){
+#ifdef _DEBUG
 				wprintf(L"broken Pipe w/err 0x%08lx\n", dwError);
+#endif
 				exit(-1);
 			}
 
 			if (!fFinishRead && ERROR_MORE_DATA != GetLastError())
 			{
 				dwError = GetLastError();
+#ifdef _DEBUG
 				wprintf(L"ReadFile from pipe failed w/err 0x%08lx\n", dwError);
+#endif
 				exit(-1);
 			}
 		} while (!fFinishRead); // Repeat loop if ERROR_MORE_DATA
 
 		if (wcscmp(chRequest, L"DONE")!=0){
+#ifdef _DEBUG
 			wprintf(L"Handshake failed:\n");
+#endif
 			exit(-1);
 		}
 	}

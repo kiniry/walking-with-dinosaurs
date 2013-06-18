@@ -77,8 +77,9 @@ bool Physics::checkInternCollissions(){
 			m_dynamicsWorld->contactPairTest(objects.at(i),objects.at(j),result);
 
 			if(result.m_connected == true){
+#ifdef _DEBUG
 				printf("dohhhh");
-
+#endif
 				return false;
 			}
 		}
@@ -93,7 +94,9 @@ bool Physics::checkHeight(){
 	//check for height
 	calcSize();
 	if(height>=15){
+#ifdef _DEBUG
 		printf("height faild");
+#endif
 		totaltime=0;
 		return false;
 	}
@@ -109,7 +112,9 @@ void Physics::checkForDismemberment(){
 		if(!m_dynamicsWorld->getConstraint(i)->isEnabled()){
 			fitness = -999999;
 			dead=true;
+#ifdef _DEBUG
 			printf("broken\n");
+#endif
 			break;
 		}
 	}
@@ -256,7 +261,9 @@ bool Physics::relaxCreature(){
 			for(int dead=0;dead<tests.size();dead++){
 				tests.at(dead).value=0;
 			}
+#ifdef _DEBUG
 			printf("relax failed");
+#endif
 			return false;
 		}
 		totalCount++;
@@ -1070,8 +1077,9 @@ void Physics::calcFitness(fitnessTest test, float* fit){
 		break;
 
 	default:
-
+#ifdef _DEBUG
 		printf("unkown fitness test\n");
+#endif
 	}
 	*fit= floorf((*fit) * 10000 + 0.5) / 10000;
 }

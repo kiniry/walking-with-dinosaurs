@@ -4,8 +4,10 @@ void initEvolution(int noCreatures){
 	survivors = (int) ((noCreatures/100.f)*((float)survivalRatio)+0.5);
 	cullAmount = (int) ((noCreatures/100.f)*((float)cullRatio)+0.5);
 
+#ifdef _DEBUG
 	printf("\nsurvivors %d\n", survivors);
 	printf("\nculled creatures %d\n", cullAmount);
+#endif
 
 	if(survivors == 0 && noCreatures != 0){
 		survivors =1;
@@ -17,8 +19,8 @@ void initEvolution(int noCreatures){
 */
 statistic evolve(std::vector<creature>* creatures){
 	statistic stats = statistic();
-	float fitnessSumElites = 0;
-	float fitnessSumBreeders = 0;
+	//float fitnessSumElites = 0;
+	//float fitnessSumBreeders = 0;
 	std::vector<creature> result;
 	std::vector<creature> elites;
 	std::vector<creature> breeders;
@@ -30,12 +32,12 @@ statistic evolve(std::vector<creature>* creatures){
 	for(int i =0; i<(int)survivors; i++){
 		result.push_back(creatures->at(i));
 		elites.push_back(creatures->at(i));
-		fitnessSumElites += (float) (creatures->at(i).fitness>0.001?creatures->at(i).fitness:0.001);
+		//fitnessSumElites += (float) (creatures->at(i).fitness>0.001?creatures->at(i).fitness:0.001);
 	}
 
 	for(int i =survivors; i<(((int)creatures->size())-survivors-cullAmount); i++){
 		breeders.push_back(creatures->at(i));
-		fitnessSumBreeders += (float) (creatures->at(i).fitness>0.001?creatures->at(i).fitness:0.001);
+		//fitnessSumBreeders += (float) (creatures->at(i).fitness>0.001?creatures->at(i).fitness:0.001);
 	}
 
 	for(int i =0; i<(int) creatures->size()-survivors;i++){
@@ -51,13 +53,17 @@ statistic evolve(std::vector<creature>* creatures){
 		}else{
 		creat.dna = mutate(crossOver2(dna,dna2),deviation);
 		}*/
-		creature breed = getWorthyCreature(fitnessSumBreeders,&breeders);
-		creature seed = getWorthyCreature(fitnessSumElites,&elites);
+		//creature breed = getWorthyCreature(fitnessSumBreeders,&breeders);
+		//creature seed = getWorthyCreature(fitnessSumElites,&elites);
+		creature breed = getWorthyCreature(0,&breeders);
+		creature seed = getWorthyCreature(0,&elites);
 
 		creat.dna = breed.treePointer->crossBreed(breed.dna,seed.dna,seed.treePointer);
 		creat.dna = mutate(creat.dna,deviation);
 		result.push_back(creat);
+#ifdef _DEBUG
 		printf("i %d\n",i);
+#endif
 	}
 
 	//cleanup
@@ -75,7 +81,7 @@ creature getWorthyCreature(float fitnessSum, std::vector<creature> *creatures){
 	int random = rand()%creatures->size();
 	return creatures->at(random);
 }
-
+/*
 creature getWorthyCreatureFail(float fitnessSum, std::vector<creature> *creatures){
 	int Sum = (int)(fitnessSum*1000.f);
 	if(Sum<1){
@@ -99,7 +105,7 @@ creature getWorthyCreatureFail(float fitnessSum, std::vector<creature> *creature
 
 	return creatures->at(i);
 }
-
+*/
 /**
 *	mutes the dna according to the chance calculated
 *	the chance is calculated as 1/lenght if diviation is as expected
@@ -127,7 +133,7 @@ std::vector<int> mutate(const std::vector<int> dna, double deviation){
 
 /**
 *	One-point crossover
-*/
+*//*
 std::vector<int> crossOver1(std::vector<int> dna1, std::vector<int> dna2){
 	std::vector<int> newCreature;
 
@@ -143,11 +149,11 @@ std::vector<int> crossOver1(std::vector<int> dna1, std::vector<int> dna2){
 
 	return newCreature;
 }
-
+*/
 /**
 *   Two-point crossover
 *	replaces the middel part of dna1 with a part from dna2
-**/
+**//*
 std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 	std::vector<int> newCreature;
 
@@ -167,7 +173,7 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2){
 	}
 	return newCreature;
 }
-
+*/
 /**
 *	Calculation of statistics
 *	all values excepet min and max are normalised to be in the span 0-100
@@ -218,12 +224,15 @@ double statistik(std::vector<creature>* creatures, statistic* stats){
 		deviation=0;
 	}
 	stats->deviation=deviation;
+#ifdef _DEBUG
 	printf("\nmax %f, min %f, median %f, mean %f, deviation %f\n", max, min, median, mean, deviation);
-
+#endif
 	delete normValues;
 	timesDiviation+=1.;
 	totalDiviation+=deviation;
+#ifdef _DEBUG
 	printf("mean diviation %f\n",totalDiviation/timesDiviation);
+#endif
 	return deviation;
 }
 

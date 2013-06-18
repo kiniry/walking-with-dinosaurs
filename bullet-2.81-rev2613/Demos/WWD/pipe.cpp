@@ -25,7 +25,9 @@ std::vector<creature> getCreatures(std::string filename){
 		delete tmpCreature;
 	}
 	if(!is.good()){
+#ifdef _DEBUG
 		printf("error\n");
+#endif
 		exit(-1);
 	}
 	is.close();
