@@ -730,8 +730,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 			}
 			SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);
 			break;
-		default:
 #ifdef _DEBUG
+		default:
+
 			printf("");
 #endif
 		}

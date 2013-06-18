@@ -1075,9 +1075,9 @@ void Physics::calcFitness(fitnessTest test, float* fit){
 		*fit=0;
 
 		break;
-
-	default:
 #ifdef _DEBUG
+	default:
+
 		printf("unkown fitness test\n");
 #endif
 	}
