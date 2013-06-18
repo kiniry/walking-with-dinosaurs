@@ -48,7 +48,7 @@ creature pipeServerMain(int cores, int populationSize, int nrOfGenerations, std:
 		start=survivors;
 		proInfo->rounds = i+1;
 		if(*stopSim){
-			stopSim=false;
+			*stopSim=false;
 			proInfo->rounds=nrOfGenerations;
 			break;
 		}
