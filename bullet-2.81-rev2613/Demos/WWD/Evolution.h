@@ -60,5 +60,7 @@ std::vector<int> crossOver2(std::vector<int> dna1, std::vector<int> dna2);
 
 creature getWorthyCreature(float fitnessSum, std::vector<creature> *creatures);
 
+bool checkForPanicAttack(std::vector<creature>* creatures,statistic statstruct);
+
 const int survivalRatio = 20; //how many percent elite creatures are there?
 const int cullRatio = 50; //how many percent creatures must die?

@@ -17,6 +17,13 @@ public:
 	MTree(){
 		NNPart = new std::vector<NNLayerNode*>();
 	}
+	MTree(const MTree& other){
+		bodyPart = new partNode((const partNode&)(*other.bodyPart));
+		NNPart = new std::vector<NNLayerNode*>();
+		for(int i = 0;i<other.NNPart->size();i++){
+			NNPart->push_back(new NNLayerNode((const NNLayerNode&)(*other.NNPart->at(i))));
+		}
+	}
 	~MTree(void){
 		for(int i=0;i<(int)NNPart->size();i++){
 			delete NNPart->at(i);

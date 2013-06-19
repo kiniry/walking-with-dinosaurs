@@ -4,8 +4,11 @@
 class NNNode : public MTreeNode{
 public:
 	NNNode(int start) :  MTreeNode(start){
-		startIndex = start;
-		//children = new std::vector<MTreeNode*>();
+		//startIndex = start;						//set in MTreeNode Constructor
+		//children = new std::vector<MTreeNode*>();	//set in MTreeNode Constructor
+	;}
+	NNNode(const NNNode& other) : MTreeNode(other){
+		children = new std::vector<MTreeNode*>();
 	}
 	/*
 	std::vector<int> mutate(){

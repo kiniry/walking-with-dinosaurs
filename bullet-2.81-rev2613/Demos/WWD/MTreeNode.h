@@ -14,6 +14,14 @@ public:
 		startIndex=start;
 		children = new std::vector<MTreeNode*>();
 	}
+	MTreeNode(const MTreeNode& other){
+		startIndex=other.startIndex;
+		endIndex=other.endIndex;
+		//children = new std::vector<MTreeNode*>();
+		//for(int i=0;i<other.children->size();i++){
+		//	children->push_back(new MTreeNode((const MTreeNode&) *other.children->at(i)));
+		//}
+	}
 	MTreeNode(int start,int end){
 		startIndex=start;
 		endIndex=end;

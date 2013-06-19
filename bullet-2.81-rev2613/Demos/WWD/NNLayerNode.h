@@ -1,11 +1,17 @@
 #pragma once
-#include "MTreeNode.h"
+#include "NNNode.h"
 
 class NNLayerNode : public MTreeNode{
 public:
 	NNLayerNode(int start) : MTreeNode(start){
-		startIndex = start;
-		//children = new std::vector<MTreeNode*>();
+		//startIndex = start;							//set in MTreeNode Contructor
+		//children = new std::vector<MTreeNode*>();		//set in MTreeNode Contructor
+	}
+	NNLayerNode(const NNLayerNode& other) : MTreeNode(other){
+		children = new std::vector<MTreeNode*>();
+		for(int i=0;i<other.children->size();i++){
+			children->push_back(new NNNode((const NNNode&) *other.children->at(i)));
+		}
 	}
 	/*
 	std::vector<int> mutate(){

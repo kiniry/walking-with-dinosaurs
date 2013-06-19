@@ -27,10 +27,11 @@ statistic evolve(std::vector<creature>* creatures){
 	elites.reserve(survivors);
 	std::vector<creature> breeders = std::vector<creature>();
 	breeders.reserve(creatures->size()-survivors-cullAmount);
-
+	
 	std::sort(creatures->begin(), creatures->end(), compareCreatures);
 
 	double deviation=statistik(creatures, &stats);
+	bool panicking = checkForPanicAttack(creatures,stats);
 
 	for(int i =0; i<(int)survivors; i++){
 		result.push_back(creatures->at(i));
@@ -257,4 +258,24 @@ std::vector<float>* normalizeFitness(std::vector<creature> *creatures, statistic
 		}
 	}
 	return normValues;
+}
+
+bool checkForPanicAttack(std::vector<creature>* creatures,statistic statstruct){
+#ifdef _DEBUG
+			printf("killed: %d  culled: %d\n",statstruct.killed,cullAmount);
+#endif
+	if(statstruct.killed<=cullAmount){return false;}
+	else{
+		for(int dif = statstruct.killed-cullAmount;dif>0;dif--){
+#ifdef _DEBUG
+			printf("dif: %d\n",dif);
+#endif
+			int index = (creatures->size()-1) - cullAmount - (dif-1);
+			int eliteIndex = rand()%survivors;
+			creatures->at(index).dna = creatures->at(eliteIndex).dna;
+			delete creatures->at(index).treePointer;
+			creatures->at(index).treePointer = new MTree((const MTree&)*creatures->at(eliteIndex).treePointer);
+		}
+		return true;
+	}
 }

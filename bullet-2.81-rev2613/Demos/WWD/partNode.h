@@ -7,9 +7,19 @@ public:
 	std::vector<NNLayerNode*>* NNChildren;
 	
 	partNode(int start) :  MTreeNode(start){
-		startIndex = start;
-		//children = new std::vector<MTreeNode*>();
+		//startIndex = start;						//set in the other contructor
+		//children = new std::vector<MTreeNode*>();	//set in the other contructor
 		NNChildren = new std::vector<NNLayerNode*>();
+	}
+	partNode(const partNode& other) : MTreeNode(other){
+		NNChildren = new std::vector<NNLayerNode*>();
+		for(int i=0;i<other.NNChildren->size();i++){
+			NNChildren->push_back(new NNLayerNode((const NNLayerNode&) (*other.NNChildren->at(i))));
+		}
+		children = new std::vector<MTreeNode*>();
+		for(int i=0;i<other.children->size();i++){
+			children->push_back(new partNode((const partNode&) *other.children->at(i)));
+		}
 	}
 	virtual ~partNode(void){
 		for(int i=0;i<NNChildren->size();i++){
