@@ -15,6 +15,8 @@ int readDNA(std::vector<int> *DNA, Physics *world){
 	int part = world->createBox(getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA));
 	blocks++;
 	index = index+3;
+	world->createSensor(part,getDNA(index,DNA));
+	index++;
 	index=B(index, DNA, world, &blocks, part, tempNeural);
 
 	//hoved NN
@@ -48,6 +50,9 @@ int B(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part, s
 
 int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, std::vector<int>* tempNeural){
 	partNode* falseBody = new partNode(0);
+	//
+	tempNeural->push_back(index);
+	//
 	index = NN(index,DNA,falseBody);
 	delete falseBody;
 	world->effectorNNindex.push_back(getDNA(index,DNA));
@@ -56,10 +61,12 @@ int J(int index, std::vector<int> *DNA, Physics *world, int *blocks, int part1, 
 	index+=3;
 
 	int part2 = world->createBox(getDNA(index+10,DNA), getDNA(index+11,DNA),getDNA(index+12,DNA));
+	world->createSensor(part2,getDNA(index+13,DNA));
 
 	int j_index = world->createJoint(part1, part2, getDNA(index,DNA), getDNA(index+1,DNA), getDNA(index+2,DNA), getDNA(index+3,DNA), getDNA(index+4,DNA), getDNA(index+5,DNA), getDNA(index+6,DNA), getDNA(index+7,DNA), getDNA(index+8,DNA),getDNA(index+9,DNA));
 	index+=13;
-	tempNeural->push_back(index);
+	index++;//for the sensor
+	//tempNeural->push_back(index);
 
 	index = B(index, DNA, world, blocks, part2, tempNeural);
 	return index;
