@@ -73,7 +73,7 @@ enum collisiontypes {		//definition of the collision groups
 	COL_BOX = BIT(1),		//Boxes collision group
 };
 
-enum{pressure, angle, light};
+enum{nosensor, pressure, angle, light};
 
 enum{GENERIC6DOF};
 class btBroadphaseInterface;
