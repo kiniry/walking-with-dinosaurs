@@ -175,6 +175,7 @@ int NN(int index, std::vector<int> *DNA,partNode* body){
 //is isJustChecking is set, we are only calculating the size of the DNA part, not creating the actual NN nodes
 int NNL(int index, int inputAmount, std::vector<int>* DNA, NeuralNetwork* aNet, NNLayerNode* node, bool isJustChecking){
 	int chooseValue = getDNA(index,DNA)%1000;
+	index++;
 	int usedChance = 0;
 	int nrOfNodes = inputAmount; //assume the most probable case
 
