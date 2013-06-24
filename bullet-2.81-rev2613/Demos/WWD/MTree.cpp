@@ -20,9 +20,9 @@ std::vector<int> MTree::crossBreed(std::vector<int> myDNA, std::vector<int> seed
 			myDNA.erase(myDNA.begin()+theNode->getStart(),myDNA.begin()+theNode->getEnd());
 			myDNA.insert(myDNA.begin()+theNode->getStart(),seedDNA.begin()+theOtherNode->getStart(),seedDNA.begin()+theOtherNode->getEnd());
 
-			if((myDNA.at(theNode->getStart()+3)%6)>0){
+			if((myDNA.at(theNode->getStart()+3+1)%6)>0){
 				partNode* falseBody = new partNode(0);
-				int index = NN(theNode->getStart()+4,&myDNA,falseBody)+3+2;
+				int index = NN(theNode->getStart()+4+1,&myDNA,falseBody)+3;
 				myDNA.at(index) += 180;
 				delete falseBody;
 			}
