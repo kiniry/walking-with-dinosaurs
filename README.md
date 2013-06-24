@@ -1,14 +1,10 @@
-﻿walking-with-dinosaurs
+walking-with-dinosaurs
 ======================
 
 TODO list:
 
 optimize evolution
 
-faldende fitness værdi
-
-dead codecs 
+faldende fitness v�rdi
 
 debug view
-
-growing dna

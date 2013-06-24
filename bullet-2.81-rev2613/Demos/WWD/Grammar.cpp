@@ -220,6 +220,7 @@ MTree* getMTree(std::vector<int> *DNA){
 
 	blocks++;
 	index = index+3;
+	index++;
 	index=treeB(index, DNA, &blocks, body);
 
 	//hoved NN
@@ -250,6 +251,7 @@ int treeJ(int index, std::vector<int> *DNA, int *blocks, partNode* body){
 
 	//for the normal joint vars
 	index+=13;
+	index++; //for the sensor
 
 	index = treeB(index, DNA, blocks,nextBody); //nextBody will end at the end of this B() function
 	return index;
