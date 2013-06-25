@@ -118,3 +118,4 @@ void calcSizes(int height, int witdh);
 void loadSaves();
 void loadDefault();
 void saveSaves(std::vector<save*> saves);
+void randomCreature();

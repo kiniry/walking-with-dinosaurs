@@ -62,7 +62,7 @@ struct   MyContactResultCallback : public btCollisionWorld::ContactResultCallbac
 
 #define PI 3.1415926
 
-#define maxBoxes 10
+#define maxBoxes 15
 #define simulationTime 10000 //10 s = 10000 ms
 
 #define BIT(x) (1<<(x))		//snippet from wikipedia http://www.bulletphysics.org/mediawiki-1.5.8/index.php?title=Collision_Filtering

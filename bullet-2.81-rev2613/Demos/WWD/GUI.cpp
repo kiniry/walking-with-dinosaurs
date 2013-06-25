@@ -5,7 +5,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	argv =CommandLineToArgvW(GetCommandLineW(),&argc);
 
 	directory = getDirectory();
-
+	srand(time(0));
 #ifdef _DEBUG
 	console();
 #endif
@@ -712,6 +712,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 #endif
 			}
 			break;
+		case ID_FILE_NEW40002:
+
+			randomCreature();
+			break;
+
 		case ID_FILE_SAVE40003:
 
 			saveSaves(saves);
@@ -822,6 +827,27 @@ void loadSaves(){
 		loadDefault();
 	}
 	is.close();
+}
+
+void randomCreature(){
+	
+	std::vector<int> ancestor;
+	ancestor.reserve(500);
+	while(ancestor.size()<500){
+	
+		ancestor.push_back(randomDnaValue);
+	}
+
+	save* tmp = new save();
+	tmp->dna=ancestor;
+	tmp->name="Random Dino";
+	
+	saves.push_back(tmp);
+	
+	SendMessage(hWndList, LB_ADDSTRING, 0, (LPARAM)saves.at(saves.size()-1)->name.c_str());
+	
+	SendMessage(hWndList,LB_SETCURSEL,saves.size()-1,0);
+	SendMessage(hWnd,WM_COMMAND,MAKEWPARAM(IDC_LISTBOX,LBN_SELCHANGE),0);
 }
 
 void loadDefault(){
