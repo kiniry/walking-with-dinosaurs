@@ -93,7 +93,6 @@ private:
 	unsigned long timeBehind;
 	unsigned long time;
 
-	int noBoxes;
 	float fitness;
 	boolean dead;
 	float heighstPoint;
@@ -155,6 +154,7 @@ private:
 
 public:
 
+	int noBoxes;
 	enum boxes{ground=-2};
 
 	virtual void displayCallback();
@@ -203,18 +203,21 @@ public:
 
 	void runSimulation();
 
-	void runSimStartUp(){
+	bool runSimStartUp(){
+		bool didntFail = true;
 		solveGroundConflicts();
 		if(!(checkInternCollissions() && relaxCreature() && checkHeight())){
 #ifdef _DEBUG
 			printf("Startup Error");
 #endif
+			didntFail = false;
 		}
 		totaltime=0;
 		last=0;
 		time=0;
 		timeBehind=0;
 		m_clock.reset();
+		return didntFail;
 	}
 
 	virtual ~Physics(){

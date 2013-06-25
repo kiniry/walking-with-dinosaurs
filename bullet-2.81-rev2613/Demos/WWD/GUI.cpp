@@ -715,6 +715,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 		case ID_FILE_NEW40002:
 
 			randomCreature();
+			while( (WWDPhysics->noBoxes<2) || (!WWDPhysics->runSimStartUp())  ){
+				{//deleting
+					int itemIndex = (int) SendMessage(hWndList, LB_GETCURSEL, (WPARAM)0, (LPARAM) 0);
+					SendMessage(hWndList,LB_DELETESTRING,itemIndex,0);
+					delete saves.at(itemIndex);
+					saves.erase(saves.begin()+itemIndex,saves.begin()+itemIndex+1);
+				}
+				randomCreature();
+			}
 			break;
 
 		case ID_FILE_SAVE40003:
