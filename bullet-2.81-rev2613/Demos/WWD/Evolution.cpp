@@ -85,31 +85,7 @@ creature getWorthyCreature(float fitnessSum, std::vector<creature> *creatures){
 	int random = rand()%creatures->size();
 	return creatures->at(random);
 }
-/*
-creature getWorthyCreatureFail(float fitnessSum, std::vector<creature> *creatures){
-	int Sum = (int)(fitnessSum*1000.f);
-	if(Sum<1){
-		int random = rand()%creatures->size();
-		return creatures->at(random);//if the sum of all the fitness is zero return a random instead... they are all useless
-	}
-	int random = (rand()*100)%Sum;	//Random number generator doesn't give high enough values so we multiply with 100 to be sure
-	//we are in the range
-	float val = 0;
-	int i=0;
-	for(i;i<(int)creatures->size();i++){
-		val+=(creatures->at(i).fitness>0.001?creatures->at(i).fitness*1000.f:1.f);
-		if(val>random){
-			break;
-		}
-	}
-	if(i>= (int)creatures->size()){
-		printf("FAIL... how irritating");
-		return creatures->at(creatures->size()-1);
-	}
 
-	return creatures->at(i);
-}
-*/
 /**
 *	mutes the dna according to the chance calculated
 *	the chance is calculated as 1/lenght if diviation is as expected
@@ -260,6 +236,8 @@ std::vector<float>* normalizeFitness(std::vector<creature> *creatures, statistic
 	return normValues;
 }
 
+//checks if the percentage of killed creatures is to high and therefore destroy the population
+// if thats the case working elite cretures is add to the ppopulation
 bool checkForPanicAttack(std::vector<creature>* creatures,statistic statstruct){
 #ifdef _DEBUG
 			printf("killed: %d  culled: %d\n",statstruct.killed,cullAmount);

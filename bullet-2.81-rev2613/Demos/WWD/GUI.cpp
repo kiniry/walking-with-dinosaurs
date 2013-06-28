@@ -151,32 +151,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	fixedSteps=true;
 	EnableWindow(hWndViewRateB,false);
 
-/*
-
-//tooltips
-HWND hwnd_tip = CreateWindowExW(0, TOOLTIPS_CLASSW, NULL, 
-  WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP, 
-  CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-  NULL, NULL, GetModuleHandle(NULL), NULL
-);
-SetWindowPos(hwnd_tip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-
-TOOLINFOW ti;
-memset(&ti, 0, sizeof(TOOLINFOW));
-ti.cbSize = sizeof(TOOLINFOW);
-ti.hwnd = hWnd;
-ti.uId = (UINT) hWndButton;
-ti.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
-ti.lpszText = L"This tip is shown correctly, including unicode characters.";
-SendMessageW(hwnd_tip, TTM_ADDTOOLW, 0, (LPARAM) &ti);
-
-*/
 
 	MSG msg = messageLoop(hDC, hRC);
 	return msg.wParam;
 }
 
-// program main loop
+// program main loop (message loop)
 MSG messageLoop(	HDC hDC, HGLRC hRC){
 	BOOL quit = FALSE;
 	MSG msg;
@@ -838,6 +818,7 @@ void loadSaves(){
 	is.close();
 }
 
+// creates a random Creature
 void randomCreature(){
 	
 	std::vector<int> ancestor;
@@ -1132,6 +1113,8 @@ BOOL CALLBACK progressControll(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 	}
 	return TRUE;
 }
+
+// starts the calculations of a batch of generations
 unsigned int _stdcall runServer(void* args){
 	argumentList* aList = (argumentList*) args;
 
