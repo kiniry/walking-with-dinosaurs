@@ -1,5 +1,8 @@
 #include "Physics.h"
 
+/** Points the camera towards the center of the simulated creature
+*
+**/
 void Physics::pointCamera(){
 	btVector3 aPoint = calcPosition();
 	//setCameraPosition(btVector3(aPoint.x(),aPoint.y()-100,aPoint.z()-100));
@@ -139,6 +142,9 @@ void Physics::solveGroundConflicts(){
 	pointCamera();
 }
 
+/**The main loop function that runs a step of the simulation
+*stepsize: The size of the step in Bullet seconds
+**/
 void Physics::simulationLoopStep(float stepSize){
 	totaltime += stepSize*1000;
 	if(m_dynamicsWorld->getNumCollisionObjects()>1){
@@ -300,6 +306,10 @@ void Physics::runSimulation(){
 	checkForDismemberment();
 }
 
+/** Main simulation function for a simulation that has to be rendered.
+*	fixed:	value determining if the stepsize is fixed to the default or set depending on the current framerate
+*	hDC:	frame buffer to switch the rendering buffer into
+**/
 bool Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
 	unsigned long tmplast=m_clock.getTimeMicroseconds();
 	unsigned long ms = tmplast-last;
@@ -350,6 +360,9 @@ bool Physics::clientMoveAndDisplay(boolean fixed, HDC hDC){
 	return true;
 }
 
+/** Old main simulation function that also renders the simulation to GLUT
+*
+**/
 void Physics::clientMoveAndDisplay(boolean fixed){
 	float ms = getDeltaTimeMicroseconds();
 	static float time2=0;
@@ -384,6 +397,9 @@ void Physics::clientMoveAndDisplay(boolean fixed){
 	swapBuffers();
 }
 
+/** Callback for the rendering
+*
+**/
 void Physics::displayCallback(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -422,6 +438,9 @@ void Physics::showInfo(int& xOffset,int& yStart, int yIncr){
 	yStart += yIncr;
 }
 
+/** Initializes the physics world and simulation
+*
+**/
 void Physics::initPhysics(){
 	dead=false;
 	totaltime=0;
